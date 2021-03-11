@@ -1,0 +1,31 @@
+@mixin media($point) {
+  @if $point == extra {
+    @media (min-width: 993px) {
+      @content;
+    }
+  } @else if $point == desktop {
+    @media (min-width: 768px) {
+      @content;
+    }
+  } @else if $point == notDesktop {
+    @media (max-width: 768px) and (min-width: 993px) {
+      @content;
+    }
+  } @else if $point == tablet {
+    @media (min-width: 577px) and (max-width: 768px) {
+      @content;
+    }
+  } @else if $point == notTablet {
+    @media (max-width: 577px) and (min-width: 768px) {
+      @content;
+    }
+  } @else if $point == phone {
+    @media (max-width: 577px) {
+      @content;
+    }
+  } @else if $point == notPhone {
+    @media (min-width: 577px) {
+      @content;
+    }
+  }
+}

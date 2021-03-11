@@ -1,0 +1,90 @@
+@import "./variables.scss";
+@import "./responsive.scss";
+@import "./theme.scss";
+
+#notificationBox {
+  z-index: map-get($navbar, "toolbar_z") + 1;
+  position: absolute;
+  padding: 0.5rem;
+  bottom: 0;
+}
+
+@keyframes notifIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes notifOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.notificationBoxElement {
+  width: fit-content;
+  padding: 0.7rem 0.8rem;
+  margin: 0rem 0.5rem 0.5rem 0.5rem;
+  border-radius: 1rem;
+  background-color: map-get($global, "success");
+  color: map-get($global, "light");
+  font-size: small;
+  animation: notifIn 0.4s ease;
+  box-shadow: map-get($shadow, "tightSmooth");
+}
+
+.notificationBoxElement.terminate {
+  animation: notifOut 0.4s ease;
+  opacity: 0;
+}
+
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  @include themify($themes) {
+    color: themed("text_color");
+  }
+}
+
+body {
+  @include media(desktop) {
+    overflow: auto;
+  }
+  overflow-x: hidden;
+  margin: 0;
+  font-family: "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+div {
+  font-family: "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+a {
+  @include themify($themes) {
+    text-decoration: none;
+    color: themed("text_color");
+    &:hover {
+      text-decoration: none;
+      color: themed("text_color");
+    }
+  }
+}
+
+p {
+  margin-bottom: 0;
+}

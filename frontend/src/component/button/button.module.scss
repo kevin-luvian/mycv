@@ -1,0 +1,62 @@
+@import "../../style/variables.scss";
+@import "../../style//theme.scss";
+
+.button {
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  transition: map-get($transition, "ease");
+  box-shadow: map-get($shadow, "tight");
+}
+
+.oval {
+  border: unset;
+  border-radius: 2rem;
+  border-style: solid;
+  border-width: 2px;
+  padding: 0.5rem 1.5rem;
+}
+
+.colorDefault {
+  @include themify($themes) {
+    background-color: themed("button_color");
+    color: themed("button_textcolor");
+    &:hover {
+      background-color: themed("button_hover");
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: themed("button_active");
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.ovalColorPrimary {
+  border-color: #007ced;
+  &:hover {
+    background-color: #007ced;
+    color: #edf5e1;
+  }
+  &:active {
+    background-color: darken(#007ced, 7%);
+    border-color: darken(#007ced, 7%);
+    color: #edf5e1;
+  }
+}
+
+.ovalColorSecondary {
+  border-color: #333;
+  &:hover {
+    background-color: #333;
+    color: #edf5e1;
+  }
+  &:active {
+    background-color: darken(#333, 7%);
+    border-color: darken(#333, 7%);
+    color: #edf5e1;
+  }
+}
