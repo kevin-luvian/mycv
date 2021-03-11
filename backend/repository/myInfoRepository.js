@@ -3,12 +3,12 @@ const MyInfo = require("../model/MyInfo");
 /** 
  * find one MyInfo object in the database
  * 
- * @return {Object} MyInfo object or null
+ * @return {Promise<Object>} MyInfo object or null if not found
  */
 const retrieve = async () => {
     let data = null;
     await MyInfo.find({}, (err, arr) => {
-        if (!err & arr.length > 0) {
+        if (!err && arr.length > 0) {
             for (let i = 1; i < arr.length; i++) {
                 deleteById(arr[i]._id);
             }
@@ -23,7 +23,7 @@ const retrieve = async () => {
  * 
  * @param {string} id document _id
  */
-const deleteById = id => { MyInfo.deleteOne({ _id: id }); }
+const deleteById = async id => { await MyInfo.deleteOne({ _id: id }); }
 
 /** 
  * find one MyInfo object by _id and update its value
@@ -40,6 +40,7 @@ const update = async myInfo => {
  * save MyInfo object or update if database is not empty
  * 
  * @param {Object} myInfo object
+ * @return {Promise<void>} empty promise
  */
 const save = async myInfo => {
     const data = await retrieve();

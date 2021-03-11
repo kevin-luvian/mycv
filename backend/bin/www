@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-const app = require('../app');
+const app = require('./app');
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const startup = require("./serverstartup");
@@ -14,7 +14,7 @@ const startup = require("./serverstartup");
  */
 
 dotenv.config();
-const port = process.env.PORT ? process.env.PORT : '9000';
+const port = process.env.PORT || '9000';
 
 /**
  * Database setup
