@@ -34,9 +34,7 @@ const stringToList = (str, separator) => {
  * @param {string} rootTag 
  * @return {function} logging function
  */
-const log = rootTag => {
-    return (tag, ...args) => { console.log(`[ ${rootTag}:${tag} ]`, ...args); }
-}
+const log = rootTag => (tag, ...args) => { console.log(`[ ${rootTag}:${tag} ]`, ...args); }
 
 module.exports = {
     stringToList, stringToMongooseId, log

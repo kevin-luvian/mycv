@@ -2,7 +2,6 @@ const none = 0;
 const admin = 1;
 const superadmin = 2;
 
-const nonestring = "none";
 const adminstring = "admin";
 const superadminstring = "superadmin";
 
@@ -20,23 +19,6 @@ const stringToNum = str => {
             return superadmin;
         default:
             return none;
-    }
-}
-
-/** 
- * role number to string
- * 
- * @param {number} num - role as number
- * @return {string} role as string
- */
-const numToString = num => {
-    switch (num) {
-        case admin:
-            return adminstring;
-        case superadmin:
-            return superadminstring;
-        default:
-            return nonestring;
     }
 }
 
@@ -66,6 +48,5 @@ module.exports = {
     admin,
     superadmin,
     stringToNum,
-    numToString,
     hasAccess
 };
