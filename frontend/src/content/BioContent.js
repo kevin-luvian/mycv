@@ -10,6 +10,11 @@ export const ProfileImage = (attr) => {
     const mapScale = (val, minA, maxA, minB, maxB) =>
         ((val - minA) * (maxB - minB)) / (maxA - minA) + minB;
 
+    const setImageHeight = useCallback(() => {
+        const width = $(`#${elemID(styles.imageContainer)}`).width();
+        $(`#${elemID(styles.circle)}`).css({ height: `${width}px` });
+    }, [elemID]);
+
     const trackWindow = useCallback(() => {
         const width = $(document).width();
         const height = $(document).height();
@@ -22,23 +27,18 @@ export const ProfileImage = (attr) => {
             );
         });
         $(window).on("resize", setImageHeight);
-    }, []);
+    }, [elemID, setImageHeight]);
 
     const clearTracking = () => {
         $(document).off("mousemove");
         $(document).off("resize");
     };
 
-    const setImageHeight = () => {
-        const width = $(`#${elemID(styles.imageContainer)}`).width();
-        $(`#${elemID(styles.circle)}`).css({ height: `${width}px` });
-    };
-
     useEffect(() => {
         trackWindow();
         setImageHeight();
         return clearTracking;
-    }, [trackWindow]);
+    }, [trackWindow, setImageHeight]);
 
     return (
         <div {...attr}>
@@ -68,19 +68,19 @@ export const Description = (attr) => {
         is called bilinear interpolation, and in three dimensions, trilinear interpolation.
     `;
 
-    const setVerticalPadding = () => {
-        const wrapperHeight = $("#" + elemID(styles.descwrapper)).height();
-        const descriptionHeight = $("#" + elemID(styles.description)).height();
-        let paddingTop = (wrapperHeight - descriptionHeight) / 2;
-        if (paddingTop < 0) paddingTop = 0;
-        $("#" + elemID(styles.description)).css("padding-top", paddingTop + "px");
-    };
-
     useEffect(() => {
+        const setVerticalPadding = () => {
+            const wrapperHeight = $("#" + elemID(styles.descwrapper)).height();
+            const descriptionHeight = $("#" + elemID(styles.description)).height();
+            let paddingTop = (wrapperHeight - descriptionHeight) / 2;
+            if (paddingTop < 0) paddingTop = 0;
+            $("#" + elemID(styles.description)).css("padding-top", paddingTop + "px");
+        };
+
         setVerticalPadding();
         $(window).on("resize", setVerticalPadding);
         return $(document).off("resize");
-    }, []);
+    }, [elemID]);
 
     return (
         <div {...attr}>
@@ -89,7 +89,7 @@ export const Description = (attr) => {
                     <h1>{fullname}</h1>
                     <p>{desc}</p>
                     <div className={styles.buttons}>
-                        <BtnOval type={OvalType.primary} className="mr-4">Download CV</BtnOval>
+                        <BtnOval className="mr-4">Download CV</BtnOval>
                         <BtnOval type={OvalType.secondary}>Contact</BtnOval>
                     </div>
                 </div>
@@ -98,15 +98,28 @@ export const Description = (attr) => {
     );
 };
 
-export const FunCard = (attr) => {
+export const FunCard = ({ className, ...attr }) => {
     const title = "Fun Cardo";
     const content = "IP500";
     return (
-        <div {...attr}>
-            <i className="fa fa-key" />
-            <div className="fa fa-key w-50" />
+        <div className={Util.concat(className, "col-12 col-sm-4 col-md-3")} {...attr}>
+            <div className={styles.funcard}>
+                <i className="fa fa-key" />
+                <h2>{title}</h2>
+                <h1>{content}</h1>
+            </div>
+        </div>
+    )
+}
+
+export const TitleBreak = ({ title, className, ...attr }) => {
+    return (
+        <div className={Util.concat(className, styles.tileBreak)} {...attr}>
             <h1>{title}</h1>
-            <p>{content}</p>
+            <div className={styles.lines}>
+                <div className={styles.secondary} />
+                <div className={styles.primary} />
+            </div>
         </div>
     )
 }

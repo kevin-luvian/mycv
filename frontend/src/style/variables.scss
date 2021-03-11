@@ -4,7 +4,7 @@ $shadow: (
   tight: $tight-shadow,
   tightSmooth: 0px 2px 5px 2px rgba(102, 102, 102, 0.43),
   smooth: 0 0 10px 0 rgba(0, 0, 0, 0.08),
-  smoothAround: 0 0 25px 0 rgba(0, 0, 0, 0.1),
+  smoothAround: 0 5px 25px 0 rgba(0, 0, 0, 0.1),
 );
 
 $transition: (
@@ -18,3 +18,4 @@ $navbar: (
 );
 
 $canvas_border_radius: 2rem;
+$card_border_radius: 1rem;

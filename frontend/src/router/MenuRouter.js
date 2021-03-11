@@ -12,8 +12,7 @@ const NavRoute = ({ component: Component, protect, ...rest }) => {
 
   // clear token if expired
   useEffect(() => {
-    if (Util.isTokenExpired(currExpires) && currExpires > 0)
-      dispatch(actions.clear);
+    if (Util.isTokenExpired(currExpires) && currExpires > 0) dispatch(actions.clear);
   }, [dispatch, currExpires]);
 
   if (protect && Util.isTokenExpired(currExpires)) {

@@ -17,9 +17,7 @@ function concat(...strs) {
  * @returns {number} id
  */
 function simpleID() {
-    if (typeof simpleID.counter == 'undefined') {
-        simpleID.counter = 0;
-    }
+    if (typeof simpleID.counter == 'undefined') simpleID.counter = 0;
     return simpleID.counter++;
 }
 
