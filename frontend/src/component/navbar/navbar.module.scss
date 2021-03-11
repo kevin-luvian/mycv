@@ -6,6 +6,13 @@ li {
     list-style-type: none;
 }
 
+.arrow {
+    font-size: 1.3rem;
+    @include themify($themes) {
+        fill: themed("text_color");
+    }
+}
+
 #nav {
     padding: 0 1rem;
     width: 100%;
@@ -142,6 +149,9 @@ li {
             @include themify($themes) {
                 background-color: themed("root");
                 color: themed("root_top");
+                .arrow {
+                    fill: themed("root_top");
+                }
             }
         }
     }

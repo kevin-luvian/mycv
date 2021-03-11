@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { UsernameInput, PasswordInput } from "../component/form/Login";
-import { Payload } from "../redux/reducers/AuthReducer";
 import Button from "../component/button/Button";
 import styles from "./style.module.scss";
 import Util from "../util/utils";
@@ -20,8 +19,7 @@ const Login = () => {
         const data = { username: username, password: password };
         const res = await Post("/auth", data);
         if (res.success) {
-            const payload = Payload(res.data.token, res.data.username, res.data.expires);
-            dispatch(actions.setAuth(payload));
+            dispatch(actions.update(res.data.token, res.data.expires));
             setRedirect(true);
             Notification.show(res.message, NotificationType.success);
         } else {

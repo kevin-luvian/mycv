@@ -4,40 +4,41 @@ import ArrowDown from "@material-ui/icons/KeyboardArrowDown";
 import styles from "./navbar.module.scss";
 import $ from "jquery";
 
-class MenuTracker {
-    isPublic = true;
-    activeMenuID = "id";
-    activeULID = "id";
+/**
+ * wrap id with unique function signature
+ * @param {string} id 
+ * @returns {string} wrapped id
+ */
+const menuIDStr = (id) => { return "menuID" + id; }
 
-    findMenu(menus, path) {
-        for (let i = 0; i < menus.length; i++) {
-            if (path === menus[i].url) return menus[i];
-            for (let j = 0; j < menus[i].submenu.length; j++) {
-                if (path === menus[i].submenu[j].url) return menus[i].submenu[j];
-            }
-        }
-        return null;
-    }
-    renderMenu(menu) {
+/**
+ * wrap id with unique function signature
+ * @param {string} id 
+ * @returns {string} wrapped id
+ */
+const menuULIDStr = (id) => { return "menuULID" + id; }
+
+const MenuRenderer = {
+    renderMenu(menu, callback) {
         const hasSubmenu = menu.submenu.length > 0;
         return (
             <React.Fragment>
-                <Link to={menu.url} onClick={() => { this.setMenuULActive(menu) }}>
-                    <p id={this.menuIDStr(menu.name)} className={styles.menu}>
-                        {menu.name} {hasSubmenu && <ArrowDown style={{ fontSize: "1.3rem" }} />}
+                <Link to={menu.url} onClick={callback}>
+                    <p id={menuIDStr(menu.name)} className={styles.menu}>
+                        {menu.name} {hasSubmenu && <ArrowDown className={styles.arrow} />}
                     </p>
                 </Link>
                 {hasSubmenu && this.renderSubMenu(menu)}
             </React.Fragment>
         )
-    }
+    },
     renderSubMenu(menu) {
         return (
-            <ul id={this.menuULIDStr(menu.name)} className={styles.submenu}>
+            <ul id={menuULIDStr(menu.name)} className={styles.submenu}>
                 {menu.submenu.map((smenu, i) =>
                     <li key={i} >
                         <Link to={smenu.url}>
-                            <p id={this.menuIDStr(smenu.name)} className={styles.menu}>
+                            <p id={menuIDStr(smenu.name)} className={styles.menu}>
                                 {smenu.name}
                             </p>
                         </Link>
@@ -46,48 +47,59 @@ class MenuTracker {
             </ul>
         )
     }
+}
+
+class MenuTracker {
+    activeMenuID = "none";
+    activeULID = "none";
+
+    constructor() {
+        console.log("Menutracker created");
+    }
+
+    findMenuName(menus, path) {
+        for (let i = 0; i < menus.length; i++) {
+            if (path === menus[i].url) return menus[i].name;
+            for (let j = 0; j < menus[i].submenu.length; j++) {
+                if (path === menus[i].submenu[j].url) return menus[i].submenu[j].name;
+            }
+        }
+        return "none";
+    }
 
     setActive(id, isActive) {
         if (isActive) $("#" + id).addClass(styles.active);
         else $("#" + id).removeClass(styles.active);
     }
 
-    menuIDStr(id) { return "menuID" + id; }
-    setMenuActive(menu) {
+    setMenuActive(name) {
         // clear previous
-        this.setActive(this.menuIDStr(this.activeMenuID), false);
+        this.setActive(menuIDStr(this.activeMenuID), false);
 
-        if (!menu) this.activeMenuID = "id"
-        else if (menu.name !== this.activeMenuID) this.activeMenuID = menu.name;
+        if (this.activeMenuID !== name) this.activeMenuID = name;
 
         // update new
-        this.setActive(this.menuIDStr(this.activeMenuID), true);
+        this.setActive(menuIDStr(this.activeMenuID), true);
     }
 
-    menuULIDStr(id) { return "menuULID" + id; }
-    setMenuULActive(menu) {
+    setMenuULActive(name) {
         // clear previous
-        this.setActive(this.menuULIDStr(this.activeULID), false);
+        this.setActive(menuULIDStr(this.activeULID), false);
 
-        if (menu.name !== this.activeULID) this.activeULID = menu.name;
-        else this.activeULID = "id"
+        if (this.activeULID !== name) this.activeULID = name;
+        else this.activeULID = "none";
 
         // update new
-        this.setActive(this.menuULIDStr(this.activeULID), true);
+        this.setActive(menuULIDStr(this.activeULID), true);
     }
 }
 
 const Singleton = (function () {
     let instance;
 
-    function createInstance() {
-        let object = new MenuTracker();
-        return object;
-    }
-
     return {
         getInstance() {
-            if (!instance) instance = createInstance();
+            if (!instance) instance = new MenuTracker();
             return instance;
         },
         clearActiveMenu() {
@@ -95,11 +107,12 @@ const Singleton = (function () {
         },
         activateMenu(menus, path) {
             this.getInstance().setMenuActive(
-                this.getInstance().findMenu(menus, path)
+                this.getInstance().findMenuName(menus, path)
             );
         },
         renderMenu(menu) {
-            return this.getInstance().renderMenu(menu);
+            return MenuRenderer.renderMenu(menu,
+                () => { this.getInstance().setMenuULActive(menu.name, 1) });
         }
     };
 })();

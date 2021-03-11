@@ -18,10 +18,12 @@ export const OvalType = {
 export function Oval({ type, className, children, ...attr }) {
     const styleType = (() => {
         switch (type) {
+            case OvalType.primary:
+                return styles.ovalColorPrimary;
             case OvalType.secondary:
                 return styles.ovalColorSecondary;
             default:
-                return styles.ovalColorPrimary;
+                return styles.ovalColorDefault;
         }
     })();
     return (

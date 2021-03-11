@@ -24,6 +24,14 @@ function simpleID() {
 }
 
 /**
+ * generate ID then return function to concat string with the ID.
+ */
+function memoizeID() {
+    const id = "_" + simpleID();
+    return (astr) => astr + id;
+}
+
+/**
  * combine two array into one
  * @param {any[]} arrA 
  * @param {any[]} arrB 
@@ -41,6 +49,6 @@ function isTokenExpired(expires) {
     return (Date.now() / 1000 - expires) >= 0;
 }
 
-const exported = { concat, combine, simpleID, isTokenExpired };
+const exported = { concat, combine, simpleID, memoizeID, isTokenExpired };
 
 export default exported;

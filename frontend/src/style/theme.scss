@@ -40,7 +40,7 @@ $themes: (
       // =============================================================
       button_color: map-get($ocean, "primary"),
       button_hover: darken(map-get($ocean, "primary"), 7%),
-      button_active: lighten(map-get($ocean, "primary"), 2%),
+      button_active: lighten(map-get($ocean, "primary"), 7%),
       button_textcolor: map-get($global, "light"),
       button_hover_textcolor: map-get($global, "light"),
       // =============================================================

@@ -18,6 +18,9 @@
   border-style: solid;
   border-width: 2px;
   padding: 0.5rem 1.5rem;
+  @include themify($themes) {
+    background-color: themed("canvas");
+  }
 }
 
 .colorDefault {
@@ -30,6 +33,21 @@
     }
     &:active {
       background-color: themed("button_active");
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.ovalColorDefault {
+  @include themify($themes) {
+    border-color: themed("button_color");
+    &:hover {
+      background-color: themed("button_color");
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: themed("button_active");
+      border-color: themed("button_active");
       color: themed("button_hover_textcolor");
     }
   }

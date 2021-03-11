@@ -1,14 +1,14 @@
 @import "../style/variables.scss";
 @import "../style/theme.scss";
 
-#imageContainer {
+.imageContainer {
     max-width: 100%;
-    #circle {
+    .circle {
         max-width: 100%;
         padding: 1rem;
         border-radius: 50%;
         box-shadow: map-get($shadow, "smoothAround");
-        #image {
+        .image {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -16,18 +16,18 @@
     }
 }
 
-#description {
-    margin-top: auto;
-    margin-bottom: auto;
-    vertical-align: middle;
-    h1 {
-        margin-bottom: 0.8rem;
-        font-weight: 700;
-        @include themify($themes) {
-            color: themed("text_color");
+.descwrapper {
+    height: 100%;
+    .description {
+        h1 {
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            @include themify($themes) {
+                color: themed("text_color");
+            }
         }
-    }
-    p {
-        margin-bottom: 1.5rem;
+        p {
+            margin-bottom: 1.5rem;
+        }
     }
 }
