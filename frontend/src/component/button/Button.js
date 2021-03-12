@@ -11,28 +11,24 @@ export function Basic({ className, children, ...attr }) {
     );
 };
 
-export const OvalType = {
-    primary: 1,
-    secondary: 2
-}
-export function Oval({ type, className, children, ...attr }) {
-    const styleType = (() => {
-        switch (type) {
-            case OvalType.primary:
-                return styles.ovalColorPrimary;
-            case OvalType.secondary:
-                return styles.ovalColorSecondary;
-            default:
-                return styles.ovalColorDefault;
-        }
-    })();
-    return (
-        <button
-            {...attr}
-            className={Util.concat(styles.button, styles.oval, styleType, className)}>
-            {children}
-        </button>
-    );
-}
+export const Oval = {
+    Default: ({ className, ...attr }) =>
+        <OvalElement {...attr}
+            className={Util.concat(className, styles.ovalColorDefault)} />,
+    Primary: ({ className, ...attr }) =>
+        <OvalElement {...attr}
+            className={Util.concat(className, styles.ovalColorPrimary)} />,
+    Secondary: ({ className, ...attr }) =>
+        <OvalElement {...attr}
+            className={Util.concat(className, styles.ovalColorSecondary)} />
+};
+
+const OvalElement = ({ className, children, ...attr }) => (
+    <button
+        {...attr}
+        className={Util.concat(styles.button, styles.oval, className)}>
+        {children}
+    </button>
+);
 
 export default Basic;

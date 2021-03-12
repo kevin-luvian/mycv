@@ -46,7 +46,7 @@ $themes: (
       button_hover_textcolor: map-get($global, "light"),
       // =============================================================
       text_color: #333,
-      text_dim: map-get($global, "dim"),
+      text_dim: rgb(129, 129, 129),
     ),
 );
 

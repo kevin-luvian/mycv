@@ -1,10 +1,11 @@
 import React, { useEffect, useCallback } from "react";
-import { Oval as BtnOval, OvalType } from "../component/button/Button";
+import { Oval as BtnOval } from "../component/button/Button";
 import styles from "./bioContent.module.scss";
 import Util from "../util/utils";
 import $ from "jquery";
 
 export const ProfileImage = (attr) => {
+    const imageURL = "https://image-cdn.neatoshop.com/styleimg/55381/none/navy/default/341250-19;1485880703i.jpg";
     const elemID = Util.memoizeID();
 
     const mapScale = (val, minA, maxA, minB, maxB) =>
@@ -48,8 +49,8 @@ export const ProfileImage = (attr) => {
                         id={elemID(styles.image)}
                         className={styles.image}
                         style={{
-                            backgroundImage:
-                                "url(https://s3.envato.com/files/76350124/BlueSpace2_Img)",
+                            backgroundImage: `url(${imageURL})`,
+                            backgroundPosition: "50% 50%"
                         }}
                     />
                 </div>
@@ -89,37 +90,11 @@ export const Description = (attr) => {
                     <h1>{fullname}</h1>
                     <p>{desc}</p>
                     <div className={styles.buttons}>
-                        <BtnOval className="mr-4">Download CV</BtnOval>
-                        <BtnOval type={OvalType.secondary}>Contact</BtnOval>
+                        <BtnOval.Primary className="mr-4">Download CV</BtnOval.Primary>
+                        <BtnOval.Secondary >Contact</BtnOval.Secondary>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-
-export const FunCard = ({ className, ...attr }) => {
-    const title = "Fun Cardo";
-    const content = "IP500";
-    return (
-        <div className={Util.concat(className, "col-12 col-sm-4 col-md-3")} {...attr}>
-            <div className={styles.funcard}>
-                <i className="fa fa-key" />
-                <h2>{title}</h2>
-                <h1>{content}</h1>
-            </div>
-        </div>
-    )
-}
-
-export const TitleBreak = ({ title, className, ...attr }) => {
-    return (
-        <div className={Util.concat(className, styles.tileBreak)} {...attr}>
-            <h1>{title}</h1>
-            <div className={styles.lines}>
-                <div className={styles.secondary} />
-                <div className={styles.primary} />
-            </div>
-        </div>
-    )
-}

@@ -1,0 +1,25 @@
+@import "../../style/theme.scss";
+
+.tileBreak {
+    width: fit-content;
+    h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+    .lines {
+        div {
+            height: 2px;
+        }
+        .primary {
+            width: 35px;
+            transform: translateY(-2px);
+            @include themify($themes) {
+                background-color: themed("root");
+            }
+        }
+        .secondary {
+            background-color: map-get($global, "dim");
+        }
+    }
+}

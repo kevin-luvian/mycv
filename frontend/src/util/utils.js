@@ -30,15 +30,6 @@ function memoizeID() {
 }
 
 /**
- * combine two array into one
- * @param {any[]} arrA 
- * @param {any[]} arrB 
- */
-function combine(arrA, arrB) {
-    return arrA + arrB;
-}
-
-/**
  * check if token time already expired
  * @param {number} expires 
  * @returns 
@@ -47,6 +38,6 @@ function isTokenExpired(expires) {
     return (Date.now() / 1000 - expires) >= 0;
 }
 
-const exported = { concat, combine, simpleID, memoizeID, isTokenExpired };
+const exported = { concat, simpleID, memoizeID, isTokenExpired };
 
 export default exported;

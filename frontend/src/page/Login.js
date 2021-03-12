@@ -10,6 +10,8 @@ import { actions } from "../redux/reducers/AuthReducer";
 import { Redirect } from 'react-router';
 
 const Login = () => {
+    document.title = "Login - authenticate to edit stuff";
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [redirect, setRedirect] = useState(false);
@@ -29,7 +31,7 @@ const Login = () => {
 
     return (
         <React.Fragment>
-            {redirect && <Redirect from="/login" to="/" />}
+            {redirect && <Redirect to="/" />}
             <div className="my-3 mx-auto col-10 col-sm-7 col-md-5">
                 <UsernameInput value={username} onChange={setUsername} />
                 <PasswordInput value={password} onChange={setPassword} />

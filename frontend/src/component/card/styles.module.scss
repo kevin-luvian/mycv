@@ -1,0 +1,70 @@
+@import "../../style/variables.scss";
+@import "../../style/theme.scss";
+
+.funcard {
+    border-radius: $card_border_radius;
+    border-width: 0.15rem;
+    border-style: solid;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-bottom: 1rem;
+    border-color: map-get($global, "muted");
+    transition: map-get($transition, "ease");
+
+    i {
+        font-size: 2.5rem;
+        @include themify($themes) {
+            color: themed("root");
+        }
+    }
+    h2 {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin: 1rem 0;
+        @include themify($themes) {
+            color: themed("text_color");
+        }
+    }
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 400;
+        margin: 0;
+        @include themify($themes) {
+            color: themed("text_dim");
+        }
+    }
+
+    &:hover {
+        transform: translateY(-0.5rem);
+        box-shadow: 0 12px 17px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.borderlessCard {
+    display: flex;
+    i {
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-right: 2rem;
+        font-size: 2rem;
+        @include themify($themes) {
+            color: themed("root");
+        }
+    }
+    h2 {
+        font-weight: 500;
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+        @include themify($themes) {
+            color: themed("text_color");
+        }
+    }
+    p {
+        font-size: 1rem;
+        font-weight: 400;
+        margin: 0;
+        @include themify($themes) {
+            color: themed("text_dim");
+        }
+    }
+}

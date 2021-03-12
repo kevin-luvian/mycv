@@ -8,6 +8,7 @@ function chooseTheme() {
 
 class PageWrapper extends React.Component {
     render() {
+        document.title = "My CV";
         return (
             <div className={chooseTheme()}>
                 <div className={styles.root}>
