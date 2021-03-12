@@ -20,15 +20,11 @@ const publicMenu = [
 ];
 
 const privateMenu = (function () {
-    const addmenus = [
-        {
-            name: "Stuff", url: "#", submenu: [
-                { name: "sketchy", url: "/sketchy" },
-                { name: "Wooxx", url: "/wooz" }]
-        },
+    const privates = [
+        { name: "Edit", url: "/edit", submenu: [] },
         { name: "Logout", url: "/logout", submenu: [] }
     ];
-    return publicMenu.slice(0, publicMenu.length - 1).concat(addmenus);
+    return publicMenu.slice(0, publicMenu.length - 1).concat(privates);
 })();
 
 const Page = () => {

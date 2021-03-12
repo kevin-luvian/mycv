@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UsernameInput, PasswordInput } from "../component/form/Login";
 import Button from "../component/button/Button";
-import styles from "./style.module.scss";
+import styles from "./styles.module.scss";
 import Util from "../util/utils";
 import { Post } from "../axios/Axios";
 import { useDispatch } from "react-redux";
@@ -23,9 +23,9 @@ const Login = () => {
         if (res.success) {
             dispatch(actions.update(res.data.token, res.data.expires));
             setRedirect(true);
-            Notification.show(res.message, NotificationType.success);
+            Notification.create(res.message, NotificationType.success);
         } else {
-            Notification.show(res.message, NotificationType.danger);
+            Notification.create(res.message, NotificationType.danger);
         }
     }
 

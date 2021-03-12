@@ -22,7 +22,7 @@ const stringToMongooseId = str => {
  * @return {string[]} splitted string
  */
 const stringToList = (str, separator) => {
-    if (str === undefined || str === null) return [""];
+    if (!str) return [""];
     const strList = str.split(separator);
     strList.forEach((s, i, arr) => { arr[i] = s.trim(); });
     return strList;

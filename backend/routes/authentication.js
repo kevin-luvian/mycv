@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     const user = await userRepo.findByUsername(rObj.username);
 
     // user exist
-    if (user != null)
+    if (user !== null)
         // password match
         if (bcrypt.compareSync(rObj.password, user.password))
             return resf.r200(res, "authenticated", createToken(user.username));

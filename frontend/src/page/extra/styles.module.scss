@@ -1,6 +1,6 @@
-@import "../style/theme.scss";
-@import "../style/variables.scss";
-@import "../style/root.scss";
+@import "../../style/theme.scss";
+@import "../../style/variables.scss";
+@import "../../style/root.scss";
 
 .root {
   overflow: hidden;
@@ -50,8 +50,4 @@
   @include themify($themes) {
     color: themed("text_dim");
   }
-}
-
-.wFit {
-  width: fit-content;
 }

@@ -29,7 +29,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 401) {
-      Notification.show("Error: unauthorized error, JWT token discarded", Notification.type.danger);
+      Notification.create("Error: unauthorized error, JWT token discarded", Notification.type.danger);
       console.log("Error: unauthorized error, JWT token discarded");
       store.dispatch(actions.clear);
     }

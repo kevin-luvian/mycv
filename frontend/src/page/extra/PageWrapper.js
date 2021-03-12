@@ -1,6 +1,6 @@
 import React from 'react';
-import Navbar from '../component/navbar/Navbar';
-import styles from './style.module.scss';
+import Navbar from '../../component/navbar/Navbar';
+import styles from './styles.module.scss';
 
 function chooseTheme() {
     return "themeocean";
