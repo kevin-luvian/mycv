@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
     Input,
     Select,
@@ -8,7 +9,10 @@ import {
     TextField,
     MenuItem
 } from "@material-ui/core";
-import { HelpOutline } from "@material-ui/icons";
+import {
+    HelpOutline,
+    FileCopy
+} from "@material-ui/icons";
 import styles from "./styles.module.scss";
 import { concat } from "../../util/utils";
 
@@ -23,7 +27,6 @@ export const TextInput = ({ className, label, value, onChange, ...attr }) =>
 export const NumberInput = ({ value, step, inputProps, onChange, ...attr }) => {
     function sanitize(inputVal) {
         const regex = new RegExp("^[0-9]+$");
-        console.log(inputVal);
         if (regex.test(inputVal)) onChange(inputVal);
     }
     return (
@@ -47,14 +50,16 @@ export const MultiTextInput = ({ rows, rowsMax, className, label, value, onChang
         className={concat(styles.input, className)}
         onChange={(elem) => onChange(elem.target.value)} />
 
+export const FileIconInput = ({ onClick, ...attr }) =>
+    <IconInput
+        {...attr}
+        iconElement={<FileCopy className={styles.iconInput} onClick={onClick} />} />
+
+
 export const HelpIconInput = ({ onClick, ...attr }) =>
     <IconInput
         {...attr}
-        iconElement={
-            <HelpOutline
-                className={styles.iconInput}
-                onClick={onClick} />
-        } />
+        iconElement={<HelpOutline className={styles.iconInput} onClick={onClick} />} />
 
 const IconInput = ({ className, label, value, onChange, onClick, iconElement, ...attr }) => {
     return (
@@ -63,7 +68,7 @@ const IconInput = ({ className, label, value, onChange, onClick, iconElement, ..
             className={concat(styles.input, className)}>
             <InputLabel>{label}</InputLabel>
             <Input
-                type="text"
+                disabled
                 value={value}
                 onChange={(elem) => onChange(elem.target.value)}
                 endAdornment={

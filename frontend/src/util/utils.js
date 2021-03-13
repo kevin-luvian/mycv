@@ -40,12 +40,36 @@ export function memoizeID() {
 /**
  * check if token time already expired
  * @param {number} expires 
- * @returns 
+ * @returns {boolean}
  */
 export function isTokenExpired(expires) {
     return (Date.now() / 1000 - expires) >= 0;
 }
 
-const exported = { concat, simpleID, badStringID, memoizeID, isTokenExpired };
+/**
+ * convert array of string to string
+ * @param {string[]} strArr 
+ * @returns {string}
+ */
+export function arrayToString(strArr, separator = ",") {
+    let res = strArr[0];
+    for (let i = 1; i < strArr.length; i++) {
+        res += separator + " " + strArr[i];
+    }
+    return res;
+}
+
+export function hasNumberOnly(str) {
+    const regex = new RegExp("^[0-9]+$");
+    return regex.test(str);
+}
+
+const exported = {
+    concat,
+    simpleID, badStringID, memoizeID,
+    isTokenExpired,
+    arrayToString,
+    hasNumberOnly
+};
 
 export default exported;

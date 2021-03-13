@@ -12,7 +12,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   async (config) => {
     try {
-      config.headers.Authorization = store.getState().token;
+      config.headers.Authorization = store.getState().auth.token;
     } finally {
       return config;
     }
@@ -49,6 +49,20 @@ class APIRes {
     this.data = data;
     this.other = other;
   }
+  /**
+   * @param {AxiosResponse<any>} res
+   * @return {APIRes} instance
+   */
+  static constructRes(res) {
+    return new APIRes(true, res.data.message, res.data.data);
+  }
+  /**
+   * @param {string} message
+   * @return {APIRes} instance
+   */
+  static constructFail(message) {
+    return new APIRes(false, message);
+  }
 }
 
 /**
@@ -61,12 +75,18 @@ class APIRes {
  */
 export const Post = (path, data) =>
   instance.post(path, data)
-    .then(res => {
-      return new APIRes(true, res.data.message, res.data.data);
-    })
+    .then(res => APIRes.constructRes(res))
     .catch(err => {
-      if (err.response) return new APIRes(false, err.response.data.message);
-      return new APIRes(false, "response not received");
+      if (err.response) return APIRes.constructFail(err.response.data.message);
+      return APIRes.constructFail("response not received");
+    });
+
+export const Get = path =>
+  instance.get(path)
+    .then(res => APIRes.constructRes(res))
+    .catch(err => {
+      if (err.response) return APIRes.constructFail(err.response.data.message);
+      return APIRes.constructFail("response not received");
     });
 
 export default instance;

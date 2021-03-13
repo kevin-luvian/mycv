@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../../component/navbar/Navbar';
 import styles from './styles.module.scss';
 
-function chooseTheme() {
+export function chooseTheme() {
     return "themeocean";
 };
 

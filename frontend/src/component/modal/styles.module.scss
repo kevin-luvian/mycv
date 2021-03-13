@@ -1,0 +1,23 @@
+@import "../../style/theme";
+@import "../../style/variables";
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paper {
+    border-radius: $card_border_radius;
+    border-width: 2px;
+    border-style: solid;
+    box-shadow: map-get($shadow, "smoothAround");
+    transition: map-get($transition, "ease");
+    padding: 2rem 4rem;
+
+    @include themify($themes) {
+        background-color: themed("canvas");
+        border-color: themed("text_dim");
+        color: themed("text_color");
+    }
+}

@@ -32,9 +32,7 @@ const exported = () =>
     <Switch>
       <NavRoute path="/" exact component={Pages.Bio} />
       <NavRoute path="/resume" exact component={Pages.Resume} />
-      <NavRoute path="/edit" protect={true} exact component={Pages.Edit.Root} />
-      <NavRoute path={Pages.Edit.EditBio.url} protect={true} exact component={Pages.Edit.EditBio.jsx} />
-      <NavRoute path={Pages.Edit.EditResume.url} protect={true} exact component={Pages.Edit.EditResume.jsx} />
+      <NavRoute path="/edit" protect={true} exact component={Pages.Edit} />
       <NavRoute path="/login" exact component={Pages.Login} />
       <NavRoute path="/logout" exact component={Pages.Logout} />
       <NavRoute component={Error.Err404} />
