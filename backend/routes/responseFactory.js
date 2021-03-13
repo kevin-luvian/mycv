@@ -1,54 +1,17 @@
-/** 
- * wrap string to standardize response { message: m }
- * 
- * @param {string} m - message body
- * @return {Object} message as dictionary
+/**
+ * wrap response status and payload
+ * @param {Response<any, Record<string, any>, number>} res 
+ * @param {string} status 
+ * @param {string} message 
+ * @param {any} data 
  */
-const message = m => { return { message: m }; }
+const response = (res, status, message, data) =>
+    res.status(status).json({ message: message, data: data });
 
-/** 
- * wrap response status as 400
- * 
- * @param {Response<any, Record<string, any>, number>} res - response object
- * @param {string} m - message to return
- * @return {Response<any, Record<string, any>, number>} modified response
- */
-const r400 = (res, m) => { return res.status("400").json(message(m)); }
+const r200 = (res, message, object) => response(res, "200", message, object);
+const r400 = (res, message, object) => response(res, "400", message, object);
+const r401 = (res, message, object) => response(res, "401", message, object);
+const r404 = (res, message, object) => response(res, "404", message, object);
+const r500 = (res, message, object) => response(res, "500", message, object);
 
-/** 
- * wrap response status as 401
- * 
- * @param {Response<any, Record<string, any>, number>} res - response object
- * @param {string} m - message to return
- * @return {Response<any, Record<string, any>, number>} modified response
- */
-const r401 = (res, m) => { return res.status("401").json(message(m)); }
-
-/** 
- * wrap response status as 404, Not Found
- * 
- * @param {Response<any, Record<string, any>, number>} res - response object
- * @param {string} m - message to return
- * @return {Response<any, Record<string, any>, number>} modified response
- */
-const r404 = (res, m) => { return res.status("404").json(message(m)); }
-
-/** 
- * wrap response status as 200
- * 
- * @param {Response<any, Record<string, any>, number>} res - response object
- * @param {string} m - message to return
- * @param {Object} o - Object to return
- * @return {Response<any, Record<string, any>, number>} modified response
- */
-const r200 = (res, m, o) => {
-    return res.status("200").json({ message: m, data: o });
-}
-
-module.exports = {
-    r200,
-    r400,
-    r401,
-    r404,
-    message
-};
+module.exports = { r200, r400, r401, r404, r500 };

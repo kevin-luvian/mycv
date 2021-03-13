@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const schema = mongoose.Schema({
     fullname: { type: String },
+    phone: { type: String },
+    gender: { type: Number },
     email: { type: String },
     address: { type: String },
     description: { type: String },

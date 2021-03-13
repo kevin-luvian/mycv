@@ -11,14 +11,12 @@ const userRepo = require("../repository/userRepository");
 
 const parseReqObject = req => {
     return {
-        username: req.body.username || "",
-        password: req.body.password || ""
+        username: req.body.username,
+        password: req.body.password
     };
 }
 
-router.get("/check", tokenAuth.valid, async (req, res) => {
-    resf.r200(res, "authenticated", tokenAuth.getLocalsToken(res));
-});
+router.get("/check", tokenAuth.valid, (req, res) => resf.r200(res, "authenticated"));
 
 router.post("/", async (req, res) => {
     const rObj = parseReqObject(req);

@@ -18,14 +18,12 @@ const convertToken = (token) => {
 
 // main validation functions
 const validateToken = (req, res) => {
+    const authorizationHeader = req.header("Authorization");
     try {
-        const localsToken = getLocalsToken(res);
-        if (localsToken) return localsToken;
-        let token = jwt.verify(req.header("Authorization"), process.env.JWT_TOKEN_SECRET);
-        setLocalsToken(res, convertToken(token));
+        const token = jwt.verify(authorizationHeader, process.env.JWT_TOKEN_SECRET);
         return convertToken(token);
     } catch (err) {
-        debug("validateToken", err);
+        debug("validateToken", "\ntoken:", authorizationHeader, "\nmessage:", err.message);
         return null;
     }
 }
@@ -49,4 +47,7 @@ const valid = (req, res, next) => {
     else resf.r401(res, "invalid token");
 }
 
-module.exports = { valid, admin, superadmin };
+module.exports = {
+    valid, admin, superadmin,
+    setLocalsToken, getLocalsToken
+};
