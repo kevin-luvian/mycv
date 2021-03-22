@@ -26,10 +26,6 @@ $dimColor: map-get($global, "muted");
         color: themed("text_color");
     }
 
-    @include media(phone) {
-        padding: 2rem;
-    }
-
     .iclose {
         float: right;
         width: 1.5rem;
@@ -37,6 +33,10 @@ $dimColor: map-get($global, "muted");
     }
     .content {
         padding: 1.5rem 3.5rem;
+
+        @include media(phone) {
+            padding: 1rem;
+        }
     }
 }
 

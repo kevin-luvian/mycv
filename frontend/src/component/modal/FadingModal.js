@@ -31,13 +31,11 @@ export const FadingModal = forwardRef(({ className, children, ...attr }, ref) =>
             BackdropProps={{ timeout: 500 }}>
             <Fade in={open}>
                 <div className={styles.paper}>
-                    {/* <div className={styles.iclose}> */}
                     <ColoredIcon
                         className={styles.iclose}
                         color={iconColors.default}
                         icon={icons.close}
                         onClick={closeModal} />
-                    {/* </div> */}
                     <div className={styles.content}>
                         {children}
                     </div>

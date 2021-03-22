@@ -24,7 +24,7 @@ router.delete('/:id', tokenAuth.admin, async (req, res) => {
     const fileDeleted = await fileRepo.deleteById(id);
     if (!fileDeleted) return resf.r500(res, "file deletion failed");
 
-    resf.r200(res, "files deleted");
+    resf.r200(res, "file deleted");
 });
 
 router.put('/:id', tokenAuth.admin, async (req, res) => {

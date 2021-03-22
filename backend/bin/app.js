@@ -51,6 +51,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const fileRouter = require("../routes/file");
 app.use('/api/auth', require("../routes/authentication"));
 app.use('/api/myinfo', require("../routes/myInfo"));
+app.use('/api/funInfo', require("../routes/funInfo"));
 app.use('/api/user', require("../routes/user"));
 app.use(fileRouter.routeURL, fileRouter.router);
 app.use('/api/*', require("../routes/catchAll"));

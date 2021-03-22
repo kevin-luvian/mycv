@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import EditBioContent from "../content/edit/EditBioContent";
 import EditResumeContent from "../content/edit/EditResumeContent";
 import EditFilesContent from "../content/edit/EditFilesContent";
+import EditFunInfoContent from "../content/edit/EditFunInfoContent";
 import EditMenu, { contentFormat } from "../content/edit/EditMenu";
 import styles from "./editStyles.module.scss";
 
@@ -9,6 +10,7 @@ const contents = [
     contentFormat("Bio", "Edit - change my biodata", <EditBioContent />),
     contentFormat("Resume", "Edit - change my resume", <EditResumeContent />),
     contentFormat("Files", "Edit - change my files", <EditFilesContent />),
+    contentFormat("Fun Info", "Edit - change my fun info", <EditFunInfoContent />),
 ];
 
 const Page = () => {

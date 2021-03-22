@@ -7,11 +7,13 @@ import {
     Delete,
     Close,
     Edit,
+    Info,
 } from '@material-ui/icons';
 import styles from "./styles.module.scss";
 import { concat } from "../../util/utils";
 
 export const icons = {
+    info: Info,
     edit: Edit,
     close: Close,
     delete: Delete,

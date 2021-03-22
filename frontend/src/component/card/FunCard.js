@@ -1,6 +1,6 @@
 import styles from "./styles.module.scss";
 
-const FunCard = ({ className, ...attr }) => {
+export const FunCard = ({ className, ...attr }) => {
     const icon = "fa-key";
     const title = "Fun Cardo";
     const content = "IP500";
@@ -15,4 +15,19 @@ const FunCard = ({ className, ...attr }) => {
     )
 }
 
-export default FunCard;
+export const FunCardBorderless = ({ className, ...attr }) => {
+    const icon = "fa-key";
+    const title = "Buying Stuff";
+    const content = "capitalism";
+    return (
+        <div className={`${className} col-12 col-sm-6 col-lg-4 mb-4`} {...attr}>
+            <div className={styles.borderlessCard}>
+                <i className={`fa ${icon}`} />
+                <div className={styles.content}>
+                    <h2>{title}</h2>
+                    <p>{content}</p>
+                </div>
+            </div>
+        </div>
+    )
+}

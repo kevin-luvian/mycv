@@ -22,7 +22,10 @@ export const Page = () => {
             <p>Curr Page:{curPage}</p>
             <button onClick={() => setItemSize(500)}>Add</button>
             <button onClick={() => setItemSize(100)}>Sub</button>
-            <IndexedPagination onChange={onChanged} itemSize={itemSize} perPage={10} />
+            <IndexedPagination
+                onChange={onChanged}
+                itemSize={itemSize}
+                perPage={10} />
         </Fragment>
     );
 }

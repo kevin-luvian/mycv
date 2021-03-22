@@ -1,5 +1,4 @@
-// import styles from "./styles.module.scss";
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
     TextInput,
     MultiTextInput,
@@ -135,20 +134,19 @@ const ChooseFileInput = ({ value, onChange, label }) => {
     const [files, setFiles] = useState([]);
     const modalRef = useRef();
 
-    const fetch = useCallback(async () => {
-        const res = await Get("/file");
-        if (res.success) {
-            const newFiles = [];
-            for (let i = 0; i < res.data.length; i++) {
-                newFiles.push(createSelectableElement(res.data[i].filename, res.data[i]));
-            }
-            setFiles(newFiles);
-        } else {
-            Notification.create(res.message, Notification.type.danger);
-        }
+    useEffect(() => {
+        const fetch = async () => {
+            const res = await Get("/file");
+            if (res.success) {
+                const newFiles = [];
+                for (let i = 0; i < res.data.length; i++) {
+                    newFiles.push(createSelectableElement(res.data[i].filename, res.data[i]));
+                }
+                setFiles(newFiles);
+            } else Notification.create(res.message, Notification.type.danger);
+        };
+        fetch();
     }, []);
-
-    useEffect(() => fetch(), [fetch]);
 
     const renderElement = (elem, isActive) => {
         const showImage = elem.contentType.includes("image");

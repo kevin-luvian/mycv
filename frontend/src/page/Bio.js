@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ProfileImage, Description } from "../content/BioContent";
-import FunCard from "../component/card/FunCard";
-import BorderlessCard from "../component/card/BorderlessCard";
+import { FunCard, FunCardBorderless } from "../component/card/FunCard";
 import { TitleBreak } from "../component/decoration/TileBreaker";
 import { Get } from "../axios/Axios";
 
@@ -33,9 +32,9 @@ const Page = () => {
             </div>
             <TitleBreak title="What I Do" className="pt-3" />
             <div className="row mt-4">
-                <BorderlessCard />
-                <BorderlessCard />
-                <BorderlessCard />
+                <FunCardBorderless />
+                <FunCardBorderless />
+                <FunCardBorderless />
             </div>
             <TitleBreak title="Fun Facts" className="pt-3" />
             <div className="row mt-4">

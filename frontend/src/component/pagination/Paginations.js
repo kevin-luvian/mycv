@@ -47,7 +47,7 @@ export const BasicPagination = ({ className, onChange, pageSize }) => {
             <div className={styles.pagenum} onClick={() => changePage(activePage - 1)}>{"<"}</div>
             {pageNums.map((pageNum, index) =>
                 <div className={concat(styles.pagenum, pageNum === activePage && styles.active)}
-                    key={index} onClick={() => changePage(pageNum)}>{pad(pageNum, 2)}</div>
+                    key={index} onClick={() => changePage(pageNum)}>{pad(pageNum + 1, 2)}</div>
             )}
             <div className={styles.pagenum} onClick={() => changePage(activePage + 1)}>{">"}</div>
             {findChunk(activePage) < maxChunkSize &&
