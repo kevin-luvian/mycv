@@ -14,6 +14,13 @@ router.get('/', tokenAuth.admin, async (req, res) => {
     resf.r200(res, "files found", files);
 });
 
+router.get('/:id/*', async (req, res) => {
+    const id = util.stringToMongooseId(req.params.id);
+    const file = await fileRepo.findFileById(id);
+    if (!file) return resf.r400(res, "file not found");
+    fileRepo.downloadStream(res, id);
+});
+
 router.delete('/:id', tokenAuth.admin, async (req, res) => {
     const id = util.stringToMongooseId(req.params.id);
     if (!id) return resf.r400(res, "invalid id");
@@ -48,13 +55,6 @@ router.get('/page/:num', async (req, res) => {
         return resf.r200(res, "files found", files);
     }
     return resf.r400(res, "files not found");
-});
-
-router.get('/:id/:filename', async (req, res) => {
-    const id = util.stringToMongooseId(req.params.id);
-    const file = await fileRepo.findFileById(id);
-    if (!file) return resf.r400(res, "file not found");
-    fileRepo.downloadStream(res, id);
 });
 
 router.post('/', tokenAuth.admin, upload, async (req, res) => {

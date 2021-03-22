@@ -8,17 +8,30 @@ const Page = () => {
     document.title = "Home - My Bio";
 
     const [myInfo, setMyInfo] = useState({});
+    const [whatIDos, setWhatIDos] = useState([]);
+    const [funFacts, setFunFacts] = useState([]);
 
     const fetchMyInfo = async () => {
         const res = await Get("/myinfo");
-        if (res.success) {
-            setMyInfo(res.data);
-            console.log("data", res.data);
-        }
+        if (res.success) setMyInfo(res.data);
         res.notify();
     }
 
-    useEffect(() => fetchMyInfo(), []);
+    const fetchWIDO = async () => {
+        const res = await Get("/funInfo/0");
+        if (res.success) setWhatIDos(res.data);
+    }
+
+    const fetchFF = async () => {
+        const res = await Get("/funInfo/1");
+        if (res.success) setFunFacts(res.data);
+    }
+
+    useEffect(() => {
+        fetchMyInfo();
+        fetchWIDO();
+        fetchFF();
+    }, []);
 
     return (
         <React.Fragment>
@@ -32,15 +45,23 @@ const Page = () => {
             </div>
             <TitleBreak title="What I Do" className="pt-3" />
             <div className="row mt-4">
-                <FunCardBorderless />
-                <FunCardBorderless />
-                <FunCardBorderless />
+                {whatIDos.map((val, index) =>
+                    <FunCardBorderless
+                        key={index}
+                        title={val.title}
+                        description={val.description}
+                        icon={val.favicon} />
+                )}
             </div>
             <TitleBreak title="Fun Facts" className="pt-3" />
             <div className="row mt-4">
-                <FunCard />
-                <FunCard />
-                <FunCard />
+                {funFacts.map((val, index) =>
+                    <FunCard
+                        key={index}
+                        title={val.title}
+                        description={val.description}
+                        icon={val.favicon} />
+                )}
             </div>
         </React.Fragment>
     );

@@ -20,6 +20,14 @@ router.get('/:type', async (req, res) => {
     resf.r200(res, "FunInfos retrieved", await funInfoRepo.findByType(type));
 });
 
+router.put('/:id', tokenAuth.admin, async (req, res) => {
+    const obj = parseReqObject(req);
+    obj._id = util.stringToMongooseId(req.params.id);
+    const updated = await funInfoRepo.update(obj);
+    if (updated) resf.r200(res, "update successfull");
+    else resf.r500(res, "update failed");
+});
+
 router.delete('/:id', tokenAuth.admin, async (req, res) => {
     const id = util.stringToMongooseId(req.params.id);
     const deleted = await funInfoRepo.deleteById(id);
@@ -28,11 +36,13 @@ router.delete('/:id', tokenAuth.admin, async (req, res) => {
 });
 
 const parseReqObject = req => {
+    let type = Number(req.body.type);
+    if (isNaN(type)) type = 0;
     return {
         title: req.body.title,
         description: req.body.description,
         favicon: req.body.favicon,
-        type: funInfoRepo.constraintType(req.body.type || 0),
+        type: funInfoRepo.constraintType(type),
     };
 }
 

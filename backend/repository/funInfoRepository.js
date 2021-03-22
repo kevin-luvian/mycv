@@ -31,7 +31,7 @@ const deleteById = async id => {
 const update = async data => {
     const res = await FunInfo.updateOne({ _id: data._id }, data)
         .catch(err => debug("update", err));
-    return res.ok === 1;
+    return res.ok === 1 && res.nModified === 1;
 }
 
 /** 

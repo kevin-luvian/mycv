@@ -1,16 +1,18 @@
 const mongoose = require("mongoose");
+const debug = log("util");
 
 /** 
  * convert to mongoose ObjectId or undefined if error
  * 
  * @param {string} str - string body
- * @return {mongoose.Types.ObjectId} splitted string
+ * @return {mongoose.Types.ObjectId|undefined} splitted string
  */
 const stringToMongooseId = str => {
     try {
         if (!str) throw ("error");
         return mongoose.Types.ObjectId(str);
-    } catch (e) {
+    } catch (err) {
+        debug("stringToMongooseId", err);
         return undefined;
     }
 }
