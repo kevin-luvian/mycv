@@ -5,7 +5,7 @@ import { Basic as BtnBasic } from "../button/Button";
 import { SearchFilterInput } from "../input/Inputs";
 import BlankCard from "../card/BlankCard";
 import { containStr } from "../../util/utils";
-import { IndexPagination } from "../pagination/Paginations";
+import { IndexedPagination } from "../pagination/Paginations";
 
 export const SimpleValidation = forwardRef(({ title, children, onContinue, onCancel }, ref) => {
     const modalRef = useRef();
@@ -49,6 +49,7 @@ export const SelectableModal = forwardRef((
     const [selectedID, setSelectedID] = useState(-1);
     const [searchedElements, setSearchedElements] = useState([]);
     const [shownElements, setShownElements] = useState([]);
+    const perPage = numPerPage ?? 50;
 
     const mRenderElement = useCallback((elem, active) => renderElement?.(elem, active), [renderElement])
 
@@ -59,18 +60,6 @@ export const SelectableModal = forwardRef((
         },
         close() { modalRef.current.close() }
     }));
-
-    useEffect(() => {
-        const searchElements = () => {
-            const newElements = [];
-            elements.forEach(element => {
-                if (containStr(element.title, search))
-                    newElements.push(element);
-            });
-            setSearchedElements(newElements);
-        }
-        searchElements()
-    }, [search, elements]);
 
     const selected = () => {
         const findID = (arr, targetID) => {
@@ -91,10 +80,20 @@ export const SelectableModal = forwardRef((
         setSelectedID(-1);
     }
 
-    const onPageChange = (firstIndex, lastIndex) => {
-        console.log(`f:${firstIndex} l:${lastIndex}`);
-        setShownElements(searchedElements.slice(firstIndex, lastIndex));
-    }
+    const showPage = useCallback((firstIndex, lastIndex) =>
+        setShownElements(searchedElements.slice(firstIndex, lastIndex)), [searchedElements]);
+
+    useEffect(() => {
+        const searchElements = () => {
+            const newElements = [];
+            elements.forEach(element => {
+                if (containStr(element.title, search))
+                    newElements.push(element);
+            });
+            setSearchedElements(newElements);
+        }
+        searchElements();
+    }, [search, elements]);
 
     return (
         <FadingModal className={styles.selectableModal} ref={modalRef}>
@@ -119,10 +118,10 @@ export const SelectableModal = forwardRef((
                 </div>
                 <div className={styles.actionContainer}>
                     <div className={styles.pagination}>
-                        <IndexPagination
-                            pageSize={searchedElements.length}
-                            perPage={numPerPage ?? 50}
-                            onChange={onPageChange} />
+                        <IndexedPagination
+                            itemSize={searchedElements.length}
+                            perPage={perPage}
+                            onChange={showPage} />
                     </div>
                     <BtnBasic.Default onClick={selected}>continue</BtnBasic.Default>
                 </div>

@@ -3,16 +3,16 @@ import { concat } from "../../util/utils";
 import { useCallback, useEffect, useState } from "react";
 import { constraint, pad } from "../../util/utils";
 
-const chunkSize = 5;
+const CHUNK_SIZE = 5;
 export const BasicPagination = ({ className, onChange, pageSize }) => {
     const [pageNums, setPageNums] = useState([]);
     const [activePage, setActivePage] = useState(0);
+    const maxChunkSize = Math.ceil(pageSize / CHUNK_SIZE) - 1;
 
-    const maxChunkSize = Math.ceil(pageSize / chunkSize) - 1;
-    const findChunk = useCallback(pageNum => Math.max(Math.floor(pageNum / chunkSize), 0), []);
-    const firstChunkPage = useCallback(chunkNum => chunkNum * chunkSize, []);
+    const findChunk = useCallback(pageNum => Math.max(Math.floor(pageNum / CHUNK_SIZE), 0), []);
+    const firstChunkPage = useCallback(chunkNum => chunkNum * CHUNK_SIZE, []);
     const lastChunkPage = useCallback(chunkNum =>
-        Math.min(firstChunkPage(chunkNum) + chunkSize, pageSize), [firstChunkPage, pageSize]);
+        Math.min(firstChunkPage(chunkNum) + CHUNK_SIZE, pageSize), [firstChunkPage, pageSize]);
 
     const slideChunk = displacement => {
         const curChunk = findChunk(activePage) + displacement;
@@ -57,14 +57,12 @@ export const BasicPagination = ({ className, onChange, pageSize }) => {
     )
 }
 
-export const IndexPagination = ({ className, onChange, itemSize, perPage }) => {
+export const IndexedPagination = ({ className, onChange, itemSize, perPage }) => {
     const handleChange = useCallback(page =>
         onChange?.(page * perPage, (page * perPage) + perPage), [onChange, perPage]);
 
-    return (
-        <BasicPagination
-            className={className}
-            onChange={handleChange}
-            pageSize={Math.ceil(itemSize / perPage)} />
-    )
+    return <BasicPagination
+        className={className}
+        onChange={handleChange}
+        pageSize={Math.ceil(itemSize / perPage)} />
 }
