@@ -44,7 +44,7 @@ li {
 }
 
 #logoname {
-    z-index: map-get($navbar, "toolbar_z");
+    z-index: map-get($zIndex, "toolbar");
     display: flex;
     flex-basis: content;
     padding: 0 15px;
@@ -84,7 +84,7 @@ li {
 }
 
 #menubar {
-    z-index: map-get($navbar, "toolbar_z");
+    z-index: map-get($zIndex, "toolbar");
     flex-basis: 0;
     flex-grow: 1;
     max-width: 100%;

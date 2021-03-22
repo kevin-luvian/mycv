@@ -10,11 +10,7 @@ const debug = require("../util/utils").log("middleware:tokenAuth");
 // Utility functions
 const setLocalsToken = (res, token) => { res.locals.token = token; };
 const getLocalsToken = (res) => res.locals.token;
-const convertToken = (token) => {
-    return {
-        username: token.username
-    }
-}
+const convertToken = ({ username }) => { return { username }; }
 
 // main validation functions
 const validateToken = (req, res) => {

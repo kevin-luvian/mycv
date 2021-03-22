@@ -1,54 +1,76 @@
 const debug = require("../util/utils").log("repository:fileRepository");
 const mongoose = require("mongoose");
+const mongodb = require("mongodb");
+const { Readable } = require('stream');
 
-/**
- * delete upload chunks by id
- * 
- * @param {mongoose.Types.ObjectId} id file document id
- * @return {Promise<Boolean>} success
- */
-const deleteChunkById = async id => {
-    let success = false;
+const findFileById = async id => {
     const modb = mongoose.connection.db;
-    await modb.collection('upload.chunks').deleteOne({ _id: id })
-        .then(del => {
-            success = del.result.ok === 1;
-        }).catch(err => {
-            debug("deleteChunkById", "error", err);
+    const file = await modb.collection(`${collection}.files`)
+        .findOne({ _id: id })
+        .then(data => { return data; })
+        .catch(err => {
+            debug("findFileById", "error:", err);
+            return null;
         });
-    return success;
+    return file;
 };
 
 /**
- * delete upload files by id
- * 
- * @param {mongoose.Types.ObjectId} id file document id
- * @return {Promise<Boolean>} success
- */
-const deleteFileById = async id => {
-    let success = false;
-    const modb = mongoose.connection.db;
-    await modb.collection('upload.files').deleteOne({ _id: id })
-        .then(del => {
-            success = del.result.ok === 1;
-        }).catch(err => {
-            debug("deleteFileById", "error", err);
-        });
-    return success;
-}
-
-/**
- * delete upload chunks and files by id
+ * delete file chunks and files by id
  * 
  * @param {mongoose.Types.ObjectId} id file document id
  * @return {Promise<Boolean>} success
  */
 const deleteById = async id => {
-    const [dChunk, dFile] = await Promise.all([deleteChunkById(id), deleteFileById(id)]);
-    debug("deleteById", "dChunk:", dChunk, "dFile:", dFile);
-    return dChunk && dFile;
+    try {
+        const modb = mongoose.connection.db;
+        const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
+        bucket.delete(id, err => {
+            if (err) {
+                debug("deleteById", "error:", err.message, "\n", err);
+                return false;
+            }
+        });
+        return true;
+    } catch (err) {
+        debug("deleteById", "err:", err);
+        return false;
+    }
 };
 
+const downloadStream = (res, id) => {
+    const modb = mongoose.connection.db;
+    const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
+    const downloadStream = bucket.openDownloadStream(id);
+
+    downloadStream.on('data', chunk => res.write(chunk));
+    downloadStream.on('error', err => {
+        debug("downloadStream", "on error:", err);
+        res.status(404)
+    });
+    downloadStream.on('end', () => res.end());
+}
+
+const uploadStream = req => new Promise((resolve, reject) => {
+    const readableTrackStream = new Readable();
+    readableTrackStream.push(req.file.buffer);
+    readableTrackStream.push(null);
+
+    const modb = mongoose.connection.db;
+    const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
+
+    const uploadStream = bucket.openUploadStream();
+    readableTrackStream.pipe(uploadStream);
+
+    uploadStream.on('error', () => reject(null));
+    uploadStream.on('finish', () => resolve(uploadStream.id));
+});
+
+const collection = "file";
+
 module.exports = {
-    deleteById
+    deleteById,
+    findFileById,
+    downloadStream,
+    uploadStream
 }

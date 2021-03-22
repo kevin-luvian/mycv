@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     Input,
     Select,
@@ -13,8 +12,12 @@ import {
     HelpOutline,
     FileCopy
 } from "@material-ui/icons";
+import { Divider } from "../decoration/TileBreaker";
+import { icons, ColoredIcon } from "../decoration/Icons";
 import styles from "./styles.module.scss";
 import { concat } from "../../util/utils";
+import $ from "jquery";
+import Notification from "../../component/notification/Notification";
 
 export const TextInput = ({ className, label, value, onChange, ...attr }) =>
     <TextField
@@ -50,36 +53,23 @@ export const MultiTextInput = ({ rows, rowsMax, className, label, value, onChang
         className={concat(styles.input, className)}
         onChange={(elem) => onChange(elem.target.value)} />
 
-export const FileIconInput = ({ onClick, ...attr }) =>
-    <IconInput
-        {...attr}
-        iconElement={<FileCopy className={styles.iconInput} onClick={onClick} />} />
-
-
-export const HelpIconInput = ({ onClick, ...attr }) =>
-    <IconInput
-        {...attr}
-        iconElement={<HelpOutline className={styles.iconInput} onClick={onClick} />} />
-
-const IconInput = ({ className, label, value, onChange, onClick, iconElement, ...attr }) => {
-    return (
-        <FormControl
+export const FileIconInput = (props) => <IconInput {...props} icon={FileCopy} />
+export const HelpIconInput = (props) => <IconInput {...props} icon={HelpOutline} />
+export const IconInput = ({ className, label, value, onChange, onClick, icon: Icon, ...attr }) =>
+    <FormControl className={concat(styles.input, className)}>
+        <InputLabel>{label}</InputLabel>
+        <Input
             {...attr}
-            className={concat(styles.input, className)}>
-            <InputLabel>{label}</InputLabel>
-            <Input
-                disabled
-                value={value}
-                onChange={(elem) => onChange(elem.target.value)}
-                endAdornment={
-                    <InputAdornment position="end">
-                        {iconElement}
-                    </InputAdornment>
-                }
-            />
-        </FormControl>
-    )
-}
+            value={value}
+            onChange={(elem) => onChange?.(elem.target.value)}
+            endAdornment={
+                <InputAdornment position="end">
+                    <div className={styles.iconInput} onClick={onClick}>
+                        <Icon />
+                    </div>
+                </InputAdornment>
+            } />
+    </FormControl>
 
 export const optionItem = (label, value) => {
     return {
@@ -95,12 +85,54 @@ export const OptionInput = ({ className, label, value, selections, onChange, ...
         <InputLabel>{label}</InputLabel>
         <Select
             value={value}
-            onChange={(elem) => onChange(elem.target.value)}>
+            onChange={elem => onChange(elem.target.value)}>
             {selections.map((item, index) => (
                 <MenuItem key={index} value={item.value}>{item.label}</MenuItem>
             ))}
         </Select>
     </FormControl>
 
-const exported = { TextInput, MultiTextInput, OptionInput };
-export default exported;
+export const SearchFilterInput = ({ className, placeholder, onEnter, onChange }) => {
+    const [search, setSearch] = useState("");
+    const inputRef = useRef();
+
+    const enterIt = useCallback(() => onEnter?.(search), [onEnter, search]);
+
+    useEffect(() => {
+        const iRef = inputRef.current;
+        $(iRef).on("keyup", e => { if (e.key === 'Enter') enterIt(); });
+        return () => $(iRef).off("keyup");
+    }, [enterIt]);
+
+    const focusInput = () => {
+        inputRef.current.focus();
+        enterIt();
+    }
+
+    const openFilter = () => {
+        Notification.create(`filter clicked`);
+    }
+
+    const updateSearch = value => {
+        setSearch(value);
+        onChange?.(value);
+    }
+
+    return (
+        <div className={concat(className, styles.searchFilterInput)}>
+            <ColoredIcon className={styles.icon} icon={icons.search} onClick={focusInput} />
+            <Divider orientation="vertical" />
+            <div className={styles.inputField}>
+                <input
+                    ref={inputRef}
+                    className={styles.search}
+                    placeholder={placeholder ?? "Search"}
+                    value={search}
+                    onChange={e => updateSearch(e.target.value)} />
+                <i className="fa fa-times" onClick={() => updateSearch("")} />
+            </div>
+            <Divider orientation="vertical" />
+            <ColoredIcon className={styles.icon} icon={icons.filter} onClick={openFilter} />
+        </div>
+    )
+}

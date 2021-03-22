@@ -1,4 +1,5 @@
-@import "../../style/theme.scss";
+@import "../../style/theme";
+@import "../../style/variables";
 
 .tileBreak {
     width: fit-content;
@@ -21,5 +22,43 @@
         .secondary {
             background-color: map-get($global, "dim");
         }
+    }
+}
+
+.divider {
+    min-width: 1px;
+    min-height: 1px;
+    background-color: map-get($global, "muted");
+}
+
+.colorPrimary {
+    @include themify($themes) {
+        color: themed("root");
+    }
+}
+.colorSuccess {
+    color: map-get($global, "success");
+}
+.colorWarning {
+    color: map-get($global, "warning");
+}
+.colorDanger {
+    color: map-get($global, "danger");
+}
+.colorDefault {
+    color: map-get($global, "default");
+}
+
+$mutedColor: map-get($global, "muted");
+.icon {
+    cursor: pointer;
+    transition: map-get($transition, "ease") !important;
+    border-radius: 50%;
+    padding: 0.3rem;
+    &:hover {
+        background-color: lighten($mutedColor, 7%);
+    }
+    &:active {
+        background-color: $mutedColor;
     }
 }

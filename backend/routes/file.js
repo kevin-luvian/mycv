@@ -5,37 +5,73 @@ const tokenAuth = require("../middleware/tokenAuth");
 const upload = require("../middleware/uploadFile");
 const fileRepo = require("../repository/fileRepository");
 const fileMetadataRepo = require("../repository/fileMetadataRepository");
-const debug = require("../util/utils").log("router:file");
+const util = require("../util/utils");
+const FileMetadata = require('../model/FileMetadata');
+const debug = util.log("router:file");
 
-router.get('/', async (req, res) => {
-    const files = fileMetadataRepo.addFileUrl(req.headers.host, await fileMetadataRepo.retrieveLean());
+router.get('/', tokenAuth.admin, async (req, res) => {
+    const files = fileMetadataRepo.addFilesUrl(req.headers.host, await fileMetadataRepo.retrieveLean());
     resf.r200(res, "files found", files);
 });
 
-router.post('/', tokenAuth.admin, upload, async (req, res) => {
-    if (!req.file)
-        return resf.r400(res, "You must select a file");
+router.delete('/:id', tokenAuth.admin, async (req, res) => {
+    const id = util.stringToMongooseId(req.params.id);
+    if (!id) return resf.r400(res, "invalid id");
 
-    let filename = req.file.originalname;
-    // replace filename if provided in header
-    if (req.headers.filename)
-        filename = matchFileExt(req.file.originalname, req.headers.filename);
-    debug("POST", "filename:", filename);
+    const filemetaDeleted = await fileMetadataRepo.deleteById(id);
+    if (!filemetaDeleted) return resf.r500(res, "file metadata deletion failed");
+
+    const fileDeleted = await fileRepo.deleteById(id);
+    if (!fileDeleted) return resf.r500(res, "file deletion failed");
+
+    resf.r200(res, "files deleted");
+});
+
+router.put('/:id', tokenAuth.admin, async (req, res) => {
+    let { filename, group } = req.body;
+    const id = util.stringToMongooseId(req.params.id);
+
+    const file = await fileMetadataRepo.findById(id);
+    if (!file) return resf.r404(res, "file not found");
+    filename = matchFileExt(file.filename, filename);
+
+    const success = await fileMetadataRepo.updateById(id, { filename, group });
+    if (success) resf.r200(res, "file metadata updated");
+    else resf.r500(res, "file metadata failed to update");
+});
+
+router.get('/page/:num', async (req, res) => {
+    const pageNum = Math.max(req.params.num || 1, 1);
+    const metadatas = await fileMetadataRepo.retrievePaginated(pageNum, 50);
+    if (metadatas) {
+        const files = fileMetadataRepo.addFilesUrl(req.headers.host, util.leanDocsCopy(metadatas.docs));
+        return resf.r200(res, "files found", files);
+    }
+    return resf.r400(res, "files not found");
+});
+
+router.get('/:id/:filename', async (req, res) => {
+    const id = util.stringToMongooseId(req.params.id);
+    const file = await fileRepo.findFileById(id);
+    if (!file) return resf.r400(res, "file not found");
+    fileRepo.downloadStream(res, id);
+});
+
+router.post('/', tokenAuth.admin, upload, async (req, res) => {
+    const id = await fileRepo.uploadStream(req);
+    if (!id) return resf.r500(res, "Error uploading file");
 
     // Create a Metadata
-    const fileMetaAttr = createFileMetadata(req.file, filename, req.group);
+    const fileMetaAttr = createFileMetadata(req.file, id, req.headers.filename, req.headers.group);
     const isCreated = await fileMetadataRepo.create(fileMetaAttr);
-    debug("POST", "fileMetaAttr:", fileMetaAttr);
 
-    // failed to create, delete uploaded files
-    if (!isCreated) {
+    if (isCreated) {
+        resf.r200(res, "File uploaded successfully");
+    } else {
+        // failed to create, delete uploaded files
         fileRepo.deleteById(fileMetaAttr._id);
-        return resf.r400(res, "File Metadata creation failed.");
+        resf.r500(res, "File Metadata creation failed");
     }
-
-    fileRepo.deleteById(fileMetaAttr._id);
-
-    resf.r200(res, "upload successful");
 });
 
 /**
@@ -46,8 +82,8 @@ router.post('/', tokenAuth.admin, upload, async (req, res) => {
  * @return {string}
  */
 const matchFileExt = (original, replacement) => {
-    if (path.extname(original) === path.extname(replacement))
-        return replacement;
+    if (!replacement) return original;
+    if (path.extname(original) === path.extname(replacement)) return replacement;
     return replacement + path.extname(original);
 };
 
@@ -59,13 +95,13 @@ const matchFileExt = (original, replacement) => {
  * @param {string} group 
  * @return {Object}
  */
-const createFileMetadata = (mFile, filename, group) => {
+const createFileMetadata = (mFile, id, filename, group) => {
     return {
-        filename: filename,
+        _id: id,
+        filename: matchFileExt(mFile.originalname, filename),
         group: group,
-        _id: mFile.id,
-        contentType: mFile.contentType,
-        uploadDate: mFile.uploadDate,
+        contentType: mFile.mimetype,
+        uploadDate: new Date(),
         size: mFile.size
     };
 };

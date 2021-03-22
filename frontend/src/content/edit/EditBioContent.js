@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+// import styles from "./styles.module.scss";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import {
     TextInput,
-    NumberInput,
     MultiTextInput,
     FileIconInput,
     OptionInput,
@@ -10,7 +10,11 @@ import {
 import Button from "../../component/button/Button";
 import Notification from "../../component/notification/Notification";
 import { Get, Post } from "../../axios/Axios";
-import Util from "../../util/utils";
+import { arrayToString, hasNumberOnly } from "../../util/utils";
+import {
+    SelectableModal,
+    createSelectableElement
+} from "../../component/modal/Modal";
 
 const genders = [
     optionItem("unspecified", 0),
@@ -19,29 +23,26 @@ const genders = [
     optionItem("other", 3)
 ];
 
-const parsePayload = (payload) => {
+const parsePayload = ({ fullname, phone, gender, address, email, description, professions, imageID, cvID }) => {
     return {
-        fullname: payload.fullname || "",
-        phone: payload.phone || 0,
-        gender: payload.gender || 0,
-        address: payload.address || "",
-        email: payload.email || "",
-        description: payload.description || "",
-        professions: payload.professions,
-        imageID: payload.imageID || "",
-        cvID: payload.cvID || ""
+        fullname: fullname ?? "",
+        phone: phone ?? "",
+        gender: gender ?? 0,
+        address: address ?? "",
+        email: email ?? "",
+        description: description ?? "",
+        professions: arrayToString(professions ?? [""]),
+        imageID: imageID ?? "",
+        cvID: cvID ?? ""
     }
 }
 
 const Page = () => {
-    document.title = "Edit - change my biodata";
-
     const [state, setState] = useState({
         fullname: "",
         phone: "",
         gender: 0,
         address: "",
-
         email: "",
         description: "",
         professions: "",
@@ -60,18 +61,15 @@ const Page = () => {
         if (res.success) {
             Notification.create(res.message, Notification.type.success);
             const data = parsePayload(res.data);
-            data.professions = Util.arrayToString(data.professions || [""]);
             setState(data);
         }
         else Notification.create(res.message, Notification.type.danger);
     }
 
     const send = async () => {
-        const res = await Post("/myinfo", parsePayload(state));
-        if (res.success)
-            Notification.create(res.message, Notification.type.success);
-        else
-            Notification.create("sending data failed", Notification.type.danger);
+        const res = await Post("/myinfo", state);
+        if (res.success) Notification.create(res.message, Notification.type.success);
+        else Notification.create("sending data failed", Notification.type.danger);
     }
 
     return (
@@ -98,7 +96,7 @@ const Page = () => {
                 label="phone number"
                 value={state.phone}
                 onChange={val => {
-                    if (val.length <= 12 && Util.hasNumberOnly(val))
+                    if (val.length <= 12 && hasNumberOnly(val))
                         updateState({ phone: val })
                 }} />
 
@@ -118,12 +116,12 @@ const Page = () => {
                 value={state.professions}
                 onChange={val => updateState({ professions: val })} />
 
-            <FileIconInput
+            <ChooseFileInput
                 label="image"
                 value={state.imageID}
                 onChange={val => updateState({ imageID: val })} />
 
-            <FileIconInput
+            <ChooseFileInput
                 label="cv"
                 value={state.cvID}
                 onChange={val => updateState({ cvID: val })} />
@@ -131,6 +129,71 @@ const Page = () => {
             <Button className="w-100" onClick={send}>submit</Button>
         </React.Fragment>
     );
+}
+
+const ChooseFileInput = ({ value, onChange, label }) => {
+    const [files, setFiles] = useState([]);
+    const modalRef = useRef();
+
+    const fetch = useCallback(async () => {
+        const res = await Get("/file");
+        if (res.success) {
+            const newFiles = [];
+            for (let i = 0; i < res.data.length; i++) {
+                newFiles.push(createSelectableElement(res.data[i].filename, res.data[i]));
+            }
+            setFiles(newFiles);
+        } else {
+            Notification.create(res.message, Notification.type.danger);
+        }
+    }, []);
+
+    useEffect(() => fetch(), [fetch]);
+
+    const renderElement = (elem, isActive) => {
+        const showImage = elem.contentType.includes("image");
+        if (!isActive) return (
+            <div>
+                <p className="mb-0" style={{ fontSize: "0.8em" }}>{elem.filename}</p>
+            </div>
+        )
+        return (
+            <div style={{ maxWidth: "70vw" }}>
+                <p className="mb-0" style={{ fontSize: "0.8em" }}>{elem.filename}</p>
+                {showImage &&
+                    <img src={elem.url} alt="file"
+                        style={{ maxWidth: "100%", maxHeight: "15rem", marginTop: "0.3rem" }} />}
+            </div>
+        )
+    }
+
+    const selected = file => onChange?.(file._id);
+
+    const getFilename = fileID => {
+        if (!fileID) return " ";
+        for (let i = 0; i < files.length; i++) {
+            if (fileID === files[i]?.data._id) return files[i].data.filename;
+        }
+        return " ";
+    }
+
+    return (
+        <Fragment>
+            <FileIconInput
+                disabled
+                label={label}
+                value={getFilename(value)}
+                onClick={() => modalRef.current.open()} />
+
+            <SelectableModal
+                ref={modalRef}
+                title="Find Files"
+                elements={files}
+                numPerPage={100}
+                onSelect={selected}
+                renderElement={renderElement} />
+        </Fragment>
+    )
 }
 
 export default Page;

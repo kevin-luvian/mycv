@@ -1,4 +1,19 @@
 /**
+ * check if value includes one of the target
+ * @param {string} value 
+ * @param  {...string} targets 
+ * @returns {boolean}
+ */
+export function orIncludes(value, ...targets) {
+    if (!value) return false;
+    let result = value.includes(targets[0]);
+    for (let i = 1; i < targets.length; i++) {
+        result = result || value.includes(targets[i]);
+    }
+    return result;
+}
+
+/**
  * concatenate multiple string with whitespace
  * 
  * @param  {...string} strs string array 
@@ -59,17 +74,46 @@ export function arrayToString(strArr, separator = ",") {
     return res;
 }
 
+/**
+ * check if string only has number
+ * @param {string} str 
+ * @returns {boolean}
+ */
 export function hasNumberOnly(str) {
     const regex = new RegExp("^[0-9]+$");
     return regex.test(str);
 }
 
-const exported = {
-    concat,
-    simpleID, badStringID, memoizeID,
-    isTokenExpired,
-    arrayToString,
-    hasNumberOnly
-};
+/**
+ * check if stringA has substring stringB
+ * @param {string} strA 
+ * @param {string} strB 
+ * @returns {boolean}
+ */
+export function containStr(strA, strB) {
+    return strA.toLowerCase().includes(strB.toLowerCase());
+}
 
-export default exported;
+/**
+ * constraint number to minimum and maximum value
+ * @param {number} num 
+ * @param {number} minVal 
+ * @param {number} maxVal 
+ * @returns {number}
+ */
+export function constraint(num, minVal, maxVal) {
+    return num < minVal ? minVal : (num > maxVal ? maxVal : num);
+}
+
+/**
+ * convert number with leading zero
+ * @param {number} num 
+ * @param {string} size 
+ * @returns {string}
+ */
+export function pad(num, size) {
+    let numStr = num.toString();
+    while (numStr.length < size)
+        numStr = "0" + numStr;
+    return numStr;
+}

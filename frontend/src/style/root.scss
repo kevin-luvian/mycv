@@ -3,7 +3,7 @@
 @import "./theme.scss";
 
 #notificationBox {
-  z-index: map-get($navbar, "toolbar_z") + 1;
+  z-index: map-get($zIndex, "notification");
   position: fixed;
   padding: 0.5rem;
   bottom: 0;
@@ -38,13 +38,20 @@
 .notificationBoxElement {
   width: fit-content;
   padding: 0.7rem 0.8rem;
-  margin: 0rem 0.5rem 0.5rem 0.5rem;
+  margin: 0rem auto 0.5rem auto;
   border-radius: 1rem;
-  background-color: map-get($global, "success");
+  background-color: map-get($global, "default");
   color: map-get($global, "light");
   font-size: small;
   animation: notifIn 0.4s ease;
   box-shadow: map-get($shadow, "tightSmooth");
+
+  @include media(tablet) {
+    margin: 0rem 0.5rem 0.5rem 0.5rem;
+  }
+  @include media(desktop) {
+    margin: 0rem 0.5rem 0.5rem 0.5rem;
+  }
 }
 
 .notificationBoxElement.terminate {

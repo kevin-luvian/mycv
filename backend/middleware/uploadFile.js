@@ -1,14 +1,23 @@
-const util = require("util");
 const multer = require("multer");
-const GridFsStorage = require("multer-gridfs-storage");
-require("dotenv").config();
+const resf = require("../routes/responseFactory");
 
-const storage = new GridFsStorage({
-    url: process.env.MONGO_DB,
-    options: { useNewUrlParser: true, useUnifiedTopology: true },
-    file: () => { return { bucketName: "upload" }; }
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage: storage,
+    limits: {
+        fields: 1,
+        files: 1,
+        fileSize: 6000000,
+        parts: 2
+    }
 });
+const uploadMiddleware = upload.single("file");
 
-const uploadFile = multer({ storage: storage }).single("file");
-const uploadFilesMiddleware = util.promisify(uploadFile);
-module.exports = uploadFilesMiddleware;
+const uploadFile = (req, res, next) => {
+    uploadMiddleware(req, res, err => {
+        if (err) return resf.r400(res, "Upload Request Validation Failed");
+        return next();
+    });
+}
+
+module.exports = uploadFile;

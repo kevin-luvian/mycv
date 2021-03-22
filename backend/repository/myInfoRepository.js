@@ -7,7 +7,7 @@ const debug = util.log("repository:myInfoRepository");
  * @return {Promise<Object>} MyInfo object or null if not found
  */
 const retrieve = async () => {
-    let data = await MyInfo.find({})
+    let data = await MyInfo.find({}).lean()
         .catch(err => debug("retrieve", "error:", err));
     if (data.length === 0) return undefined;
     else if (data.length > 1) deleteMany(data.slice(1));

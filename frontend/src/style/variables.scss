@@ -9,13 +9,21 @@ $shadow: (
 
 $transition: (
   ease: all 0.2s ease,
+  ease_slow: all 1s ease,
 );
 
 $navbar: (
   toolbar_height: 50px,
   logo_size: 35px,
-  toolbar_z: 10,
+);
+
+$zIndex: (
+  toolbar: 10,
+  modal: 15,
+  notification: 20,
 );
 
 $canvas_border_radius: 2rem;
 $card_border_radius: 1rem;
+$modal_border_radius: 0.7rem;
+$button_border_radius: 0.5rem;

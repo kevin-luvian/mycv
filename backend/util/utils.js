@@ -38,28 +38,24 @@ const stringToList = (str, separator) => {
 const log = rootTag => (tag, ...args) => { console.log(`[ ${rootTag}:${tag} ]`, ...args); }
 
 /**
- * return value above minimum
- * @param {number} minVal 
- * @param {number} val 
- */
-const min = (minVal, val) => val > minVal ? val : minVal;
-
-/**
- * return value under maximum
- * @param {number} maxVal 
- * @param {number} val 
- */
-const max = (maxVal, val) => val < maxVal ? val : maxVal;
-
-/**
  * return value within the constraints
  * @param {number} minVal 
  * @param {number} maxVal 
  * @param {number} val 
  */
-const constraint = (minVal, maxVal, val) => min(minVal, max(maxVal, val));
+const constraint = (minVal, maxVal, val) => Math.max(minVal, Math.min(maxVal, val));
+
+/**
+ * copy elements property in documents
+ * @param {any[]} arr 
+ * @return {any[]}
+ */
+const leanDocsCopy = arr => arr.map(val => Object.assign({}, val._doc));
 
 module.exports = {
-    stringToList, stringToMongooseId, log,
-    min, max, constraint
+    log,
+    constraint,
+    stringToList,
+    leanDocsCopy,
+    stringToMongooseId,
 };

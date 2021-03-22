@@ -1,6 +1,27 @@
 @import "../../style/variables.scss";
 @import "../../style/theme.scss";
 
+$mutedColor: map-get($global, "muted");
+.blankCard {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: $button_border_radius;
+    border-color: $mutedColor;
+    box-shadow: 0 0 10px 0 $mutedColor;
+
+    padding: 0.5rem;
+    transition: map-get($transition, "ease");
+    @include themify($themes) {
+        color: themed("text_color");
+    }
+}
+.blankCard.active {
+    @include themify($themes) {
+        border-color: themed("root");
+        box-shadow: 0 0 10px 0 themed("root");
+    }
+}
+
 .funcard {
     border-radius: $card_border_radius;
     border-width: 0.15rem;

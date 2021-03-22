@@ -1,6 +1,9 @@
 @import "../../style/variables.scss";
 @import "../../style//theme.scss";
 
+$colorWarning: map-get($global, "warning");
+$colorDanger: map-get($global, "danger");
+
 .button {
   cursor: pointer;
   padding: 0.4rem 0.8rem;
@@ -23,7 +26,7 @@
   }
 }
 
-.colorDefault {
+.button.colorDefault {
   @include themify($themes) {
     background-color: themed("button_color");
     color: themed("button_textcolor");
@@ -38,7 +41,37 @@
   }
 }
 
-.ovalColorDefault {
+.button.colorWarning {
+  @include themify($themes) {
+    background-color: $colorWarning;
+    color: themed("button_textcolor");
+    &:hover {
+      background-color: darken($colorWarning, 7%);
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: lighten($colorWarning, 7%);
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.button.colorDanger {
+  @include themify($themes) {
+    background-color: $colorDanger;
+    color: themed("button_textcolor");
+    &:hover {
+      background-color: darken($colorDanger, 7%);
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: lighten($colorDanger, 7%);
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.oval.colorDefault {
   @include themify($themes) {
     border-color: themed("button_color");
     &:hover {
@@ -53,7 +86,7 @@
   }
 }
 
-.ovalColorPrimary {
+.oval.colorPrimary {
   border-color: #007ced;
   &:hover {
     background-color: #007ced;
@@ -66,7 +99,7 @@
   }
 }
 
-.ovalColorSecondary {
+.oval.colorSecondary {
   border-color: #333;
   &:hover {
     background-color: #333;

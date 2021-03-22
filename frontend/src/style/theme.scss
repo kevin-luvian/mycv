@@ -6,6 +6,7 @@ $global: (
   success: #28a745,
   warning: #ffc107,
   danger: #dc3545,
+  default: #343a40,
 );
 
 $forest: (
@@ -22,11 +23,22 @@ $ocean: (
 
 $themes: (
   forest: (
+    primary: map-get($forest, "primary"),
+    secondary: map-get($forest, "secondary"),
+    tertiary: map-get($forest, "tertiary"),
+    // =============================================================
+    root: map-get($forest, "primary"),
+    root_top: map-get($global, "light"),
+    canvas: map-get($global, "light"),
+    // =============================================================
     button_color: map-get($forest, "primary"),
     button_hover: darken(map-get($forest, "primary"), 7%),
     button_active: darken(map-get($forest, "primary"), 21%),
-    button_textcolor: black,
-    button_hover_textcolor: white,
+    button_textcolor: map-get($global, "light"),
+    button_hover_textcolor: map-get($global, "light"),
+    // =============================================================
+    text_color: #333,
+    text_dim: rgb(129, 129, 129),
   ),
   // ==[ OCEAN ]====================================================
   ocean:

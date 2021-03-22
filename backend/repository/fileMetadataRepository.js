@@ -1,12 +1,33 @@
 const debug = require("../util/utils").log("repository:fileMetadataRepository");
 const FileMetadata = require("../model/FileMetadata");
+const util = require("../util/utils");
 
 /** 
  * find all File Metadata lean
  * 
  * @return {Promise<Object[]>} Array of object
  */
-const retrieveLean = () => { return FileMetadata.find().lean(); };
+const retrieveLean = () => FileMetadata.find().lean();
+
+/**
+ * find all File Metadata paginated
+ * @param {number} page 
+ * @param {number} limit 
+ */
+const retrievePaginated = (page, limit) => {
+    /**
+     * Response looks like:
+     * {
+     *   docs: [...] // array of Posts
+     *   total: 42   // the total number of Posts
+     *   limit: 10   // the number of Posts returned per page
+     *   page: 2     // the current page of Posts returned
+     *   pages: 5    // the total number of pages
+     * }    */
+    return FileMetadata.paginate({}, { page, limit });
+    // .then(response => { })
+    // .catch(handleQueryError);
+}
 
 /** 
  * add url attribute
@@ -15,15 +36,26 @@ const retrieveLean = () => { return FileMetadata.find().lean(); };
  * @param {Object[]} arr array of FileMetadata
  * @return {Object[]} modified array
  */
-const addFileUrl = (host, arr) => {
-    const fileurl = host + require("../routes/file").routeURL;
-    for (let i = 0; i < arr.length; i++) {
-        arr[i]["url"] = `http://${fileurl}/` +
-            `${arr[i]._id}/` +
-            arr[i].filename.replace(/\s+/g, "%20");
-    }
-    return arr;
+const addFilesUrl = (host, arr) => {
+    // for (let i = 0; i < arr.length; i++) {
+    //     arr[i]["url"] = fileUrl(host, arr[i]);
+    // }
+    return arr.map(file => {
+        file["url"] = fileUrl(host, file._id, file.filename);
+        return file;
+    });
 };
+
+/**
+ * return url for file download
+ * @param {string} host 
+ * @param {string} fileID 
+ * @param {string} filename 
+ * @returns {string}
+ */
+const fileUrl = (host, fileID, filename) =>
+    `http://${host}${require("../routes/file").routeURL}/` +
+    `${fileID}/${filename.replace(/\s+/g, "%20")}`;
 
 /** 
  * create new FileMetadata
@@ -43,4 +75,37 @@ const create = async obj => {
     return success;
 };
 
-module.exports = { retrieveLean, addFileUrl, create }
+const updateById = async (id, data) => {
+    const res = await FileMetadata.updateOne({ _id: id }, data);
+    return res.ok === 1;
+}
+
+const deleteById = async id => {
+    const res = await FileMetadata.deleteOne({ _id: id });
+    return res.ok === 1;
+}
+
+/** 
+ * find File Metadata by id
+ * @param {Types.ObjectId} id
+ */
+const findById = id => FileMetadata.findOne({ _id: id }).lean();
+
+const findFullById = async (host, id) => {
+    const file = await findById(util.stringToMongooseId(id));
+    if (!file) return null;
+
+    file["url"] = fileUrl(host, file._id, file.filename);
+    return file;
+}
+
+module.exports = {
+    retrieveLean,
+    retrievePaginated,
+    addFilesUrl,
+    create,
+    findById,
+    updateById,
+    deleteById,
+    findFullById,
+}

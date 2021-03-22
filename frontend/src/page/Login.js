@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UsernameInput, PasswordInput } from "../component/form/Login";
 import Button from "../component/button/Button";
 import styles from "./styles.module.scss";
-import Util from "../util/utils";
+import { concat } from "../util/utils";
 import { Post } from "../axios/Axios";
 import { useDispatch } from "react-redux";
 import Notification, { NotificationType } from "../component/notification/Notification";
@@ -36,7 +36,7 @@ const Login = () => {
                 <UsernameInput value={username} onChange={setUsername} />
                 <PasswordInput value={password} onChange={setPassword} />
             </div>
-            <div className={Util.concat(styles.wFit, "mx-auto")}>
+            <div className={concat(styles.wFit, "mx-auto")}>
                 <Button onClick={postLogin}>Submit</Button>
             </div>
         </React.Fragment>

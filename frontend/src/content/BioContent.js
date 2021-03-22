@@ -1,12 +1,11 @@
 import React, { useEffect, useCallback } from "react";
 import { Oval as BtnOval } from "../component/button/Button";
 import styles from "./bioContent.module.scss";
-import Util from "../util/utils";
+import { memoizeID } from "../util/utils";
 import $ from "jquery";
 
-export const ProfileImage = (attr) => {
-    const imageURL = "https://image-cdn.neatoshop.com/styleimg/55381/none/navy/default/341250-19;1485880703i.jpg";
-    const elemID = Util.memoizeID();
+export const ProfileImage = ({ imageURL, ...attr }) => {
+    const elemID = memoizeID();
 
     const mapScale = (val, minA, maxA, minB, maxB) =>
         ((val - minA) * (maxB - minB)) / (maxA - minA) + minB;
@@ -45,8 +44,7 @@ export const ProfileImage = (attr) => {
         <div {...attr}>
             <div id={elemID(styles.imageContainer)} className={styles.imageContainer}>
                 <div id={elemID(styles.circle)} className={styles.circle}>
-                    <div
-                        id={elemID(styles.image)}
+                    <div id={elemID(styles.image)}
                         className={styles.image}
                         style={{
                             backgroundImage: `url(${imageURL})`,
@@ -59,15 +57,8 @@ export const ProfileImage = (attr) => {
     );
 };
 
-export const Description = (attr) => {
-    const elemID = Util.memoizeID();
-
-    const fullname = "Kevin Luvian H";
-    const desc = `
-        Linear interpolation as described here is for data points in one spatial
-        dimension. For two spatial dimensions, the extension of linear interpolation
-        is called bilinear interpolation, and in three dimensions, trilinear interpolation.
-    `;
+export const Description = ({ fullname, description, cvURL, ...attr }) => {
+    const elemID = memoizeID();
 
     useEffect(() => {
         const setVerticalPadding = () => {
@@ -88,9 +79,12 @@ export const Description = (attr) => {
             <div id={elemID(styles.descwrapper)} className={styles.descwrapper}>
                 <div id={elemID(styles.description)} className={styles.description}>
                     <h1>{fullname}</h1>
-                    <p>{desc}</p>
+                    <p>{description}</p>
                     <div className={styles.buttons}>
-                        <BtnOval.Primary className="mr-4">Download CV</BtnOval.Primary>
+                        <BtnOval.Primary className="mr-4"
+                            onClick={() => window.open(cvURL, "_blank")}>
+                            Download CV
+                        </BtnOval.Primary>
                         <BtnOval.Secondary >Contact</BtnOval.Secondary>
                     </div>
                 </div>

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from "react-redux";
 import { store, persistor } from "./redux/Store";
 import { PersistGate } from "redux-persist/integration/react";
+import ThemeStore from "./store/ThemeStore";
+import CVDataStore from "./store/CVDataStore";
 
 import MenuRouter from "./router/MenuRouter";
 import "bootstrap/dist/css/bootstrap.css";
@@ -12,7 +14,11 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <MenuRouter />
+        <ThemeStore>
+          <CVDataStore>
+            <MenuRouter />
+          </CVDataStore>
+        </ThemeStore>
       </PersistGate>
     </Provider>
   </React.StrictMode>,

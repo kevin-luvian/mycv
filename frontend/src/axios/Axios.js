@@ -49,6 +49,10 @@ class APIRes {
     this.data = data;
     this.other = other;
   }
+  notify() {
+    const type = this.success ? Notification.type.success : Notification.type.danger;
+    Notification.create(this.message, type);
+  }
   /**
    * @param {AxiosResponse<any>} res
    * @return {APIRes} instance
@@ -65,28 +69,35 @@ class APIRes {
   }
 }
 
+const responseError = err =>
+  APIRes.constructFail(err.response?.data.message || "response not received");
+
 /**
- * api result wrapper for better compatibility
- * 
+ * axios post wrapper for better compatibility
  * @param {boolean} success
  * @param {string} message
  * @param {any} data
+ * @param {any} config
  * @returns {Promise<APIRes>} wrapped result
  */
-export const Post = (path, data) =>
-  instance.post(path, data)
+export const Post = (path, data, config) =>
+  instance.post(path, data, config)
     .then(res => APIRes.constructRes(res))
-    .catch(err => {
-      if (err.response) return APIRes.constructFail(err.response.data.message);
-      return APIRes.constructFail("response not received");
-    });
+    .catch(err => responseError(err));
+
+export const Put = (path, data) =>
+  instance.put(path, data)
+    .then(res => APIRes.constructRes(res))
+    .catch(err => responseError(err));
 
 export const Get = path =>
   instance.get(path)
     .then(res => APIRes.constructRes(res))
-    .catch(err => {
-      if (err.response) return APIRes.constructFail(err.response.data.message);
-      return APIRes.constructFail("response not received");
-    });
+    .catch(err => responseError(err));
+
+export const Delete = path =>
+  instance.delete(path)
+    .then(res => APIRes.constructRes(res))
+    .catch(err => responseError(err));
 
 export default instance;

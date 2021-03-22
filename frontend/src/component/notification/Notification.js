@@ -1,6 +1,7 @@
 import $ from "jquery";
-import Util from "../../util/utils";
+import { badStringID } from "../../util/utils";
 
+const htmlNotificationBlockID = "notificationBox";
 const destroyTime = 5000;
 
 export const NotificationType = {
@@ -13,14 +14,14 @@ export const NotificationType = {
 /**
  * convert type to color
  * @param {number} type 
- * @returns {string} color
+ * @returns {string|undefined} color
  */
 function getColor(type) {
     switch (type) {
         case 1: return "#28a745";
         case 2: return "#ffc107";
         case 3: return "#dc3545";
-        default: return "white";
+        default: return undefined;
     }
 }
 
@@ -28,7 +29,7 @@ function getColor(type) {
  * create notification destroy timer
  * @param {string} elemID 
  */
-function destroyCallback(elemID) {
+function setDestroyTimer(elemID) {
     window.setTimeout(() => {
         $("#" + elemID).addClass("terminate");
         window.setTimeout(() => {
@@ -63,9 +64,10 @@ export const Notification = {
      * @param {number} type 
      */
     create(message, type = NotificationType.blank) {
-        const elemID = Util.badStringID();
-        $("#notificationBox").append(getElemString(elemID, message, getColor(type)));
-        destroyCallback(elemID);
+        const elemID = badStringID();
+        $("#" + htmlNotificationBlockID)
+            .append(getElemString(elemID, message, getColor(type)));
+        setDestroyTimer(elemID);
     }
 };
 

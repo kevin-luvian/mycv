@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const paginate = require("mongoose-paginate");
 
 const schema = mongoose.Schema({
     group: { type: String },
@@ -8,5 +9,7 @@ const schema = mongoose.Schema({
     size: { type: Number },
     role: { type: Number }
 });
+
+schema.plugin(paginate);
 
 module.exports = mongoose.model("FileMetadata", schema);

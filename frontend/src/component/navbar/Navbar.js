@@ -5,7 +5,8 @@ import List from "@material-ui/icons/List";
 import styles from "./navbar.module.scss";
 import $ from "jquery";
 import MenuTracker from "./MenuTracker";
-import Util from "../../util/utils";
+import { isTokenExpired } from "../../util/utils";
+import { useStore } from "../../store/CVDataStore";
 
 const publicMenu = [
     { name: "Home", url: "/", submenu: [] },
@@ -16,6 +17,7 @@ const publicMenu = [
             { name: "Wowo", url: "/xz" }]
     },
     { name: "Contact", url: "/contact", submenu: [] },
+    { name: "Test", url: "/test", submenu: [] },
     { name: "Login", url: "/login", submenu: [] },
 ];
 
@@ -32,13 +34,12 @@ const Page = () => {
     const [displayMenu, setDisplayMenu] = useState(true);
     const currExpires = useSelector(store => store.auth.expires);
 
-    useEffect(() => {
-        MenuTracker.activateMenu(menus, window.location.pathname);
-        // console.log("path", window.location.pathname);
-    });
+    const store = useStore();
+
+    useEffect(() => MenuTracker.activateMenu(menus, window.location.pathname));
 
     useEffect(() => {
-        const isExpired = Util.isTokenExpired(currExpires);
+        const isExpired = isTokenExpired(currExpires);
         MenuTracker.clearActiveMenu();
         if (isExpired) setMenus(publicMenu);
         else setMenus(privateMenu);
@@ -56,12 +57,19 @@ const Page = () => {
         }
     }
 
+    const firstName = () => store.fullname.split(" ")[0];
+    const lastName = () => {
+        const splitted = store.fullname.split(" ");
+        if (splitted.length <= 1) return "";
+        return splitted.slice(1, splitted.length).join(" ");
+    }
+
     return (
         <nav id={styles.nav}>
             <div id={styles.toolbar}>
                 <div id={styles.logoname}>
-                    <Link to="/"><p id={styles.logo}>K</p></Link>
-                    <p id={styles.name}>Kevin <span>Luvian H</span></p>
+                    <Link to="/"><p id={styles.logo}>{store.fullname[0]}</p></Link>
+                    <p id={styles.name}>{firstName()} <span>{lastName()}</span></p>
                 </div>
                 <div id={styles.links}>
                     {menus.map((menu, index) =>
