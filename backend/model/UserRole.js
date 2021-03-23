@@ -5,6 +5,13 @@ const superadmin = 2;
 const adminstring = "admin";
 const superadminstring = "superadmin";
 
+const defaultRole = 0;
+const roles = {
+    0: "none",
+    1: "admin",
+    2: "superadmin"
+}
+
 /** 
  * role string to number
  * 

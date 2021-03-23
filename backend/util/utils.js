@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const debug = log("util");
 
 /** 
  * convert to mongoose ObjectId or undefined if error
@@ -11,8 +10,7 @@ const stringToMongooseId = str => {
     try {
         if (!str) throw ("error");
         return mongoose.Types.ObjectId(str);
-    } catch (err) {
-        debug("stringToMongooseId", err);
+    } catch (e) {
         return undefined;
     }
 }
