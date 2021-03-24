@@ -21,10 +21,12 @@ export function BasicElement({ className, children, ...attr }) {
 export const Oval = {
     Default: ({ className, ...attr }) =>
         <OvalElement {...attr} className={concat(className, styles.colorDefault)} />,
-    Primary: ({ className, ...attr }) =>
-        <OvalElement {...attr} className={concat(className, styles.colorPrimary)} />,
     Secondary: ({ className, ...attr }) =>
-        <OvalElement {...attr} className={concat(className, styles.colorSecondary)} />
+        <OvalElement {...attr} className={concat(className, styles.colorDark)} />,
+    Dark: ({ className, ...attr }) =>
+        <OvalElement {...attr} className={concat(className, styles.colorDark)} />,
+    Danger: ({ className, ...attr }) =>
+        <OvalElement {...attr} className={concat(className, styles.colorDanger)} />,
 };
 
 const OvalElement = ({ className, children, ...attr }) => (

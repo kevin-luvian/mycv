@@ -81,10 +81,10 @@ export const Description = ({ fullname, description, cvURL, ...attr }) => {
                     <h1>{fullname}</h1>
                     <p>{description}</p>
                     <div className={styles.buttons}>
-                        <BtnOval.Primary className="mr-4"
+                        <BtnOval.Default className="mr-4"
                             onClick={() => window.open(cvURL, "_blank")}>
                             Download CV
-                        </BtnOval.Primary>
+                        </BtnOval.Default>
                         <BtnOval.Secondary >Contact</BtnOval.Secondary>
                     </div>
                 </div>

@@ -175,7 +175,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
     return (
         <Fragment>
             {showThis() &&
-                <div className={concat(styles.fileElement, className)}>
+                <div className={concat(styles.fileElement, styles.fadeAnim, className)}>
                     <SimpleValidation
                         ref={deleteModalRef}
                         onContinue={deleteFile} />

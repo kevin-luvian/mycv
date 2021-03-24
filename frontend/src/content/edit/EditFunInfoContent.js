@@ -51,14 +51,14 @@ export const Page = () => {
     return (
         <Fragment>
             <h2 className="mb-4">Edit Fun Info</h2>
-            <BlankCard className={"px-5 py-4"}>
+            <BlankCard className="px-5 py-4">
                 <FunInfoForm formTitle="What I Do" onSubmit={postWIDO} />
             </BlankCard>
             <div className="row mt-4 px-3">
                 {whatIDos.map((val, index) =>
                     <FunELement key={index} obj={val} type={whatIDoType} onChange={fetchWIDO} />)}
             </div>
-            <BlankCard className={"px-5 py-4"}>
+            <BlankCard className="px-5 py-4">
                 <FunInfoForm formTitle="Fun Fact" onSubmit={postFF} />
             </BlankCard>
             <div className="row mt-4">

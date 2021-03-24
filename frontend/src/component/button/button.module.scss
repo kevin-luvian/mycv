@@ -3,6 +3,7 @@
 
 $colorWarning: map-get($global, "warning");
 $colorDanger: map-get($global, "danger");
+$colorDark: map-get($global, "default");
 
 .button {
   cursor: pointer;
@@ -13,17 +14,6 @@ $colorDanger: map-get($global, "danger");
   border-radius: 0.25rem;
   transition: map-get($transition, "ease");
   box-shadow: map-get($shadow, "tight");
-}
-
-.oval {
-  border: unset;
-  border-radius: 2rem;
-  border-style: solid;
-  border-width: 2px;
-  padding: 0.5rem 1.5rem;
-  @include themify($themes) {
-    background-color: themed("canvas");
-  }
 }
 
 .button.colorDefault {
@@ -71,9 +61,19 @@ $colorDanger: map-get($global, "danger");
   }
 }
 
+.oval {
+  border: unset;
+  border-radius: 2rem;
+  border-style: solid;
+  border-width: 2px;
+  padding: 0.5rem 1.5rem;
+}
+
 .oval.colorDefault {
   @include themify($themes) {
     border-color: themed("button_color");
+    background-color: themed("canvas");
+    color: themed("text_color");
     &:hover {
       background-color: themed("button_color");
       color: themed("button_hover_textcolor");
@@ -86,28 +86,36 @@ $colorDanger: map-get($global, "danger");
   }
 }
 
-.oval.colorPrimary {
-  border-color: #007ced;
-  &:hover {
-    background-color: #007ced;
-    color: #edf5e1;
-  }
-  &:active {
-    background-color: darken(#007ced, 7%);
-    border-color: darken(#007ced, 7%);
-    color: #edf5e1;
+.oval.colorDark {
+  border-color: $colorDark;
+  @include themify($themes) {
+    background-color: themed("canvas");
+    color: themed("text_color");
+    &:hover {
+      background-color: $colorDark;
+      color: themed("canvas");
+    }
+    &:active {
+      background-color: darken($colorDark, 7%);
+      border-color: darken($colorDark, 7%);
+      color: themed("canvas");
+    }
   }
 }
 
-.oval.colorSecondary {
-  border-color: #333;
-  &:hover {
-    background-color: #333;
-    color: #edf5e1;
-  }
-  &:active {
-    background-color: darken(#333, 7%);
-    border-color: darken(#333, 7%);
-    color: #edf5e1;
+.oval.colorDanger {
+  border-color: $colorDanger;
+  @include themify($themes) {
+    background-color: themed("canvas");
+    color: themed("text_color");
+    &:hover {
+      background-color: $colorDanger;
+      color: themed("canvas");
+    }
+    &:active {
+      background-color: darken($colorDanger, 7%);
+      border-color: darken($colorDanger, 7%);
+      color: themed("canvas");
+    }
   }
 }

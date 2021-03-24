@@ -35,6 +35,12 @@ export const SimpleValidation = forwardRef(({ title, children, onContinue, onCan
     )
 });
 
+/**
+ * create a selectable element
+ * @param {string} title 
+ * @param {any} data 
+ * @returns {{title:string, data:any, id:number}}
+ */
 export const createSelectableElement = (title, data) => {
     if (typeof createSelectableElement.counter == 'undefined')
         createSelectableElement.counter = 0;

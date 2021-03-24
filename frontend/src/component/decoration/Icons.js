@@ -1,5 +1,6 @@
 import {
     CheckBoxOutlineBlank,
+    FolderOpenOutlined,
     FilterList,
     ExpandMore,
     GetApp,
@@ -22,6 +23,7 @@ export const icons = {
     filter: FilterList,
     arrowDown: ExpandMore,
     blank: CheckBoxOutlineBlank,
+    folderSharp: FolderOpenOutlined,
 }
 
 export const iconColors = {

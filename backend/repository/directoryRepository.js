@@ -4,14 +4,10 @@ const Visibility = require("../model/Visiblity");
 const util = require("../util/utils");
 const debug = util.log("repository:myInfoRepository");
 
-/** 
- * find FunInfo object in the database
- */
+const findAll = () => Directory.find({}).lean();
+
 const findRoots = () => Directory.find({ root: true }).lean();
 
-/** 
- * find FunInfo objects in the database by type
- */
 const findByType = type => Directory.find({ type }).lean();
 
 const retrieve = async () => {
@@ -25,9 +21,42 @@ const purge = async () => {
     return res.ok === 1;
 }
 
+const findOneById = id => Directory.findOne({ _id: id }).lean();
+
+const findFullById = async id => {
+    const mID = util.stringToMongooseId(id);
+    if (!mID) return null;
+    const parentDir = await findOneById(mID);
+    if (!parentDir) return null;
+    const childrenDirs = [];
+    if (parentDir.childrens && parentDir.childrens.length > 0) {
+        for (let i = 0; i < parentDir.childrens.length; i++) {
+            childrenDirs.push(await findFullById(parentDir.childrens[i]));
+        }
+    }
+    // debug("findFullById", "child dirs", childrenDirs);
+    parentDir.childrens = childrenDirs;
+    return parentDir;
+}
+
+/**
+ * delete multiple directory documents using array of id
+ * @param {string[]} arrIDs 
+ * @returns {Promise<boolean>}
+ */
+const deleteManyByIds = async arrIDs => {
+    const res = await Directory.deleteMany({ _id: { $in: arrIDs } });
+    return res.ok === 1;
+}
+
+const deleteOne = async dir => {
+    const res = await Directory.deleteOne({ _id: dir._id });
+    return res.ok === 1 && res.deletedCount === 1;
+}
+
 const updateOne = async dir => {
     const res = await Directory.updateOne({ _id: dir._id }, dir);
-    return res.ok === 1 && res.nModified === 1;
+    return res.ok === 1;
 }
 
 /**
@@ -48,6 +77,30 @@ const saveOne = dir => {
     );
 }
 
+/**
+ * @param {any} parentDir 
+ * @returns {Promise<string>} id
+ */
+const saveOrUpdateOne = async dir => {
+    if (util.stringToMongooseId(dir._id)) {
+        await updateOne(dir);
+        return dir._id;
+    }
+    return await saveOne(dir);
+}
+
+const deleteRootByID = async rootID => {
+    const rootDir = await findFullById(rootID);
+    const dirIDs = spreadDirID(rootDir);
+    return deleteManyByIds(dirIDs);
+}
+
+const update = async rootDir => {
+    const prevDir = await findFullById(rootDir._id);
+    deleteMissingDir(rootDir, prevDir);
+    await saveOrUpdateChildrensRecursive(rootDir);
+}
+
 const save = async rootDir => {
     try {
         const rootID = await saveChildrensRecursive(rootDir);
@@ -59,16 +112,62 @@ const save = async rootDir => {
 }
 
 module.exports = {
+    deleteRootByID,
+    findRoots,
     retrieve,
+    findAll,
     purge,
     save,
+    update,
     saveOne,
+    findOneById,
+    findFullById,
 };
+
+const deleteMissingDir = (rootDir, prevRootDir) => {
+    const ids = spreadDirID(rootDir);
+    const prevIds = spreadDirID(prevRootDir);
+    const missingIds = prevIds.filter(id => !ids.includes(id));
+    return deleteManyByIds(missingIds);
+}
 
 /**
  * @param {any} parentDir 
- * @returns {Promise<string>} id
+ * @returns {string[]}
  */
+const spreadDirID = parentDir => spreadDir(parentDir).map(dir => dir._id + '');
+
+/**
+ * @param {any} parentDir 
+ * @returns {any[]}
+ */
+const spreadDir = parentDir => {
+    if (!parentDir) return [];
+    const childrenIDs = [];
+    let childrenDir = [];
+    if (parentDir.childrens && parentDir.childrens.length > 0) {
+        for (let i = 0; i < parentDir.childrens.length; i++) {
+            childrenIDs.push(parentDir.childrens[i]._id);
+            childrenDir = childrenDir.concat(spreadDir(parentDir.childrens[i]));
+        }
+    }
+    return [{ ...parentDir, childrens: childrenIDs }].concat(childrenDir);
+}
+
+const saveOrUpdateChildrensRecursive = async parentDir => {
+    const childrenIDs = [];
+    if (parentDir.childrens && parentDir.childrens.length > 0) {
+        for (let i = 0; i < parentDir.childrens.length; i++) {
+            childrenIDs.push(await saveOrUpdateChildrensRecursive(parentDir.childrens[i]));
+        }
+    }
+
+    parentDir.childrens = childrenIDs;
+    delete parentDir.root;
+
+    return await saveOrUpdateOne(parentDir);
+}
+
 const saveChildrensRecursive = async parentDir => {
     const childrenIDs = [];
     if (parentDir.childrens && parentDir.childrens.length > 0) {
@@ -82,12 +181,7 @@ const saveChildrensRecursive = async parentDir => {
     delete parentDir.root;
 
     // return clause
-    if (util.stringToMongooseId(parentDir._id)) {
-        updateOne(parentDir);
-        return parentDir._id;
-    } else {
-        return await saveOne(parentDir);
-    }
+    return await saveOne(parentDir);
 }
 
 /**
