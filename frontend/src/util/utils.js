@@ -117,3 +117,21 @@ export function pad(num, size) {
         numStr = "0" + numStr;
     return numStr;
 }
+
+/**
+ * return new array with changed index
+ * @param {any[]} arr 
+ * @param {number} from 
+ * @param {number} to 
+ * @returns {any[]}
+ */
+export const swap = (arr, from, to) => {
+    const checkPos = num => num >= 0 && num < arr.length;
+    if (checkPos(from) && checkPos(to) && from !== to) {
+        const copyArr = [...arr];
+        const temp = copyArr[from];
+        copyArr[from] = copyArr[to];
+        copyArr[to] = temp;
+        return copyArr;
+    } else return arr;
+}

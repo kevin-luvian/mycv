@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../model/User");
-const userRole = require("../model/UserRole");
+const access = require("../model/Access");
 const util = require("../util/utils");
 const bcrypt = require("bcrypt");
 require("dotenv").config(); // uses .env file
@@ -36,7 +36,7 @@ const retrieve = async () => {
  * @return {Promise<Boolean>} success
  */
 const purge = async () => {
-    const res = await User.deleteMany({ role: { $ne: userRole.superadmin } }, err => {
+    const res = await User.deleteMany({ role: { $ne: access.userRole.superadmin } }, err => {
         if (err) debug("purge", err);
     });
     return res.ok === 1;

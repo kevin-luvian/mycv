@@ -35,71 +35,64 @@ export const SimpleValidation = forwardRef(({ title, children, onContinue, onCan
     )
 });
 
-/**
- * create a selectable element
- * @param {string} title 
- * @param {any} data 
- * @returns {{title:string, data:any, id:number}}
- */
-export const createSelectableElement = (title, data) => {
-    if (typeof createSelectableElement.counter == 'undefined')
-        createSelectableElement.counter = 0;
-    return { title, data, id: createSelectableElement.counter++ };
-}
-
 export const SelectableModal = forwardRef((
-    { title, elements, onSelect, numPerPage, renderElement },
+    { title, data, titleKey, valueIndex, perPage, renderElement, onContinue },
     ref) => {
     const modalRef = useRef();
+    const [selectedIndex, setSelectedIndex] = useState(-1);
     const [search, setSearch] = useState("");
-    const [selectedID, setSelectedID] = useState(-1);
-    const [searchedElements, setSearchedElements] = useState([]);
+    const [elements, setElements] = useState([createSelectableElement("", -1)]);
+    const [availableElements, setAvailableElements] = useState([]);
     const [shownElements, setShownElements] = useState([]);
-    const perPage = numPerPage ?? 50;
+    const [numPerPage, setNumPerPage] = useState(10);
 
-    const mRenderElement = useCallback((elem, active) => renderElement?.(elem, active), [renderElement])
+    const mRenderElement = useCallback((index, isActive) =>
+        renderElement?.(index, isActive), [renderElement]);
 
     useImperativeHandle(ref, () => ({
         open() {
             modalRef.current.open();
             reset();
         },
-        close() { modalRef.current.close() }
+        close() { modalRef.current.close(); }
     }));
-
-    const selected = () => {
-        const findID = (arr, targetID) => {
-            for (let i = 0; i < arr.length; i++) {
-                if (targetID === arr[i].id)
-                    return arr[i].data;
-            }
-            return null;
-        }
-        if (selectedID >= 0) {
-            onSelect?.(findID(elements, selectedID));
-            modalRef.current.close();
-        }
-    }
 
     const reset = () => {
         setSearch("");
-        setSelectedID(-1);
+        setSelectedIndex(valueIndex);
+    };
+
+    const onClose = () => modalRef.current.close();
+
+    useEffect(() => setSelectedIndex(valueIndex), [valueIndex])
+
+    // handle number per page setting
+    useEffect(() => setNumPerPage(perPage ?? 50), [perPage]);
+
+    // handle elements creation
+    useEffect(() =>
+        setElements(data.map((val, index) => createSelectableElement(val[titleKey], index))),
+        [data, titleKey]);
+
+    // handle search query
+    useEffect(() => {
+        console.log("searching", elements, "for", search, "res", elements.filter(e => containStr(e.title, search)));
+        setAvailableElements(elements.filter(e => containStr(e.title, search)))
+    }, [search, elements]);
+
+    // handle page change
+    const showPage = useCallback((firstIndex, lastIndex) =>
+        setShownElements(availableElements.slice(firstIndex, lastIndex)), [availableElements]);
+
+    const onSelect = index => {
+        if (selectedIndex === index) setSelectedIndex?.(-1);
+        else setSelectedIndex?.(index);
     }
 
-    const showPage = useCallback((firstIndex, lastIndex) =>
-        setShownElements(searchedElements.slice(firstIndex, lastIndex)), [searchedElements]);
-
-    useEffect(() => {
-        const searchElements = () => {
-            const newElements = [];
-            elements.forEach(element => {
-                if (containStr(element.title, search))
-                    newElements.push(element);
-            });
-            setSearchedElements(newElements);
-        }
-        searchElements();
-    }, [search, elements]);
+    const handleContinue = () => {
+        onContinue?.(selectedIndex);
+        onClose();
+    }
 
     return (
         <FadingModal className={styles.selectableModal} ref={modalRef}>
@@ -113,10 +106,10 @@ export const SelectableModal = forwardRef((
                         {shownElements.map((elem, index) =>
                             <div key={index}>
                                 <BlankCard
-                                    active={elem.id === selectedID}
+                                    active={elem.index === selectedIndex}
                                     className={styles.element}
-                                    onClick={() => setSelectedID(elem.id)}>
-                                    {mRenderElement(elem.data, elem.id === selectedID)}
+                                    onClick={() => onSelect(elem.index)}>
+                                    {mRenderElement(elem.index, elem.index === selectedIndex)}
                                 </BlankCard>
                             </div>
                         )}
@@ -125,13 +118,20 @@ export const SelectableModal = forwardRef((
                 <div className={styles.actionContainer}>
                     <div className={styles.pagination}>
                         <IndexedPagination
-                            itemSize={searchedElements.length}
-                            perPage={perPage}
+                            itemSize={availableElements.length}
+                            perPage={numPerPage}
                             onChange={showPage} />
                     </div>
-                    <BtnBasic.Default onClick={selected}>continue</BtnBasic.Default>
+                    <BtnBasic.Default onClick={handleContinue}>continue</BtnBasic.Default>
                 </div>
             </div>
         </FadingModal>
     )
 });
+
+/**
+ * create a selectable element
+ * @param {string} title 
+ * @param {number} index 
+ */
+export const createSelectableElement = (title, index) => { return { title, index } };

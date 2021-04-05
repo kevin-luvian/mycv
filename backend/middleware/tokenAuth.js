@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 const resf = require("../routes/responseFactory");
-const UserRepo = require("../repository/userRepository");
-const UserRole = require("../model/UserRole");
+const userRepo = require("../repository/userRepository");
+const access = require("../model/Access");
 require("dotenv").config();
-
 
 const debug = require("../util/utils").log("middleware:tokenAuth");
 
@@ -12,8 +11,11 @@ const setLocalsToken = (res, token) => { res.locals.token = token; };
 const getLocalsToken = (res) => res.locals.token;
 const convertToken = ({ username }) => { return { username }; }
 
+const setLocalsUser = (res, user) => { res.locals.user = user; }
+const getLocalsUser = (res) => res.locals.user;
+
 // main validation functions
-const validateToken = (req, res) => {
+const validateToken = (req) => {
     const authorizationHeader = req.header("Authorization");
     try {
         const token = jwt.verify(authorizationHeader, process.env.JWT_TOKEN_SECRET);
@@ -24,26 +26,34 @@ const validateToken = (req, res) => {
     }
 }
 const validateRole = async (req, res, next, role) => {
-    const token = validateToken(req, res);
+    const token = validateToken(req);
     if (!token) return resf.r401(res, "invalid token");
 
-    const user = await UserRepo.findByUsername(token.username);
+    const user = await userRepo.findByUsername(token.username);
     if (!user) return resf.r401(res, "user not found");
 
-    if (UserRole.hasAccess(role, user.role)) next();
+    if (access.roleAccess(role, user.role)) next();
     else resf.r401(res, "unauthorized");
 }
 
 // role adapters
-const admin = (req, res, next) => validateRole(req, res, next, UserRole.admin);
-const superadmin = (req, res, next) => validateRole(req, res, next, UserRole.superadmin);
+const admin = (req, res, next) => validateRole(req, res, next, access.userRole.admin);
+const superadmin = (req, res, next) => validateRole(req, res, next, access.userRole.superadmin);
 const valid = (req, res, next) => {
-    const token = validateToken(req, res);
+    const token = validateToken(req);
     if (token) next();
     else resf.r401(res, "invalid token");
 }
 
+const parseTokenUser = async (req, res, next) => {
+    const token = validateToken(req);
+    const username = token ? token.username : null;
+    const user = await userRepo.findByUsername(username);
+    setLocalsUser(res, user);
+    next();
+}
+
 module.exports = {
-    valid, admin, superadmin,
-    setLocalsToken, getLocalsToken
+    valid, admin, superadmin, parseTokenUser,
+    setLocalsToken, getLocalsToken, getLocalsUser
 };

@@ -79,6 +79,14 @@ const ChooseRootDirIDInput = forwardRef(({ className, directory, onChange }, ref
     )
 })
 
+export const EditImagesViewer = () => {
+    return (
+        <Fragment>
+            <h1>Edit Images Viewer</h1>
+        </Fragment>
+    );
+}
+
 const typeOptions = [
     optionItem("public", 0),
     optionItem("private", 1),
@@ -87,10 +95,10 @@ const typeOptions = [
 const EditableDirectoryComponent = forwardRef(({ directory, isRoot, leftMargin }, ref) => {
     useImperativeHandle(ref, () => ({
         propagate() {
-            if (isDeleted || Object.entries(state).length === 0) return null;
-            if (!state?.childrens?.length > 0) return state;
+            if (isDeleted || Object.entries(state).length === 0) return null; // is deleted
+            if (!state?.childrens?.length > 0) return state; // no childrens
             const childDirs = [];
-            childRefs.current.forEach(cRef => {
+            childRefs.current.forEach(cRef => { // iterate through childrens
                 const dir = cRef?.propagate();
                 if (dir) childDirs.push(dir);
             });
@@ -104,7 +112,7 @@ const EditableDirectoryComponent = forwardRef(({ directory, isRoot, leftMargin }
 
     const changeState = data => setState({ ...state, ...data });
 
-    useEffect(() => setState(s => { return { ...s, ...parseDir(directory) } }), [directory]);
+    useEffect(() => setState(state => { return { ...state, ...parseDir(directory) } }), [directory]);
 
     const newChild = () => changeState({ childrens: state.childrens.concat([parseDir({})]) });
 

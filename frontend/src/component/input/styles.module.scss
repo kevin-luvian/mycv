@@ -18,6 +18,15 @@
     }
 }
 
+.inputBorder {
+    border-radius: $button_border_radius;
+    border: solid 0.08em map-get($global, "muted");
+}
+
+.selectedFilename {
+    display: flex;
+}
+
 $searchFilterInputHeight: 2.5rem;
 .searchFilterInput {
     border-radius: $button_border_radius;

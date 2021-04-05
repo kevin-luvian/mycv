@@ -4,7 +4,7 @@ const tokenAuth = require("../middleware/tokenAuth");
 const resf = require("./responseFactory");
 const util = require("../util/utils");
 const userRepo = require("../repository/userRepository");
-const userRole = require("../model/UserRole");
+const access = require("../model/Access");
 const debug = util.log("routes:user");
 
 router.get("/", tokenAuth.admin, async (req, res) => {
@@ -47,7 +47,7 @@ router.delete("/:id", async (req, res) => {
 
 const parseReqObject = (req) => {
     let role = req.body.role || 0;
-    if (role && typeof role === "string") role = userRole.stringToNum(role);
+    if (role && typeof role === "string") role = access.getValueFromStr(access.userRole, role);
 
     return {
         username: req.body.username || "",

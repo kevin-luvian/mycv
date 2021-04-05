@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Directory = require("../model/Directory");
-const Visibility = require("../model/Visiblity");
+const access = require("../model/Access");
 const util = require("../util/utils");
 const debug = util.log("repository:myInfoRepository");
 
@@ -14,6 +14,15 @@ const retrieve = async () => {
     const dirs = await Directory.find({}).lean();
     const roots = getRoots(dirs);
     return roots.map(dir => fillChildrenRecursive(dir, dirs));
+}
+
+const retrieveRestrictedByRole = async role => {
+    const dirs = [];
+    (await retrieve()).forEach(dir => {
+        const restrictedDir = restrictByRole(role, dir);
+        if (restrictedDir) dirs.push(restrictedDir);
+    });
+    return dirs;
 }
 
 const purge = async () => {
@@ -49,11 +58,6 @@ const deleteManyByIds = async arrIDs => {
     return res.ok === 1;
 }
 
-const deleteOne = async dir => {
-    const res = await Directory.deleteOne({ _id: dir._id });
-    return res.ok === 1 && res.deletedCount === 1;
-}
-
 const updateOne = async dir => {
     const res = await Directory.updateOne({ _id: dir._id }, dir);
     return res.ok === 1;
@@ -66,7 +70,7 @@ const updateOne = async dir => {
  */
 const saveOne = dir => {
     delete dir._id;
-    dir.type = Visibility.sanitizeTypeNum(dir.type);
+    dir.type = access.containsValue(access.visibilityType, dir.type);
     return new Promise((resolve, reject) =>
         new Directory(dir).save((err, dir) => {
             if (err) {
@@ -111,7 +115,42 @@ const save = async rootDir => {
     }
 }
 
+const restrictByRole0 = (role, parentDir) => {
+    const modFunc = dir => {
+        if (access.visibilityAccess(role, parentDir.type))
+            return dir;
+        return null;
+    }
+    iterateDirModify()
+
+    if (!parentDir || !access.visibilityAccess(role, parentDir.type))
+        return null;
+
+    const childrenDirs = [];
+    if (parentDir.childrens && parentDir.childrens.length > 0) {
+        for (let i = 0; i < parentDir.childrens.length; i++) {
+            childrenDir = restrictByRole(role, parentDir.childrens[i]);
+            if (childrenDir) childrenDirs.push(childrenDir);
+        }
+    }
+
+    parentDir.childrens = childrenDirs;
+    return parentDir;
+}
+
+
+const restrictByRole = (role, parentDir) => {
+    const modFunc = dir => {
+        if (access.visibilityAccess(role, dir.type))
+            return dir;
+        return null;
+    }
+
+    return iterateDirModify(parentDir, modFunc);
+}
+
 module.exports = {
+    retrieveRestrictedByRole,
     deleteRootByID,
     findRoots,
     retrieve,
@@ -122,7 +161,31 @@ module.exports = {
     saveOne,
     findOneById,
     findFullById,
+    restrictByRole,
 };
+
+/**
+ * 
+ * @param {any} dir 
+ * @param {(dir:any) => any} modFunc 
+ * @returns {any}
+ */
+const iterateDirModify = (dir, modFunc) => {
+    if (dir) dir = modFunc(dir);
+    if (!dir) return null;
+
+    const newChildrens = [];
+    if (dir.childrens && dir.childrens.length > 0) {
+        for (let i = 0; i < dir.childrens.length; i++) {
+            const modifiedChild = modFunc(dir.childrens[i]);
+            if (modifiedChild)
+                newChildrens.push(modifiedChild);
+        }
+    }
+
+    dir.childrens = newChildrens;
+    return dir;
+}
 
 const deleteMissingDir = (rootDir, prevRootDir) => {
     const ids = spreadDirID(rootDir);

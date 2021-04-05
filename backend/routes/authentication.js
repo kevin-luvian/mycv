@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const tokenAuth = require("../middleware/tokenAuth");
+const access = require("../model/Access");
 const resf = require("../routes/responseFactory");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -26,21 +27,20 @@ router.post("/", async (req, res) => {
     if (user !== null)
         // password match
         if (bcrypt.compareSync(rObj.password, user.password))
-            return resf.r200(res, "authenticated", createToken(user.username));
+            return resf.r200(res, "authenticated", createToken(user));
     debug("POST", "authentication failed", "\nrObj:", rObj, "\nuser:", user);
     resf.r404(res, "authentication failed");
 });
 
 /** 
  * create token with username, expires in 2 hour
- * 
- * @param {string} username username
  */
-const createToken = username => {
+const createToken = (user) => {
     const time = Math.floor(Date.now() / 1000) + 60 * 60 * 2;
-    const token = jwt.sign({ username: username, exp: time }, process.env.JWT_TOKEN_SECRET);
+    const token = jwt.sign({ username: user.username, exp: time }, process.env.JWT_TOKEN_SECRET);
     return {
-        username: username,
+        username: user.username,
+        role: access.getKeyFromValue(access.userRole, user.role || -1),
         token: token,
         expires: time
     }

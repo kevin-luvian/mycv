@@ -1,56 +1,29 @@
-import { Fragment, useCallback, useState, useRef } from 'react';
-import { IndexedPagination } from "../component/pagination/Paginations";
+import { Fragment, useEffect, useState, useRef, useCallback } from 'react';
 import Notification from "../component/notification/Notification";
-
-import { Basic } from "../component/button/Button";
-import { SelectableModal, createSelectableElement } from "../component/modal/Modal";
-import favicons from "../util/favicons";
+import { FileIconInput } from "../component/input/Inputs";
+import { ChooseFileInput, ChooseMultiFileInput } from "../component/input/SearchFilterInput";
+import { SelectableModal, MultiSelectableModal } from "../component/modal/Modal";
+import { Get } from "../axios/Axios";
 
 export const Page = () => {
+    const [fileID, setFileID] = useState("605a02f93df2b9600beb25bb");
+    const [fileIDs, setFileIDs] = useState(["605a02f93df2b9600beb25bb", "60572ec1a4b828505ebd895d"]);
     document.title = "Test - Test Page";
 
-    const [itemSize, setItemSize] = useState(100);
-    const [curPage, setCurPage] = useState(-1);
-
-    const onChanged = useCallback((f, l) => {
-        Notification.create(`changed: f:${f} l: ${l}`);
-        setCurPage(f);
-    }, []);
+    const handleChange = fileIds => {
+        setFileIDs(fileIds);
+    }
 
     return (
         <Fragment>
-            <p>Curr Page:{curPage}</p>
-            <button onClick={() => setItemSize(500)}>Add</button>
-            <button onClick={() => setItemSize(100)}>Sub</button>
-            <IndexedPagination
-                onChange={onChanged}
-                itemSize={itemSize}
-                perPage={10} />
+            <ChooseMultiFileInput label="choose files"
+                values={fileIDs}
+                onChange={handleChange} />
+            {/* <ChooseFileInput label="choose fiel"
+                value={fileID}
+                onChange={setFileID} /> */}
         </Fragment>
     );
 }
 
-const iconElements = favicons.map(val => createSelectableElement(val.replace("fa-", ""), val));
-export const PModalPage = () => {
-    document.title = "Test - Test Page";
-
-    const modalRef = useRef();
-
-    const show = elem => Notification.create(elem);
-    const renderElement = (val, isActive) =>
-        <p style={{ fontSize: "0.8rem" }}><i className={"fa " + val} /> {val.replace("fa-", "")}</p>
-
-    return (
-        <Fragment>
-            <Basic.Default onClick={() => modalRef.current.open()}>Open Sesame</Basic.Default>
-            <SelectableModal
-                ref={modalRef}
-                elements={iconElements}
-                numPerPage={100}
-                onSelect={show}
-                renderElement={renderElement} />
-        </Fragment>
-    );
-}
-
-export default PModalPage;
+export default Page;
