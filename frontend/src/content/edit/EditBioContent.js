@@ -47,9 +47,7 @@ const Page = () => {
 
     useEffect(() => fetch(), []);
 
-    const updateState = (obj) => {
-        setState({ ...state, ...obj });
-    }
+    const updateState = (obj) => setState({ ...state, ...obj });
 
     const fetch = async () => {
         const res = await Get("/myinfo");

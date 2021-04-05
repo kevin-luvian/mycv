@@ -1,9 +1,10 @@
 import {
+    useRef,
     Fragment,
     useState,
-    useRef,
     useEffect,
     forwardRef,
+    useCallback,
     useImperativeHandle
 } from "react";
 import Button, { Basic as BtnBasic } from "../../component/button/Button";
@@ -19,8 +20,9 @@ import {
 import { Divider } from "../../component/decoration/TileBreaker";
 import { concat } from "../../util/utils";
 import styles from "./styles.module.scss";
-import { Post, Get, Delete, Put } from "../../axios/Axios";
+import { Post, Delete, Put } from "../../axios/Axios";
 import $ from "jquery";
+import { useStore, useDispatch, updateFiles } from "../../store/CacheStore";
 
 const FileInput = ({ onUploaded }) => {
     const [file, setFile] = useState(undefined);
@@ -146,7 +148,7 @@ const composeServerFile = ({ _id, filename, contentType, size, uploadDate, url, 
 
 const FileElement = ({ nameSearch, className, file, onChange }) => {
     const [open, setOpen] = useState(false);
-    const cFile = composeServerFile(file);
+    const cFile = useCallback(() => composeServerFile(file), [file]);
 
     const deleteModalRef = useRef();
     const editModalRef = useRef();
@@ -157,10 +159,11 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
         $(contentRef.current).slideUp(),
         [open]);
 
-    const showThis = () => cFile.filename.toLowerCase().includes(nameSearch?.toLowerCase() ?? "");
+    const showThis = useCallback(() =>
+        cFile().filename.toLowerCase().includes(nameSearch?.toLowerCase() ?? ""), [cFile, nameSearch]);
 
     const deleteFile = async () => {
-        const res = await Delete("/file/" + cFile._id);
+        const res = await Delete("/file/" + cFile()._id);
         if (res.success) {
             Notification.create(res.message, Notification.type.success);
             onChange();
@@ -170,7 +173,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
         }
     }
 
-    const downloadFile = () => window.open(cFile.url, "_blank");
+    const downloadFile = () => window.open(cFile().url, "_blank");
 
     return (
         <Fragment>
@@ -181,12 +184,12 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
                         onContinue={deleteFile} />
                     <EditFileModal
                         ref={editModalRef}
-                        id={cFile._id}
-                        filename={cFile.filename}
-                        group={cFile.group}
+                        id={cFile()._id}
+                        filename={cFile().filename}
+                        group={cFile().group}
                         onChange={onChange} />
                     <div className={styles.header}>
-                        <div className={styles.title}><p>{cFile.filename}</p></div>
+                        <div className={styles.title}><p>{cFile().filename}</p></div>
                         <div className={styles.actions}>
                             <ColoredIcon
                                 color={iconColors.warning}
@@ -208,17 +211,17 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
                         </div>
                     </div>
                     <div className={styles.content} ref={contentRef}>
-                        {cFile.contentType.includes("image") &&
+                        {cFile().contentType.includes("image") &&
                             <div className="w-100 text-center mb-2">
-                                <img src={open && cFile.url} alt="" />
+                                <img src={open && cFile().url} alt="" />
                             </div>}
                         <div className={styles.contentDesc}>
-                            <p>group: {cFile.group}</p>
-                            <p>type: {cFile.contentType}</p>
-                            <p>size: {cFile.size}</p>
-                            <p>upload date: {cFile.uploadDate}</p>
+                            <p>group: {cFile().group}</p>
+                            <p>type: {cFile().contentType}</p>
+                            <p>size: {cFile().size}</p>
+                            <p>upload date: {cFile().uploadDate}</p>
                             <Divider className="mt-3 mb-2" />
-                            <p>{cFile.url}</p>
+                            <p>{cFile().url}</p>
                         </div>
                     </div>
                 </div>
@@ -228,38 +231,30 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
 }
 
 const Page = () => {
-    const [files, setFiles] = useState([]);
     const [search, setSearch] = useState("");
 
-    useEffect(() => {
-        const onRender = async () => {
-            await fetch();
-            Notification.create("file fetched");
-        }
-        onRender();
-    }, []);
+    const store = useStore();
+    const dispatch = useDispatch();
 
-    const fetch = async () => {
-        const res = await Get("/file");
-        if (res.success) setFiles(res.data);
-        else Notification.create(res.message, Notification.type.danger);
-    }
+    useEffect(() => updateFiles(store, dispatch), [store, dispatch]);
+
+    const reupdate = async () => updateFiles(store, dispatch, true);
 
     return (
         <Fragment>
             <h2 className="mb-4">Edit Files</h2>
-            <FileInput onUploaded={fetch} />
+            <FileInput onUploaded={reupdate} />
             <SearchFilterInput
                 placeholder="Search Files"
                 className="my-3 col-8 p-0 ml-auto"
                 onEnter={val => setSearch(val)} />
-            {files.map((file, index) =>
+            {store.files?.value?.map((file, index) =>
                 <FileElement
                     key={index}
                     nameSearch={search}
                     className="mb-2"
                     file={file}
-                    onChange={fetch} />)}
+                    onChange={reupdate} />)}
         </Fragment>
     );
 }

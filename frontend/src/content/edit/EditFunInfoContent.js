@@ -3,12 +3,12 @@ import {
     Fragment,
     useState,
     useRef,
+    useCallback,
 } from 'react';
 import FadingModal from "../../component/modal/FadingModal";
 import {
     SimpleValidation,
     SelectableModal,
-    createSelectableElement
 } from "../../component/modal/Modal";
 import { IconInput, TextInput, MultiTextInput } from "../../component/input/Inputs";
 import { FunCard, FunCardBorderless } from "../../component/card/FunCard";
@@ -162,12 +162,21 @@ const FunInfoForm = ({ className, parsedObj, formTitle, onSubmit }) => {
     )
 }
 
-const iconElements = favicons.map(val => createSelectableElement(val.replace("fa-", ""), val));
+const iconElements = favicons.map(value => {
+    return { title: value.replace("fa-", ""), value }
+});
 const ChooseIconInput = ({ className, value, onChange }) => {
     const modalRef = useRef();
 
-    const renderElement = val =>
-        <p style={{ fontSize: "0.8rem" }}><i className={"fa " + val} /> {val.replace("fa-", "")}</p>
+    const renderElement = index =>
+        <p style={{ fontSize: "0.8rem" }}>
+            <i className={"fa " + iconElements[index].value} /> {iconElements[index].title}
+        </p>
+
+    const valueIndex = useCallback(() =>
+        iconElements.findIndex(e => e.value === value.replace("fa ", "")), [value]);
+
+    const handleContinue = index => onChange?.("fa " + iconElements[index].value);
 
     return (
         <div className={className}>
@@ -181,9 +190,11 @@ const ChooseIconInput = ({ className, value, onChange }) => {
             <SelectableModal
                 ref={modalRef}
                 title="Find Icon"
-                elements={iconElements}
-                numPerPage={100}
-                onSelect={onChange}
+                data={iconElements}
+                titleKey={"title"}
+                perPage={100}
+                valueIndex={valueIndex()}
+                onContinue={handleContinue}
                 renderElement={renderElement} />
         </div>
     )

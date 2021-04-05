@@ -5,10 +5,8 @@ import { useState, useEffect, useCallback } from "react";
  * @param {string} key 
  * @param {any} data 
  */
-export const setStorage = (storage, key, data) => {
-    console.log("setting storage", "key:", key, "data:", data);
-    storage.setItem(key, JSON.stringify(data));
-}
+export const setStorage = (storage, key, data) => storage.setItem(key, JSON.stringify(data));
+
 /**
  * @param {Storage} storage 
  * @param {string} key 

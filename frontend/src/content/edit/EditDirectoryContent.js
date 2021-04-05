@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment } from "react";
+import { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useCallback } from "react";
 import { icons } from "../../component/decoration/Icons";
 import {
     IconInput,
@@ -11,7 +11,6 @@ import Notification from "../../component/notification/Notification";
 import {
     SimpleValidation,
     SelectableModal,
-    createSelectableElement
 } from "../../component/modal/Modal";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 
@@ -41,23 +40,21 @@ const ChooseRootDirIDInput = forwardRef(({ className, directory, onChange }, ref
 
     const fetchRoots = async () => {
         const res = await Get("/directory");
-        if (res.success) {
-            const directories = res.data.map(dir => {
-                const parsedDir = parseDir(dir);
-                return createSelectableElement(parsedDir.title, parsedDir);
-            })
-            setRootDirs(directories);
-        }
+        if (res.success)
+            setRootDirs(res.data.map(dir => parseDir(dir)));
         res.notify();
     }
 
-    const renderElement = (dir, isActive) =>
-        <div>
-            <p>{dir.title}</p>
-            {isActive && <p>id: {dir._id}</p>}
-        </div>
+    const renderElement = useCallback((index, isActive) =>
+        <div key={index}>
+            <p>{rootDirs[index].title}</p>
+            {isActive && <p>id: {rootDirs[index]._id}</p>}
+        </div>, [rootDirs]);
 
-    const handleSelect = dir => onChange?.(dir);
+    const valueIndex = useCallback(() =>
+        rootDirs.findIndex(d => d._id === directory._id), [directory, rootDirs]);
+
+    const handleContinue = index => onChange?.(rootDirs[index]);
 
     return (
         <div className={className}>
@@ -71,9 +68,11 @@ const ChooseRootDirIDInput = forwardRef(({ className, directory, onChange }, ref
             <SelectableModal
                 ref={modalRef}
                 title="Find Icon"
-                elements={rootDirs}
-                numPerPage={100}
-                onSelect={handleSelect}
+                data={rootDirs}
+                titleKey="title"
+                valueIndex={valueIndex()}
+                perPage={100}
+                onContinue={handleContinue}
                 renderElement={renderElement} />
         </div>
     )

@@ -75,10 +75,8 @@ export const SelectableModal = forwardRef((
         [data, titleKey]);
 
     // handle search query
-    useEffect(() => {
-        console.log("searching", elements, "for", search, "res", elements.filter(e => containStr(e.title, search)));
-        setAvailableElements(elements.filter(e => containStr(e.title, search)))
-    }, [search, elements]);
+    useEffect(() =>
+        setAvailableElements(elements.filter(e => containStr(e.title, search))), [search, elements]);
 
     // handle page change
     const showPage = useCallback((firstIndex, lastIndex) =>
