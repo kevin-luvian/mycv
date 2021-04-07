@@ -221,7 +221,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
                             <p>size: {cFile().size}</p>
                             <p>upload date: {cFile().uploadDate}</p>
                             <Divider className="mt-3 mb-2" />
-                            <p>{cFile().url}</p>
+                            <p style={{ overflowWrap: "break-word" }}>{cFile().url}</p>
                         </div>
                     </div>
                 </div>

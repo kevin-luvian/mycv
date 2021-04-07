@@ -19,8 +19,11 @@ $navbar: (
 
 $zIndex: (
   toolbar: 10,
+  toolbarMenu: 7,
   modal: 15,
   notification: 20,
+  carouselComponent: 5,
+  carouselImg: 3,
 );
 
 $canvas_border_radius: 2rem;

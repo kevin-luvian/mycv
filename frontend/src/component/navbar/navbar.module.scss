@@ -114,7 +114,7 @@ li {
 
 #links {
     // location
-    z-index: 1;
+    z-index: map-get($zIndex, "toolbarMenu");
     display: block;
     position: absolute;
     top: map-get($navbar, "toolbar_height");

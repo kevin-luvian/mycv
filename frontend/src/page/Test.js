@@ -1,32 +1,31 @@
-import { Fragment, useState } from 'react';
-import { ChooseMultiFileInput } from "../component/input/SearchFilterInput";
-import { shouldUpdate, useStore, useDispatch, updateFiles } from "../store/CacheStore";
-import { Basic } from "../component/button/Button";
+import { Fragment, useCallback, useEffect, useState } from 'react';
+import { useStore, useDispatch, updateFiles } from "../store/CacheStore";
+import { ImageCarousel } from "../component/carousel/Carousel";
 
 export const Page = () => {
-    const [fileIDs, setFileIDs] = useState(["605a02f93df2b9600beb25bb", "60572ec1a4b828505ebd895d"]);
+    const [urls, setUrls] = useState([]);
     document.title = "Test - Test Page";
 
     const store = useStore();
     const dispatch = useDispatch();
 
-    const handleClick = () => {
-        console.log("sup", shouldUpdate(store, "files", 1));
-    }
+    useEffect(() => updateFiles(store, dispatch), [store, dispatch]);
 
-    const handleClick2 = async () => {
-        await updateFiles(store, dispatch);
-    }
+    useEffect(() => {
+        const imageFiles = store.files?.value?.filter(f => f.contentType?.includes("image")) ?? [];
+        setUrls(imageFiles.map(f => f.url));
+    }, [store.files]);
 
     return (
         <Fragment>
+            <ImageCarousel urls={[
+                "http://localhost:9000/api/file/6052c37d5504a52ac91f6052/Bwaaawasa.png",
+                "http://localhost:9000/api/file/60572ec1a4b828505ebd895d/The%20Hobbit.jpg",
+                "http://localhost:9000/api/file/6054620f7d881d1008498dff/favicon.ico",
+                "http://localhost:9000/api/file/60572ec1a4b828505ebd895d/The%20Hobbit.jpg"
+            ]} />
             <p>the files:</p>
-            {store.files?.value.map(f => <p>{f.url}</p>)}
-            <ChooseMultiFileInput label="choose files"
-                values={fileIDs}
-                onChange={setFileIDs} />
-            <Basic.Default onClick={handleClick}>click</Basic.Default>
-            <Basic.Danger onClick={handleClick2}>click</Basic.Danger>
+            {urls.map(url => <p>{url}</p>)}
         </Fragment>
     );
 }

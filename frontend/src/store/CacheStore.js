@@ -49,6 +49,20 @@ export default Store;
 /**
  * @param {any} store 
  * @param {any} dispatch 
+ * @param {()=>Promise<any>} onUpdate
+ * @param {boolean} updateNow
+ * @returns {Promise<void>}
+ */
+export const updateCache = async (store, dispatch, key, onUpdate, updateNow = false) => {
+    if (updateNow || shouldUpdate(store, key, 5)) {
+        const data = await onUpdate();
+        if (data) dispatch(actions.change(key, data));
+    }
+}
+
+/**
+ * @param {any} store 
+ * @param {any} dispatch 
  * @param {boolean} updateNow
  * @returns {Promise<any[]>}
  */

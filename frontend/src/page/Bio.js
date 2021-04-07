@@ -3,6 +3,13 @@ import { ProfileImage, Description } from "../content/BioContent";
 import { FunCard, FunCardBorderless } from "../component/card/FunCard";
 import { TitleBreak } from "../component/decoration/TileBreaker";
 import { Get } from "../axios/Axios";
+import { useStore, useDispatch, updateCache } from "../store/CacheStore";
+
+const fetchFunction = url => async () => {
+    const res = await Get(url);
+    res.notify();
+    return res.data;
+}
 
 const Page = () => {
     document.title = "Home - My Bio";
@@ -11,37 +18,31 @@ const Page = () => {
     const [whatIDos, setWhatIDos] = useState([]);
     const [funFacts, setFunFacts] = useState([]);
 
-    const fetchMyInfo = async () => {
-        const res = await Get("/myinfo");
-        if (res.success) setMyInfo(res.data);
-        res.notify();
-    }
-
-    const fetchWIDO = async () => {
-        const res = await Get("/funInfo/0");
-        if (res.success) setWhatIDos(res.data);
-    }
-
-    const fetchFF = async () => {
-        const res = await Get("/funInfo/1");
-        if (res.success) setFunFacts(res.data);
-    }
+    const store = useStore();
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        fetchMyInfo();
-        fetchWIDO();
-        fetchFF();
+        updateCache(store, dispatch, "myinfo", fetchFunction("/myinfo"));
+        updateCache(store, dispatch, "whatido", fetchFunction("/funInfo/0"));
+        updateCache(store, dispatch, "funfact", fetchFunction("/funInfo/1"));
+        // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        setMyInfo(store.myinfo?.value ?? {});
+        setWhatIDos(store.whatido?.value ?? []);
+        setFunFacts(store.funfact?.value ?? []);
+    }, [store]);
 
     return (
         <React.Fragment>
             <div className="row my-3">
                 <ProfileImage className="col-12 col-sm-5 px-4"
-                    imageURL={myInfo?.imageFile?.url} />
+                    imageURL={myInfo.imageFile?.url} />
                 <Description className="col-12 col-sm-7"
                     fullname={myInfo.fullname}
                     description={myInfo.description}
-                    cvURL={myInfo?.cvFile?.url} />
+                    cvURL={myInfo.cvFile?.url} />
             </div>
             <TitleBreak title="What I Do" className="pt-3" />
             <div className="row mt-4">
