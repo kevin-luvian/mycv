@@ -112,9 +112,6 @@ $transitionDuration: 0.4s;
         transform: translateY(-1.5rem);
         z-index: map-get($zIndex, "carouselComponent");
         .container {
-            margin: 0 auto;
-            display: flex;
-            width: fit-content;
             .circle {
                 cursor: pointer;
                 width: 0.7rem;

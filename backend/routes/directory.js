@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const fileMetadataRepo = require("../repository/fileMetadataRepository");
 const dirRepo = require("../repository/directoryRepository");
 const userRepo = require("../repository/userRepository");
 const access = require("../model/Access");
@@ -7,14 +8,23 @@ const resf = require("./responseFactory");
 const util = require("../util/utils");
 const debug = util.log("routes:directory");
 
+const parseDirImgUrl = async (req, dir) => {
+    const images = await Promise.all(dir.images.map(img => fileMetadataRepo.findFullById(req.headers.host, img)));
+    dir["images"] = images.map(img => img["url"]);
+    return dir;
+}
+
 router.get('/', tokenAuth.parseTokenUser, async (req, res) => {
     const user = tokenAuth.getLocalsUser(res);
     const uRole = user ? user.role : -1;
     resf.r200(res, "directories found", await dirRepo.retrieveRestrictedByRole(uRole));
 });
 
-router.get('/root', async (req, res) =>
-    resf.r200(res, "root directories found", await dirRepo.findRoots()));
+router.get('/root', async (req, res) => {
+    let dirs = await dirRepo.findRoots();
+    dirs = await Promise.all(dirs.map(dir => parseDirImgUrl(req, dir)));
+    resf.r200(res, "root directories found", dirs);
+});
 
 router.get('/everything', async (req, res) =>
     resf.r200(res, "directories found", await dirRepo.findAll()));
@@ -37,6 +47,14 @@ router.get('/:id', tokenAuth.parseTokenUser, async (req, res) => {
 
 router.post('/', tokenAuth.admin, async (req, res) => {
     const data = parseDirObject(req.body);
+    if (await dirRepo.save(data))
+        resf.r200(res, "directory saved");
+    else
+        resf.r500(res, "saving failed");
+});
+
+router.post('/new', tokenAuth.admin, async (req, res) => {
+    const data = parseDirObject({ title: "untitled", content: "[ ... ]", order: 0, type: "public" });
     if (await dirRepo.save(data))
         resf.r200(res, "directory saved");
     else

@@ -2,7 +2,7 @@ import styles from "./styles.module.scss";
 import { useState } from "react";
 import { concat } from "../../util/utils";
 
-export const ImageCarousel = ({ urls }) => {
+export const ImageCarousel = ({ urls, className }) => {
     const [currTarget, setCurrTarget] = useState(0);
 
     const changeTarget = index => {
@@ -13,7 +13,7 @@ export const ImageCarousel = ({ urls }) => {
     const isTarget = index => index === currTarget ? styles.target : "";
 
     return (
-        <div className={styles.imageCarousel}>
+        <div className={concat(styles.imageCarousel, className)}>
             <div className={styles.buttons}>
                 <div className={styles.prev} onClick={() => changeTarget(currTarget - 1)}>
                     <i className="fa fa-caret-left" />
@@ -25,16 +25,16 @@ export const ImageCarousel = ({ urls }) => {
 
             <div className={styles.carousel}>
                 {urls.map((url, index) =>
-                    <div className={concat(styles.imageBlock, styles.slideIn, isTarget(index))}>
-                        <img key={index} src={url} alt="carousel" />
+                    <div key={index} className={concat(styles.imageBlock, styles.slideIn, isTarget(index))}>
+                        <img src={url} alt="carousel" />
                     </div>
                 )}
             </div>
 
             <div className={styles.navigations}>
-                <div className={styles.container}>
+                <div className={concat(styles.container, "d-flex justify-content-center")}>
                     {urls.map((_, index) =>
-                        <div className={concat(styles.circle, isTarget(index))}
+                        <div key={index} className={concat(styles.circle, isTarget(index))}
                             onClick={() => changeTarget(index)} />
                     )}
                 </div>

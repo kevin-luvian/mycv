@@ -1,24 +1,22 @@
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useCallback } from "react";
 import { icons } from "../../component/decoration/Icons";
+import Button from "../../component/button/Button";
+import FindInPageIcon from '@material-ui/icons/FindInPage';
 import {
     IconInput,
     TextInput,
-    OptionInput, optionItem
+    MultiTextInput,
+    OptionInput,
+    optionItem,
+    SearchFilterInput
 } from "../../component/input/Inputs";
-import BlankCard from "../../component/card/BlankCard";
-import { Oval as OvalBtn } from "../../component/button/Button";
-import Notification from "../../component/notification/Notification";
-import {
-    SimpleValidation,
-    SelectableModal,
-} from "../../component/modal/Modal";
+import { BlankCard, DirectoryCard, EditDirectoryCard } from "../../component/card/BlankCard";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
-
-const emptyID = "";
+import styles from "./styles.module.scss";
 
 const parseDir = (dir) => {
     return {
-        _id: dir?._id ?? emptyID,
+        _id: dir?._id ?? "",
         type: dir?.type ?? '0',
         title: dir?.title ?? "empty",
         images: dir?.images ?? [],
@@ -28,193 +26,146 @@ const parseDir = (dir) => {
     };
 }
 
-const ChooseRootDirIDInput = forwardRef(({ className, directory, onChange }, ref) => {
-    useImperativeHandle(ref, () => ({
-        refetch() { fetchRoots(); }
-    }))
-    const [rootDirs, setRootDirs] = useState([]);
+const EditPage = ({ id, changePage }) => {
+    const [directory, setDirectory] = useState(parseDir());
 
-    const modalRef = useRef();
+    useEffect(() => getDirectoryInfo(), []);
 
-    useEffect(() => fetchRoots(), []);
+    const updateDirectory = (attr) => setDirectory({ ...directory, ...attr });
 
-    const fetchRoots = async () => {
-        const res = await Get("/directory");
-        if (res.success)
-            setRootDirs(res.data.map(dir => parseDir(dir)));
+    const getDirectoryInfo = async () => {
+        const res = await Get("/directory/" + id);
+        if (res.success) setDirectory(parseDir(res.data));
         res.notify();
     }
 
-    const renderElement = useCallback((index, isActive) =>
-        <div key={index}>
-            <p>{rootDirs[index].title}</p>
-            {isActive && <p>id: {rootDirs[index]._id}</p>}
-        </div>, [rootDirs]);
-
-    const valueIndex = useCallback(() =>
-        rootDirs.findIndex(d => d._id === directory._id), [directory, rootDirs]);
-
-    const handleContinue = index => onChange?.(rootDirs[index]);
-
-    return (
-        <div className={className}>
-            <IconInput
-                disabled
-                label="Root ID"
-                icon={icons.folderSharp}
-                value={directory._id || ""}
-                onClick={() => modalRef.current.open()} />
-
-            <SelectableModal
-                ref={modalRef}
-                title="Find Icon"
-                data={rootDirs}
-                titleKey="title"
-                valueIndex={valueIndex()}
-                perPage={100}
-                onContinue={handleContinue}
-                renderElement={renderElement} />
-        </div>
-    )
-})
-
-export const EditImagesViewer = () => {
     return (
         <Fragment>
-            <h1>Edit Images Viewer</h1>
+
+            <TextInput
+                label="title"
+                value={directory.title}
+                onChange={value => updateDirectory({ title: value })} />
+
+            <MultiTextInput
+                label="content"
+                rowsMax={10}
+                value={directory.content}
+                onChange={value => updateDirectory({ content: value })} />
+
+            <p>{directory?._id}</p>
+            <p>{directory?.title}</p>
+            <p>{directory?.content}</p>
+            <p>{directory?.type}</p>
         </Fragment>
-    );
+    )
 }
 
-const typeOptions = [
-    optionItem("public", 0),
-    optionItem("private", 1),
-    optionItem("hidden", 2),
-]
-const EditableDirectoryComponent = forwardRef(({ directory, isRoot, leftMargin }, ref) => {
-    useImperativeHandle(ref, () => ({
-        propagate() {
-            if (isDeleted || Object.entries(state).length === 0) return null; // is deleted
-            if (!state?.childrens?.length > 0) return state; // no childrens
-            const childDirs = [];
-            childRefs.current.forEach(cRef => { // iterate through childrens
-                const dir = cRef?.propagate();
-                if (dir) childDirs.push(dir);
-            });
-            return { ...state, childrens: childDirs };
+const MainPage = ({ changePage }) => {
+    const [rootDirs, setRootDirs] = useState([]);
+    const [dirShown, setDirShown] = useState([]);
+    const [search, setSearch] = useState("");
+
+    useEffect(() => fetchRoots(), []);
+    // useEffect(() => console.log(rootDirs), [rootDirs]);
+    useEffect(() => updateDirShown(), [search, rootDirs]);
+
+    const fetchRoots = async () => {
+        const res = await Get("/directory/root");
+        if (res.success) {
+            console.log(res.data);
+            setRootDirs(res.data.map(dir => parseDir(dir)));
         }
-    }))
-
-    const childRefs = useRef([]);
-    const [state, setState] = useState({});
-    const [isDeleted, setIsDeleted] = useState(false);
-
-    const changeState = data => setState({ ...state, ...data });
-
-    useEffect(() => setState(state => { return { ...state, ...parseDir(directory) } }), [directory]);
-
-    const newChild = () => changeState({ childrens: state.childrens.concat([parseDir({})]) });
-
-    const pushRef = (ref, index) => {
-        if (childRefs.current.length <= index)
-            childRefs.current.push(ref);
-        childRefs.current[index] = ref;
+        res.notify();
     }
 
-    if (isDeleted) return <Fragment />;
+    const stringIncludes = (strA = "", strB = "") =>
+        strA.toLowerCase().includes(strB.toLowerCase());
+
+    const updateDirShown = () => {
+        setDirShown(rootDirs.filter(dir => stringIncludes(dir.title, search)));
+        console.log("updating dir shown")
+    }
+
+    const onCreate = async () => {
+        const res = await Post("/directory/new");
+        if (res.success) fetchRoots();
+        res.notify();
+    }
+
+    const onDelete = async id => {
+        const res = await Delete("/directory/" + id);
+        if (res.success) fetchRoots();
+        res.notify();
+    }
+
+    const onEdit = (title, id) => { changePage(title, id) }
+
     return (
         <Fragment>
-            <BlankCard className="p-4 mb-3" style={{ marginLeft: `${leftMargin ?? 0}px` }}>
-                <TextInput
-                    label="Title"
-                    value={state?.title}
-                    onChange={val => changeState({ title: val })} />
-                <TextInput
-                    label="Content"
-                    value={state?.content}
-                    onChange={val => changeState({ content: val })} />
-                <OptionInput
-                    label="Type"
-                    selections={typeOptions}
-                    value={state?.type ?? 0}
-                    onChange={val => changeState({ type: val })} />
-                <div className="text-center">
-                    {!isRoot &&
-                        <OvalBtn.Dark
-                            className="mr-3"
-                            onClick={() => setIsDeleted(true)}>Delete</OvalBtn.Dark>
-                    }
-                    <OvalBtn.Default onClick={newChild}>New Directory</OvalBtn.Default>
+            <div className="row my-3 p-0">
+                <div className="col-10">
+                    <SearchFilterInput
+                        placeholder="Search Files"
+                        onChange={val => setSearch(val)} />
                 </div>
-            </BlankCard>
-            {state?.childrens?.map((dir, index) =>
-                <EditableDirectoryComponent
-                    key={index}
-                    directory={dir}
-                    ref={ref => pushRef(ref, index)}
-                    leftMargin={(leftMargin ?? 0) + 15} />
-            )}
-        </Fragment>
-    )
-})
+                <div className="col-2">
+                    <Button className="w-100 h-100" onClick={onCreate}>Create</Button>
+                </div>
+            </div>
 
-const Page = () => {
-    const rootRef = useRef();
-    const chooseRootInputRef = useRef();
-    const modalRefs = useRef([]);
-    const [dir, setDir] = useState(parseDir({}));
-
-    const postRoot = rootDirectory => Post("/directory", rootDirectory);
-    const putRoot = rootDirectory => Put("/directory/" + rootDirectory._id, rootDirectory);
-    const handleSumbit = async () => {
-        const rootDir = rootRef.current.propagate();
-        let res;
-        if (dir._id === emptyID) res = await postRoot(rootDir);
-        else res = await putRoot(rootDir);
-        if (res.success) refreshData();
-        res.notify();
-    }
-    const deleteRoot = async () => {
-        Notification.create("deleting directory");
-        const res = await Delete(`/directory/${dir._id}`);
-        if (res.success) refreshData();
-        res.notify();
-    }
-    const refreshData = () => {
-        chooseRootInputRef.current.refetch();
-        setDir(parseDir({}));
-    }
-    const resetRoot = () => setDir(parseDir());
-
-    const pushRef = (ref, index) => {
-        if (modalRefs.current.length <= index)
-            modalRefs.current.push(ref);
-        modalRefs.current[index] = ref;
-    }
-
-    const openModalRef = index => modalRefs.current[index].open();
-
-    return (
-        <Fragment>
-            <SimpleValidation ref={ref => pushRef(ref, 0)}
-                title="Reset this directory with empty value?"
-                onContinue={resetRoot} />
-            <SimpleValidation ref={ref => pushRef(ref, 1)}
-                title="Permanently delete the whole directory?"
-                onContinue={deleteRoot} />
-            <SimpleValidation ref={ref => pushRef(ref, 2)}
-                title="Save this directory?"
-                onContinue={handleSumbit} />
-            <h2 className="mb-4">Edit Directory</h2>
-            <ChooseRootDirIDInput ref={chooseRootInputRef} directory={dir} onChange={setDir} />
-            <EditableDirectoryComponent ref={rootRef} isRoot directory={dir} />
-            <div className="text-center">
-                <OvalBtn.Dark className="mr-3" onClick={() => openModalRef(0)}>Clear</OvalBtn.Dark>
-                <OvalBtn.Danger className="mr-3" onClick={() => openModalRef(1)}>Delete</OvalBtn.Danger>
-                <OvalBtn.Default onClick={() => openModalRef(2)}>Submit</OvalBtn.Default>
+            <div className="row">
+                {dirShown?.map((dir, index) =>
+                    <div key={index} className="col-6 px-3">
+                        <EditDirectoryCard
+                            className="mb-3"
+                            title={dir.title}
+                            imgUrls={dir.images}
+                            description={dir.content}
+                            onEdit={() => onEdit(dir.title, dir._id)}
+                            onDelete={() => onDelete(dir._id)} />
+                    </div>
+                )}
             </div>
         </Fragment>
     );
 }
 
-export default Page;
+const ViewPage = () => {
+    const [previousDirectories, setPreviousDirectories] = useState([{ title: "home", id: "" }]);
+    const [currentDirectory, setCurrentDirectory] = useState({ title: "home", id: "" });
+
+    useEffect(() => console.log(previousDirectories), [previousDirectories]);
+    // useEffect(() => modifyPreviousDir, [currentDirectory]);
+
+    const modifyPreviousDir = (title, id) => {
+        for (let i = 0; i < previousDirectories.length; i++) {
+            if (id === previousDirectories[i].id) {
+                setPreviousDirectories(previousDirectories.slice(0, i + 1));
+                return
+            }
+        }
+        setPreviousDirectories([...previousDirectories, { title, id }]);
+    }
+
+    const changeDir = (title, id) => {
+        modifyPreviousDir(title, id)
+        setCurrentDirectory({ title, id });
+    }
+
+    return (
+        <Fragment>
+            <h2 className="mb-4">Edit Directory</h2>
+            <div className="mb-3">
+                {previousDirectories?.map((dir, index) =>
+                    <a key={index} onClick={() => changeDir(dir.title, dir.id)}> /{dir.title}</a>)}
+            </div>
+            {currentDirectory.id === "" ?
+                <MainPage changePage={changeDir} /> :
+                <EditPage id={currentDirectory.id}
+                    changePage={changeDir} />}
+        </Fragment>
+    )
+}
+
+export default ViewPage;
