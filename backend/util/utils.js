@@ -52,8 +52,14 @@ const constraint = (minVal, maxVal, val) => Math.max(minVal, Math.min(maxVal, va
  */
 const leanDocsCopy = arr => arr.map(val => Object.assign({}, val._doc));
 
+const cleanNull = arr => {
+    if (arr) return arr.filter(val => val !== null);
+    return [];
+}
+
 module.exports = {
     log,
+    cleanNull,
     constraint,
     stringToList,
     leanDocsCopy,

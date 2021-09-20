@@ -32,6 +32,8 @@ const purge = async () => {
 
 const findOneById = id => Directory.findOne({ _id: id }).lean();
 
+const findManyByIds = ids => Promise.all(util.cleanNull(ids).map(id => findOneById(id)));
+
 const findFullById = async id => {
     const mID = util.stringToMongooseId(id);
     if (!mID) return null;
@@ -93,16 +95,22 @@ const saveOrUpdateOne = async dir => {
     return await saveOne(dir);
 }
 
-const deleteRootByID = async rootID => {
-    const rootDir = await findFullById(rootID);
-    const dirIDs = spreadDirID(rootDir);
-    return deleteManyByIds(dirIDs);
+const deleteDirectoryByID = async id => {
+    const allID = await findChildrensID(id);
+    await deleteManyByIds(allID);
 }
 
-const update = async rootDir => {
-    const prevDir = await findFullById(rootDir._id);
-    deleteMissingDir(rootDir, prevDir);
-    await saveOrUpdateChildrensRecursive(rootDir);
+const findChildrensID = async id => {
+    try {
+        const dir = await findOneById(id);
+        const childrensID = [id];
+        for (let i = 0; i < dir.childrens.length; i++) {
+            childrensID.concat(findChildrensID(dir.childrens[i]));
+        }
+        return childrensID;
+    } catch (err) {
+        return [id];
+    }
 }
 
 const save = async rootDir => {
@@ -151,17 +159,18 @@ const restrictByRole = (role, parentDir) => {
 
 module.exports = {
     retrieveRestrictedByRole,
-    deleteRootByID,
     findRoots,
     retrieve,
     findAll,
     purge,
     save,
-    update,
     saveOne,
+    updateOne,
     findOneById,
     findFullById,
+    findManyByIds,
     restrictByRole,
+    deleteDirectoryByID,
 };
 
 /**
@@ -210,8 +219,11 @@ const spreadDir = parentDir => {
     let childrenDir = [];
     if (parentDir.childrens && parentDir.childrens.length > 0) {
         for (let i = 0; i < parentDir.childrens.length; i++) {
-            childrenIDs.push(parentDir.childrens[i]._id);
-            childrenDir = childrenDir.concat(spreadDir(parentDir.childrens[i]));
+            const cID = parentDir.childrens[i]._id;
+            if (cID) {
+                childrenIDs.push(cID);
+                childrenDir = childrenDir.concat(spreadDir(parentDir.childrens[i]));
+            }
         }
     }
     return [{ ...parentDir, childrens: childrenIDs }].concat(childrenDir);

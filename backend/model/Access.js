@@ -51,7 +51,8 @@ const visibilityAccess = (role, targetType) => {
         case visibilityType.public:
             return true;
         default:
-            return false;
+            return role === userRole.admin
+                || role === userRole.superadmin;
     }
 }
 

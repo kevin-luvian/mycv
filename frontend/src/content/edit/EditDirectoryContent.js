@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useCallback } from "react";
-import { icons } from "../../component/decoration/Icons";
+import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons";
+import { Divider } from "../../component/decoration/TileBreaker";
+import { ImageCarousel } from "../../component/carousel/Carousel";
 import Button from "../../component/button/Button";
 import FindInPageIcon from '@material-ui/icons/FindInPage';
 import {
@@ -10,7 +12,10 @@ import {
     optionItem,
     SearchFilterInput
 } from "../../component/input/Inputs";
+import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
 import { BlankCard, DirectoryCard, EditDirectoryCard } from "../../component/card/BlankCard";
+import { SimpleValidation } from "../../component/modal/Modal";
+import BorderlessCard from "../../component/card/BorderlessCard";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 import styles from "./styles.module.scss";
 
@@ -20,32 +25,100 @@ const parseDir = (dir) => {
         type: dir?.type ?? '0',
         title: dir?.title ?? "empty",
         images: dir?.images ?? [],
+        imageURLs: [],
         content: dir?.content ?? "",
         order: dir?.order ?? 0,
-        childrens: dir?.childrens ?? []
+        childrens: dir?.childrens?.map(c => parseDir(c)) ?? []
     };
+}
+
+const SectionCard = ({ directory, onEdit, onDelete }) => {
+    const deleteModalRef = useRef();
+
+    return (
+        <Fragment>
+            <SimpleValidation ref={deleteModalRef} onContinue={() => onDelete(directory)} />
+            <BlankCard className="mb-2">
+                <div className="row">
+                    <p className="col-9">{directory.title}</p>
+                    <div className="col-3 text-right">
+                        <ColoredIcon
+                            icon={icons.edit}
+                            color={iconColors.warning}
+                            onClick={() => onEdit(directory)} />
+                        <ColoredIcon
+                            icon={icons.delete}
+                            color={iconColors.danger}
+                            onClick={() => deleteModalRef.current.open()} />
+                    </div>
+                </div>
+            </BlankCard>
+        </Fragment>
+    )
 }
 
 const EditPage = ({ id, changePage }) => {
     const [directory, setDirectory] = useState(parseDir());
 
-    useEffect(() => getDirectoryInfo(), []);
+    useEffect(() => getDirectoryInfo(), [id]);
+    useEffect(() => console.log(directory), [directory.images]);
+    useEffect(() => updateImageUrls(), [directory.images]);
 
     const updateDirectory = (attr) => setDirectory({ ...directory, ...attr });
 
+    const updateImageUrls = async () => {
+        const res = await Post("/file/find-urls", directory?.images ?? []);
+        updateDirectory({ imageURLs: res.data });
+    }
+
     const getDirectoryInfo = async () => {
-        const res = await Get("/directory/" + id);
+        const res = await Get(`/directory/${id}`);
         if (res.success) setDirectory(parseDir(res.data));
+        res.notify();
+    }
+
+    const onUpdate = async () => {
+        const res = await Put(`/directory/${directory._id}`, directory);
+        if (res.success) changePage(directory.title, directory._id);
+        res.notify();
+    }
+
+    const newSection = async () => {
+        const res = await Post(`/directory/${directory._id}/new`);
+        if (res.success) getDirectoryInfo();
+        res.notify();
+    }
+    const editSection = dir => changePage(dir.title, dir._id);
+    const deleteSection = async dir => {
+        const res = await Delete(`/directory/${directory._id}/section/${dir._id}`);
+        if (res.success) getDirectoryInfo();
         res.notify();
     }
 
     return (
         <Fragment>
+            <h5>Section</h5>
+            <div className="mb-3">
+                {directory?.childrens.map((dir, index) =>
+                    <SectionCard
+                        key={index}
+                        directory={dir}
+                        onEdit={editSection}
+                        onDelete={deleteSection} />
+                )}
+                <Button className="w-100" onClick={newSection}>New</Button>
+            </div>
 
             <TextInput
                 label="title"
                 value={directory.title}
                 onChange={value => updateDirectory({ title: value })} />
+
+            <ChooseMultiFileInput
+                label="images"
+                className="mb-3"
+                values={directory.images}
+                onChange={values => updateDirectory({ images: values })} />
 
             <MultiTextInput
                 label="content"
@@ -53,10 +126,11 @@ const EditPage = ({ id, changePage }) => {
                 value={directory.content}
                 onChange={value => updateDirectory({ content: value })} />
 
-            <p>{directory?._id}</p>
-            <p>{directory?.title}</p>
-            <p>{directory?.content}</p>
-            <p>{directory?.type}</p>
+            <Button className="w-100" onClick={onUpdate}>Update</Button>
+
+            <Divider className="my-5" />
+
+            <ImageCarousel className="mb-3" urls={directory.imageURLs} />
         </Fragment>
     )
 }
@@ -73,8 +147,12 @@ const MainPage = ({ changePage }) => {
     const fetchRoots = async () => {
         const res = await Get("/directory/root");
         if (res.success) {
-            console.log(res.data);
-            setRootDirs(res.data.map(dir => parseDir(dir)));
+            const dirs = await Promise.all(res.data.map(async dir => {
+                dir = parseDir(dir);
+                dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
+                return dir;
+            }));
+            setRootDirs(dirs);
         }
         res.notify();
     }
@@ -120,7 +198,7 @@ const MainPage = ({ changePage }) => {
                         <EditDirectoryCard
                             className="mb-3"
                             title={dir.title}
-                            imgUrls={dir.images}
+                            imgUrls={dir.imageURLs}
                             description={dir.content}
                             onEdit={() => onEdit(dir.title, dir._id)}
                             onDelete={() => onDelete(dir._id)} />
@@ -139,16 +217,18 @@ const ViewPage = () => {
     // useEffect(() => modifyPreviousDir, [currentDirectory]);
 
     const modifyPreviousDir = (title, id) => {
-        for (let i = 0; i < previousDirectories.length; i++) {
-            if (id === previousDirectories[i].id) {
-                setPreviousDirectories(previousDirectories.slice(0, i + 1));
-                return
+        let temp = previousDirectories;
+        for (let i = 0; i < temp.length; i++) {
+            if (id === temp[i].id) {
+                temp = temp.slice(0, i);
+                break;
             }
         }
-        setPreviousDirectories([...previousDirectories, { title, id }]);
+        setPreviousDirectories([...temp, { title, id }]);
     }
 
     const changeDir = (title, id) => {
+        console.log("changing dir", title, id)
         modifyPreviousDir(title, id)
         setCurrentDirectory({ title, id });
     }
@@ -158,7 +238,10 @@ const ViewPage = () => {
             <h2 className="mb-4">Edit Directory</h2>
             <div className="mb-3">
                 {previousDirectories?.map((dir, index) =>
-                    <a key={index} onClick={() => changeDir(dir.title, dir.id)}> /{dir.title}</a>)}
+                    <a key={index}
+                        className={styles.links}
+                        onClick={() => changeDir(dir.title, dir.id)}> /{dir.title}
+                    </a>)}
             </div>
             {currentDirectory.id === "" ?
                 <MainPage changePage={changeDir} /> :

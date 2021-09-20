@@ -99,11 +99,22 @@ const findFullById = async (host, id) => {
     return file;
 }
 
+const getUrls = async (host, ids) => {
+    const fileURLs = []
+    for (let i = 0; i < ids.length; i++) {
+        const fileid = util.stringToMongooseId(ids[i]);
+        const filename = (await findById(fileid)).filename;
+        fileURLs.push(fileUrl(host, fileid, filename));
+    }
+    return fileURLs;
+}
+
 module.exports = {
     retrieveLean,
     retrievePaginated,
     addFilesUrl,
     create,
+    getUrls,
     findById,
     updateById,
     deleteById,

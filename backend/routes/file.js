@@ -21,6 +21,12 @@ router.get('/:id/*', async (req, res) => {
     fileRepo.downloadStream(res, id);
 });
 
+router.post('/find-urls', async (req, res) => {
+    const fileIds = req.body;
+    const fileUrls = await fileMetadataRepo.getUrls(req.headers.host, fileIds);
+    resf.r200(res, "files found", fileUrls);
+});
+
 router.delete('/:id', tokenAuth.admin, async (req, res) => {
     const id = util.stringToMongooseId(req.params.id);
     if (!id) return resf.r400(res, "invalid id");

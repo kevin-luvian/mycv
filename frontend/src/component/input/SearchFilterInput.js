@@ -77,7 +77,7 @@ export const ChooseFileInput = ({ value, onChange, label }) => {
     )
 }
 
-export const ChooseMultiFileInput = ({ values, onChange, label }) => {
+export const ChooseMultiFileInput = ({ className, values, onChange, label }) => {
     const modalRef = useRef();
 
     const store = useStore();
@@ -115,7 +115,7 @@ export const ChooseMultiFileInput = ({ values, onChange, label }) => {
         </div>
 
     return (
-        <div className={concat(styles.inputBorder, "p-3")}>
+        <div className={concat(className, styles.inputBorder, "p-3")}>
             <p className="mb-2">{label ?? "Select Files"}</p>
 
             {getValuesFile().map((file, index) =>

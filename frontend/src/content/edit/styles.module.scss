@@ -1,6 +1,17 @@
 @import "../../style/theme";
 @import "../../style/variables";
 
+.links {
+    cursor: pointer;
+    transition: map-get($transition, "ease");
+    @include themify($themes) {
+        color: themed("primary") !important;
+        &:hover{
+            color: blue !important;
+        }
+    }
+}
+
 .sidemenu {
     // border-radius: 2rem;
     border-style: solid;
