@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": { },
   "scripts": {
-    "start": "node ./backend/bin/www",
-    "heroku-postbuild": "cd ./backend && npm install"
+    "start": "node ./backend/bin/www"
   }
 }
