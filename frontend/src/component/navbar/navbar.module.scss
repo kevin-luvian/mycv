@@ -49,8 +49,10 @@ li {
     flex-basis: content;
     padding: 0 15px;
     height: fit-content;
+    height: -moz-fit-content;
     p {
         width: fit-content;
+        width: -moz-fit-content;
         line-height: map-get($navbar, "logo_size");
     }
 
@@ -164,6 +166,7 @@ li {
         padding: 0;
         top: 0;
         width: fit-content;
+        width: -moz-fit-content;
 
         // looks
         box-shadow: unset;
@@ -177,6 +180,7 @@ li {
 
         li {
             width: fit-content;
+            width: -moz-fit-content;
             margin: 0;
             text-align: left;
             &:first-child {

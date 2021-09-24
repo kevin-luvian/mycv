@@ -29,7 +29,7 @@ export const TextInput = ({ className, label, value, onChange, ...attr }) =>
 
 export const NumberInput = ({ value, step, inputProps, onChange, ...attr }) => {
     function sanitize(inputVal) {
-        const regex = new RegExp("^[0-9]+$");
+        const regex = new RegExp("^[0-9]+[.]{0,1}[0-9]*");
         if (regex.test(inputVal)) onChange(inputVal);
     }
     return (

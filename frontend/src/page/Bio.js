@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { ProfileImage, Description } from "../content/BioContent";
-import { FunCard, FunCardBorderless } from "../component/card/FunCard";
-import { TitleBreak } from "../component/decoration/TileBreaker";
-import { Get } from "../axios/Axios";
+import { useEffect, useState } from 'react';
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
+import { FunCard, FunCardBorderless } from "../component/card/FunCard";
+import { ProfileImage, Description } from "../content/BioContent";
+import { TitleBreak } from "../component/decoration/TileBreaker";
+import ContentPadding from "./extra/ContentPadding";
+import { Get } from "../axios/Axios";
 
 const fetchFunction = url => async () => {
     const res = await Get(url);
@@ -18,11 +19,13 @@ const Page = () => {
     const [whatIDos, setWhatIDos] = useState([]);
     const [funFacts, setFunFacts] = useState([]);
 
+    // useEffect(() => console.log("myinfo", myInfo), [myInfo]);
+
     const store = useStore();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        updateCache(store, dispatch, "myinfo", fetchFunction("/myinfo"));
+        updateCache(store, dispatch, "myinfo", fetchFunction("/myinfo"), true);
         updateCache(store, dispatch, "whatido", fetchFunction("/funInfo/0"));
         updateCache(store, dispatch, "funfact", fetchFunction("/funInfo/1"));
         // eslint-disable-next-line
@@ -35,7 +38,7 @@ const Page = () => {
     }, [store]);
 
     return (
-        <React.Fragment>
+        <ContentPadding>
             <div className="row my-3">
                 <ProfileImage className="col-12 col-sm-5 px-4"
                     imageURL={myInfo.imageFile?.url} />
@@ -64,7 +67,7 @@ const Page = () => {
                         icon={val.favicon} />
                 )}
             </div>
-        </React.Fragment>
+        </ContentPadding>
     );
 }
 export default Page;

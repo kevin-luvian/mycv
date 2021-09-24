@@ -10,15 +10,6 @@ export const TitleBreak = ({ title, className, ...attr }) =>
         </div>
     </div>
 
-export const Banner = ({ title, className, ...attr }) => {
-    return (
-        <div className={concat(className, styles.banner)} {...attr}>
-            <h1>BANNER</h1>
-            <h1>{title}</h1>
-        </div>
-    )
-}
-
 export const Divider = ({ className, orientation }) => {
     return (
         <div className={concat(className, styles.divider)} />

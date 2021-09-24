@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useCallback } from "react";
+import { useEffect, useState, useRef, Fragment } from "react";
 import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
 import { ImageCarousel } from "../../component/carousel/Carousel";
@@ -12,6 +12,7 @@ import {
     optionItem,
     SearchFilterInput
 } from "../../component/input/Inputs";
+import parse from 'html-react-parser';
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
 import { BlankCard, DirectoryCard, EditDirectoryCard } from "../../component/card/BlankCard";
 import { SimpleValidation } from "../../component/modal/Modal";
@@ -61,7 +62,7 @@ const EditPage = ({ id, changePage }) => {
     const [directory, setDirectory] = useState(parseDir());
 
     useEffect(() => getDirectoryInfo(), [id]);
-    useEffect(() => console.log(directory), [directory.images]);
+    // useEffect(() => console.log(directory), [directory.images]);
     useEffect(() => updateImageUrls(), [directory.images]);
 
     const updateDirectory = (attr) => setDirectory({ ...directory, ...attr });
@@ -131,6 +132,7 @@ const EditPage = ({ id, changePage }) => {
             <Divider className="my-5" />
 
             <ImageCarousel className="mb-3" urls={directory.imageURLs} />
+            {parse(directory.content)}
         </Fragment>
     )
 }

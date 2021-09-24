@@ -16,15 +16,6 @@ const retrieve = async () => {
     return roots.map(dir => fillChildrenRecursive(dir, dirs));
 }
 
-const retrieveRestrictedByRole = async role => {
-    const dirs = [];
-    (await retrieve()).forEach(dir => {
-        const restrictedDir = restrictByRole(role, dir);
-        if (restrictedDir) dirs.push(restrictedDir);
-    });
-    return dirs;
-}
-
 const purge = async () => {
     const res = await Directory.deleteMany({});
     return res.ok === 1;
@@ -35,19 +26,10 @@ const findOneById = id => Directory.findOne({ _id: id }).lean();
 const findManyByIds = ids => Promise.all(util.cleanNull(ids).map(id => findOneById(id)));
 
 const findFullById = async id => {
-    const mID = util.stringToMongooseId(id);
-    if (!mID) return null;
-    const parentDir = await findOneById(mID);
-    if (!parentDir) return null;
-    const childrenDirs = [];
-    if (parentDir.childrens && parentDir.childrens.length > 0) {
-        for (let i = 0; i < parentDir.childrens.length; i++) {
-            childrenDirs.push(await findFullById(parentDir.childrens[i]));
-        }
-    }
-    // debug("findFullById", "child dirs", childrenDirs);
-    parentDir.childrens = childrenDirs;
-    return parentDir;
+    const dir = await findOneById(id);
+    if (dir !== null)
+        dir.childrens = await Promise.all(dir.childrens.map(id => findFullById(id)));
+    return dir;
 }
 
 /**
@@ -83,18 +65,6 @@ const saveOne = dir => {
     );
 }
 
-/**
- * @param {any} parentDir 
- * @returns {Promise<string>} id
- */
-const saveOrUpdateOne = async dir => {
-    if (util.stringToMongooseId(dir._id)) {
-        await updateOne(dir);
-        return dir._id;
-    }
-    return await saveOne(dir);
-}
-
 const deleteDirectoryByID = async id => {
     const allID = await findChildrensID(id);
     await deleteManyByIds(allID);
@@ -123,42 +93,7 @@ const save = async rootDir => {
     }
 }
 
-const restrictByRole0 = (role, parentDir) => {
-    const modFunc = dir => {
-        if (access.visibilityAccess(role, parentDir.type))
-            return dir;
-        return null;
-    }
-    iterateDirModify()
-
-    if (!parentDir || !access.visibilityAccess(role, parentDir.type))
-        return null;
-
-    const childrenDirs = [];
-    if (parentDir.childrens && parentDir.childrens.length > 0) {
-        for (let i = 0; i < parentDir.childrens.length; i++) {
-            childrenDir = restrictByRole(role, parentDir.childrens[i]);
-            if (childrenDir) childrenDirs.push(childrenDir);
-        }
-    }
-
-    parentDir.childrens = childrenDirs;
-    return parentDir;
-}
-
-
-const restrictByRole = (role, parentDir) => {
-    const modFunc = dir => {
-        if (access.visibilityAccess(role, dir.type))
-            return dir;
-        return null;
-    }
-
-    return iterateDirModify(parentDir, modFunc);
-}
-
 module.exports = {
-    retrieveRestrictedByRole,
     findRoots,
     retrieve,
     findAll,
@@ -169,95 +104,8 @@ module.exports = {
     findOneById,
     findFullById,
     findManyByIds,
-    restrictByRole,
     deleteDirectoryByID,
 };
-
-/**
- * 
- * @param {any} dir 
- * @param {(dir:any) => any} modFunc 
- * @returns {any}
- */
-const iterateDirModify = (dir, modFunc) => {
-    if (dir) dir = modFunc(dir);
-    if (!dir) return null;
-
-    const newChildrens = [];
-    if (dir.childrens && dir.childrens.length > 0) {
-        for (let i = 0; i < dir.childrens.length; i++) {
-            const modifiedChild = modFunc(dir.childrens[i]);
-            if (modifiedChild)
-                newChildrens.push(modifiedChild);
-        }
-    }
-
-    dir.childrens = newChildrens;
-    return dir;
-}
-
-const deleteMissingDir = (rootDir, prevRootDir) => {
-    const ids = spreadDirID(rootDir);
-    const prevIds = spreadDirID(prevRootDir);
-    const missingIds = prevIds.filter(id => !ids.includes(id));
-    return deleteManyByIds(missingIds);
-}
-
-/**
- * @param {any} parentDir 
- * @returns {string[]}
- */
-const spreadDirID = parentDir => spreadDir(parentDir).map(dir => dir._id + '');
-
-/**
- * @param {any} parentDir 
- * @returns {any[]}
- */
-const spreadDir = parentDir => {
-    if (!parentDir) return [];
-    const childrenIDs = [];
-    let childrenDir = [];
-    if (parentDir.childrens && parentDir.childrens.length > 0) {
-        for (let i = 0; i < parentDir.childrens.length; i++) {
-            const cID = parentDir.childrens[i]._id;
-            if (cID) {
-                childrenIDs.push(cID);
-                childrenDir = childrenDir.concat(spreadDir(parentDir.childrens[i]));
-            }
-        }
-    }
-    return [{ ...parentDir, childrens: childrenIDs }].concat(childrenDir);
-}
-
-const saveOrUpdateChildrensRecursive = async parentDir => {
-    const childrenIDs = [];
-    if (parentDir.childrens && parentDir.childrens.length > 0) {
-        for (let i = 0; i < parentDir.childrens.length; i++) {
-            childrenIDs.push(await saveOrUpdateChildrensRecursive(parentDir.childrens[i]));
-        }
-    }
-
-    parentDir.childrens = childrenIDs;
-    delete parentDir.root;
-
-    return await saveOrUpdateOne(parentDir);
-}
-
-const saveChildrensRecursive = async parentDir => {
-    const childrenIDs = [];
-    if (parentDir.childrens && parentDir.childrens.length > 0) {
-        for (let i = 0; i < parentDir.childrens.length; i++) {
-            childrenIDs.push(await saveChildrensRecursive(parentDir.childrens[i]));
-        }
-    }
-
-    // modify dir to save
-    parentDir.childrens = childrenIDs;
-    delete parentDir.root;
-
-    // return clause
-    return await saveOne(parentDir);
-}
 
 /**
  * filter array with root: true

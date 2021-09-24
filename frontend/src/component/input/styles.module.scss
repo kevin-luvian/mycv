@@ -33,6 +33,7 @@ $searchFilterInputHeight: 2.5rem;
     border: solid 0.08em map-get($global, "muted");
     display: flex;
     height: fit-content;
+    height: -moz-fit-content;
     .icon {
         padding: 0.7rem;
         width: $searchFilterInputHeight;

@@ -23,6 +23,7 @@ export const SimpleValidation = forwardRef(({ title, children, onContinue, onCan
         modalRef.current.close();
         onCancel?.();
     }
+
     return (
         <FadingModal className={styles.simpleValidation} ref={modalRef}>
             <h5 className="mb-3">{title ?? "Do you wish to continue with the operation?"}</h5>

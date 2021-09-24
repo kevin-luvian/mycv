@@ -21,9 +21,7 @@ const PageWrapper = ({ children }) => {
             <div className={styles.root}>
                 <div className={styles.canvas}>
                     <Navbar />
-                    <div className={concat(styles.content, "col-12 col-md-10 mx-auto")}>
-                        {children}
-                    </div>
+                    {children}
                     <div className={styles.footer}>
                         {/* <Divider className={styles.divider} /> */}
                         <p className={styles.copyright}>© 2020 All rights reserved.</p>

@@ -33,10 +33,13 @@ const Routers = () =>
     <Switch>
       <NavRoute path="/" exact component={Pages.Bio} />
       <NavRoute path="/test" exact component={Pages.Test} />
-      <NavRoute path="/resume" protect={true} exact component={Pages.Resume} />
-      <NavRoute path="/edit" protect={true} exact component={Pages.Edit} />
       <NavRoute path="/login" exact component={Pages.Login} />
       <NavRoute path="/logout" exact component={Pages.Logout} />
+      <NavRoute path="/resume" exact component={Pages.Resume} />
+      <NavRoute path="/contact" exact component={Pages.Contact} />
+      <NavRoute path="/project" exact component={Pages.Project} />
+      <NavRoute path="/project/:id" component={Pages.ProjectByID} />
+      <NavRoute path="/edit" protect={true} exact component={Pages.Edit} />
       <NavRoute component={Error.Err404} />
     </Switch>
   </BrowserRouter>

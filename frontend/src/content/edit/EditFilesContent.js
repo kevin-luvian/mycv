@@ -213,7 +213,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
                     <div className={styles.content} ref={contentRef}>
                         {cFile().contentType.includes("image") &&
                             <div className="w-100 text-center mb-2">
-                                <img src={open && cFile().url} alt="" />
+                                <img src={open ? cFile().url : ""} alt="" />
                             </div>}
                         <div className={styles.contentDesc}>
                             <p>group: {cFile().group}</p>

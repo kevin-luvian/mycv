@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
-import List from "@material-ui/icons/List";
-import styles from "./navbar.module.scss";
-import $ from "jquery";
-import MenuTracker from "./MenuTracker";
-import { isTokenExpired } from "../../util/utils";
 import { useStore } from "../../store/CVDataStore";
+import React, { useState, useEffect } from 'react';
+import { isTokenExpired } from "../../util/utils";
+import List from "@material-ui/icons/List";
+import { useSelector } from "react-redux";
+import styles from "./navbar.module.scss";
+import { Link } from 'react-router-dom';
+import MenuTracker from "./MenuTracker";
+import $ from "jquery";
 
 const publicMenu = [
     { name: "Home", url: "/", submenu: [] },
     { name: "Resume", url: "/resume", submenu: [] },
-    {
-        name: "Projects", url: "#", submenu: [
-            { name: "WaWa", url: "/x" },
-            { name: "Wowo", url: "/xz" }]
-    },
+    { name: "Project", url: "/project", submenu: [] },
+    // {
+    //     name: "Project", url: "#", submenu: [
+    //         { name: "WaWa", url: "/x" },
+    //         { name: "Wowo", url: "/xz" }]
+    // },
     { name: "Contact", url: "/contact", submenu: [] },
     { name: "Test", url: "/test", submenu: [] },
     { name: "Login", url: "/login", submenu: [] },

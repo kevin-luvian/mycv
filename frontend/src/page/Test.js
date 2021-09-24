@@ -25,7 +25,7 @@ export const Page = () => {
                 "http://localhost:9000/api/file/60572ec1a4b828505ebd895d/The%20Hobbit.jpg"
             ]} />
             <p>the files:</p>
-            {urls.map(url => <p>{url}</p>)}
+            {urls.map((url, i) => <p key={i}>{url}</p>)}
         </Fragment>
     );
 }

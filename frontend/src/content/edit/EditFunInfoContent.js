@@ -1,21 +1,12 @@
-import {
-    useEffect,
-    Fragment,
-    useState,
-    useRef,
-    useCallback,
-} from 'react';
+import { useEffect, Fragment, useState, useRef } from 'react';
 import FadingModal from "../../component/modal/FadingModal";
-import {
-    SimpleValidation,
-    SelectableModal,
-} from "../../component/modal/Modal";
-import { IconInput, TextInput, MultiTextInput } from "../../component/input/Inputs";
-import { FunCard, FunCardBorderless } from "../../component/card/FunCard";
+import { SimpleValidation } from "../../component/modal/Modal";
+import FavIconInput from "../../component/input/FavIconInput";
+import { TextInput, MultiTextInput } from "../../component/input/Inputs";
+import { FunCard, EditFunCard, EditFunCardBorderless } from "../../component/card/FunCard";
 import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons";
 import BlankCard from "../../component/card/BlankCard";
 import { Basic } from "../../component/button/Button";
-import favicons from "../../util/favicons";
 import { Get, Post, Delete, Put } from "../../axios/Axios";
 
 const whatIDoType = 0;
@@ -76,7 +67,6 @@ const parseFunInfo = ({ _id, title, favicon, description, type }) => {
 const FunELement = ({ obj, type, onChange }) => {
     const parsedObj = parseFunInfo(obj);
 
-    const deleteModalRef = useRef();
     const updateModalRef = useRef();
 
     const updateObj = async data => {
@@ -92,19 +82,6 @@ const FunELement = ({ obj, type, onChange }) => {
         onChange?.();
     }
 
-    const editComponent = (
-        <div className="mt-2">
-            <ColoredIcon
-                icon={icons.edit}
-                color={iconColors.warning}
-                onClick={() => updateModalRef.current.open()} />
-            <ColoredIcon
-                icon={icons.delete}
-                color={iconColors.danger}
-                onClick={() => deleteModalRef.current.open()} />
-        </div>
-    )
-
     return (
         <Fragment>
             <FadingModal ref={updateModalRef}>
@@ -113,18 +90,19 @@ const FunELement = ({ obj, type, onChange }) => {
                     onSubmit={updateObj}
                     formTitle={`Edit ${parsedObj.title}`} />
             </FadingModal>
-            <SimpleValidation ref={deleteModalRef} onContinue={deleteObj} />
             {type === whatIDoType ?
-                <FunCardBorderless
+                <EditFunCardBorderless
                     title={parsedObj.title}
                     description={parsedObj.description}
                     icon={parsedObj.favicon}
-                    editComponent={editComponent} /> :
-                <FunCard
+                    onUpdate={() => updateModalRef.current.open()}
+                    onDelete={deleteObj} /> :
+                <EditFunCard
                     title={parsedObj.title}
                     description={parsedObj.description}
                     icon={parsedObj.favicon}
-                    editComponent={editComponent} />}
+                    onUpdate={() => updateModalRef.current.open()}
+                    onDelete={deleteObj} />}
         </Fragment>
     )
 }
@@ -146,7 +124,7 @@ const FunInfoForm = ({ className, parsedObj, formTitle, onSubmit }) => {
         <Fragment>
             <h5>{formTitle ?? "Fun Form"}</h5>
             <div className="row mt-3">
-                <ChooseIconInput className="col-5" value={favicon} onChange={setFavicon} />
+                <FavIconInput className="col-5" value={favicon} onChange={setFavicon} />
                 <div className="col-7">
                     <TextInput label="title" value={title} onChange={setTitle} />
                 </div>
@@ -159,44 +137,6 @@ const FunInfoForm = ({ className, parsedObj, formTitle, onSubmit }) => {
                 <Basic.Default onClick={post}>Submit</Basic.Default>
             </div>
         </Fragment>
-    )
-}
-
-const iconElements = favicons.map(value => {
-    return { title: value.replace("fa-", ""), value }
-});
-const ChooseIconInput = ({ className, value, onChange }) => {
-    const modalRef = useRef();
-
-    const renderElement = index =>
-        <p style={{ fontSize: "0.8rem" }}>
-            <i className={"fa " + iconElements[index].value} /> {iconElements[index].title}
-        </p>
-
-    const valueIndex = useCallback(() =>
-        iconElements.findIndex(e => e.value === value.replace("fa ", "")), [value]);
-
-    const handleContinue = index => onChange?.("fa " + iconElements[index].value);
-
-    return (
-        <div className={className}>
-            <IconInput
-                label="fav-icon"
-                icon={icons.info}
-                value={value}
-                onChange={onChange}
-                onClick={() => modalRef.current.open()} />
-
-            <SelectableModal
-                ref={modalRef}
-                title="Find Icon"
-                data={iconElements}
-                titleKey={"title"}
-                perPage={100}
-                valueIndex={valueIndex()}
-                onContinue={handleContinue}
-                renderElement={renderElement} />
-        </div>
     )
 }
 

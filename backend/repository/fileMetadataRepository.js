@@ -103,8 +103,8 @@ const getUrls = async (host, ids) => {
     const fileURLs = []
     for (let i = 0; i < ids.length; i++) {
         const fileid = util.stringToMongooseId(ids[i]);
-        const filename = (await findById(fileid)).filename;
-        fileURLs.push(fileUrl(host, fileid, filename));
+        const file = await findById(fileid);
+        if (file) fileURLs.push(fileUrl(host, fileid, file.filename));
     }
     return fileURLs;
 }

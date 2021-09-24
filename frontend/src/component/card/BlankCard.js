@@ -12,7 +12,7 @@ export const BlankCard = ({ active, className, children, ...attr }) =>
         {children}
     </div>
 
-export const DirectoryCard = ({ title, imgUrls = [], description, className, children, ...attr }) =>
+export const DirectoryCard = ({ title, imgUrls = [], description, className, children, readMore }) =>
     <BlankCard className={concat(className, "p-3")}>
         {children}
         <h1>{title}</h1>
@@ -21,7 +21,8 @@ export const DirectoryCard = ({ title, imgUrls = [], description, className, chi
         <p>{description}</p>
         <div className="d-flex justify-content-end">
             <BtnOval.Default
-                style={{ padding: ".3rem .7rem" }}>
+                style={{ padding: ".3rem .7rem" }}
+                onClick={readMore}>
                 read more
             </BtnOval.Default>
         </div>
