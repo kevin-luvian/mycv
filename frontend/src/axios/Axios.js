@@ -4,8 +4,9 @@ import { actions } from "../redux/reducers/AuthReducer";
 import Notification from "../component/notification/Notification";
 
 const instance = axios.create({
-  baseURL: "http://localhost:9000/api"
-  // baseURL: process.env.CVEXPRESS_API_URL
+  baseURL: "https://kevinlh.herokuapp.com/api",
+  // baseURL: "http://localhost:9000/api",
+  // baseURL: process.env.CVEXPRESS_API_URL,
   // baseURL: "https://mycv.atkev.site",
 });
 
