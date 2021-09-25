@@ -1,37 +1,27 @@
-import { useEffect, useState, useRef, Fragment } from "react";
+import { useEffect, useState, useRef, useCallback, Fragment } from "react";
 import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
 import { ImageCarousel } from "../../component/carousel/Carousel";
 import Button from "../../component/button/Button";
-import FindInPageIcon from '@material-ui/icons/FindInPage';
-import {
-    IconInput,
-    TextInput,
-    MultiTextInput,
-    OptionInput,
-    optionItem,
-    SearchFilterInput
-} from "../../component/input/Inputs";
+import { TextInput, MultiTextInput, SearchFilterInput } from "../../component/input/Inputs";
 import parse from 'html-react-parser';
+import { Link } from 'react-router-dom';
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
-import { BlankCard, DirectoryCard, EditDirectoryCard } from "../../component/card/BlankCard";
+import { BlankCard, EditDirectoryCard } from "../../component/card/BlankCard";
 import { SimpleValidation } from "../../component/modal/Modal";
-import BorderlessCard from "../../component/card/BorderlessCard";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 import styles from "./styles.module.scss";
 
-const parseDir = (dir) => {
-    return {
-        _id: dir?._id ?? "",
-        type: dir?.type ?? '0',
-        title: dir?.title ?? "empty",
-        images: dir?.images ?? [],
-        imageURLs: [],
-        content: dir?.content ?? "",
-        order: dir?.order ?? 0,
-        childrens: dir?.childrens?.map(c => parseDir(c)) ?? []
-    };
-}
+const parseDir = (dir) => ({
+    _id: dir?._id ?? "",
+    type: dir?.type ?? '0',
+    title: dir?.title ?? "empty",
+    images: dir?.images ?? [],
+    imageURLs: [],
+    content: dir?.content ?? "",
+    order: dir?.order ?? 0,
+    childrens: dir?.childrens?.map(c => parseDir(c)) ?? []
+})
 
 const SectionCard = ({ directory, onEdit, onDelete }) => {
     const deleteModalRef = useRef();
@@ -61,22 +51,29 @@ const SectionCard = ({ directory, onEdit, onDelete }) => {
 const EditPage = ({ id, changePage }) => {
     const [directory, setDirectory] = useState(parseDir());
 
-    useEffect(() => getDirectoryInfo(), [id]);
     // useEffect(() => console.log(directory), [directory.images]);
-    useEffect(() => updateImageUrls(), [directory.images]);
 
-    const updateDirectory = (attr) => setDirectory({ ...directory, ...attr });
+    const updateDirectory = useCallback(
+        attr => setDirectory(d => ({ ...d, ...attr })),
+        [setDirectory])
 
-    const updateImageUrls = async () => {
-        const res = await Post("/file/find-urls", directory?.images ?? []);
-        updateDirectory({ imageURLs: res.data });
-    }
+    const updateImageUrls = useCallback(
+        async () => {
+            const res = await Post("/file/find-urls", directory?.images ?? []);
+            updateDirectory({ imageURLs: res.data });
+        },
+        [directory.images, updateDirectory])
 
-    const getDirectoryInfo = async () => {
-        const res = await Get(`/directory/${id}`);
-        if (res.success) setDirectory(parseDir(res.data));
-        res.notify();
-    }
+    const getDirectoryInfo = useCallback(
+        async () => {
+            const res = await Get(`/directory/${id}`);
+            if (res.success) setDirectory(parseDir(res.data));
+            res.notify();
+        },
+        [id])
+
+    useEffect(() => getDirectoryInfo(), [getDirectoryInfo]);
+    useEffect(() => updateImageUrls(), [updateImageUrls]);
 
     const onUpdate = async () => {
         const res = await Put(`/directory/${directory._id}`, directory);
@@ -142,30 +139,23 @@ const MainPage = ({ changePage }) => {
     const [dirShown, setDirShown] = useState([]);
     const [search, setSearch] = useState("");
 
-    useEffect(() => fetchRoots(), []);
-    // useEffect(() => console.log(rootDirs), [rootDirs]);
-    useEffect(() => updateDirShown(), [search, rootDirs]);
-
-    const fetchRoots = async () => {
-        const res = await Get("/directory/root");
-        if (res.success) {
-            const dirs = await Promise.all(res.data.map(async dir => {
-                dir = parseDir(dir);
-                dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
-                return dir;
-            }));
-            setRootDirs(dirs);
-        }
-        res.notify();
-    }
+    const fetchRoots = useCallback(
+        async () => {
+            const res = await Get("/directory/root");
+            if (res.success) {
+                const dirs = await Promise.all(res.data.map(async dir => {
+                    dir = parseDir(dir);
+                    dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
+                    return dir;
+                }));
+                setRootDirs(dirs);
+            }
+            res.notify();
+        },
+        [])
 
     const stringIncludes = (strA = "", strB = "") =>
         strA.toLowerCase().includes(strB.toLowerCase());
-
-    const updateDirShown = () => {
-        setDirShown(rootDirs.filter(dir => stringIncludes(dir.title, search)));
-        console.log("updating dir shown")
-    }
 
     const onCreate = async () => {
         const res = await Post("/directory/new");
@@ -180,6 +170,12 @@ const MainPage = ({ changePage }) => {
     }
 
     const onEdit = (title, id) => { changePage(title, id) }
+
+    // updating shown directory based on search result
+    useEffect(() =>
+        setDirShown(rootDirs.filter(dir => stringIncludes(dir.title, search))),
+        [search, rootDirs]);
+    useEffect(() => fetchRoots(), [fetchRoots]);
 
     return (
         <Fragment>
@@ -240,10 +236,10 @@ const ViewPage = () => {
             <h2 className="mb-4">Edit Directory</h2>
             <div className="mb-3">
                 {previousDirectories?.map((dir, index) =>
-                    <a key={index}
+                    <Link key={index}
                         className={styles.links}
                         onClick={() => changeDir(dir.title, dir.id)}> /{dir.title}
-                    </a>)}
+                    </Link>)}
             </div>
             {currentDirectory.id === "" ?
                 <MainPage changePage={changeDir} /> :

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useStore, useDispatch, updateFiles } from "../store/CacheStore";
 import { ImageCarousel } from "../component/carousel/Carousel";
 

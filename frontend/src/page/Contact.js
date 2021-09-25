@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
 import { Get } from '../axios/Axios';
-import { UnderlinedTitle, Banner } from '../component/decoration/Text';
+import { Banner } from '../component/decoration/Text';
 import { FunCardBorderless } from "../component/card/FunCard";
 import ContentPadding from "./extra/ContentPadding";
 

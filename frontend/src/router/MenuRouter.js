@@ -32,7 +32,6 @@ const Routers = () =>
   <BrowserRouter>
     <Switch>
       <NavRoute path="/" exact component={Pages.Bio} />
-      <NavRoute path="/test" exact component={Pages.Test} />
       <NavRoute path="/login" exact component={Pages.Login} />
       <NavRoute path="/logout" exact component={Pages.Logout} />
       <NavRoute path="/resume" exact component={Pages.Resume} />

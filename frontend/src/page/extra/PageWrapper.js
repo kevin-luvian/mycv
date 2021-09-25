@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Navbar from '../../component/navbar/Navbar';
 import styles from './styles.module.scss';
 import themes from "../../style/themes";
-import { concat } from "../../util/utils";
 import { useStore, useDispatch, actions } from "../../store/ThemeStore";
 
 const PageWrapper = ({ children }) => {

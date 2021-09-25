@@ -1,20 +1,12 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
-import { UnderlinedTitle, Banner } from '../component/decoration/Text';
+import { Banner } from '../component/decoration/Text';
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
 import { Get, Post } from '../axios/Axios';
-import { ResumeCard } from "../component/card/ResumeCard";
-import { SkillCard } from "../component/card/SkillCard";
-import { DirectoryCard } from '../component/card/BlankCard';
 import { ImageCarousel } from "../component/carousel/Carousel";
-import { badStringID, concat } from "../util/utils";
+import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
 import styles from "./styles.module.scss";
 import parse from 'html-react-parser';
-
-const elemID = (() => {
-    const constant = badStringID();
-    return (astr) => constant + astr;
-})();
 
 const parseDir = (dir) => {
     return {
@@ -33,14 +25,7 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
     const [sections, setSections] = useState([]);
     const [activeSectionIndex, setActiveSectionIndex] = useState(-1);
 
-    useEffect(() => {
-        const menu = createSectionMenu(project);
-        menu.splice(0, 1);
-        setSections(menu);
-        changeSection(menu[0], 0);
-    }, [project]);
-
-    const createSectionMenu = (section, indent = 0) => {
+    const createSectionMenu = useCallback((section, indent = 0) => {
         if (!section) return [];
         const childrens = section.childrens?.reduce(
             (arr, s) => arr.concat(createSectionMenu(s, indent + 1)),
@@ -48,13 +33,20 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
         section["indent"] = indent;
         delete section["childrens"];
         return [section].concat(childrens);
-    }
+    }, []);
 
-    const changeSection = (section, index) => {
+    const changeSection = useCallback((section, index) => {
         if (!section || "" === section.content) return;
         setActiveSectionIndex(index);
         onChange?.(section);
-    }
+    }, [onChange]);
+
+    useEffect(() => {
+        const menu = createSectionMenu(project);
+        menu.splice(0, 1);
+        setSections(menu);
+        changeSection(menu[0], 0);
+    }, [project, createSectionMenu, changeSection]);
 
     return (
         <div {...props} className={className}>
@@ -88,25 +80,14 @@ const Page = ({ ...props }) => {
     const [project, setProject] = useState(parseDir());
     const [currentProject, setCurrentProject] = useState(parseDir());
 
-    // useEffect(() => console.log("Current Project:", currentProject()), [currentProject]);
-    // useEffect(() => onStart(props.match.params.id), [props.match.params.id]);
-
     const store = useStore();
     const dispatch = useDispatch();
-
-    // useEffect(() => {
-    //     const id = props.match.params.id;
-    //     onStart(id);
-    //     // eslint-disable-next-line
-    // }, [props.match.params.id]);
 
     useEffect(() => {
         const id = props.match.params.id;
         const project = store[`directory-${id}`]?.value ?? {};
         setProject(project);
-        console.log("Store", store);
-        // setProject( ?? {});
-    }, [store]);
+    }, [store, props.match.params.id]);
 
     useEffect(() => {
         const id = props.match.params.id;
@@ -118,8 +99,6 @@ const Page = ({ ...props }) => {
         console.log("Finding Dir");
         return await updateImageURLs(parseDir(await findDirByID(id)));
     };
-
-    const onStart = async id => setProject(await updateImageURLs(parseDir(await findDirByID(id))));
 
     const findDirByID = async id => {
         const res = await Get(`/directory/${id}`);

@@ -1,7 +1,7 @@
-import React, { useState, useRef, Fragment, useEffect } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import Button from "../../component/button/Button";
 import { TextInput, NumberInput } from "../../component/input/Inputs";
-import { Get, Delete, Post, Put } from "../../axios/Axios";
+import { Get, Post, Put } from "../../axios/Axios";
 
 const emptySkillObj = {
     title: "untitled",
@@ -14,15 +14,12 @@ const Form = ({ id = "", reload }) => {
 
     useEffect(() => console.log("skill", skill), [skill]);
 
-    useEffect(() => {
-        if (id === "") setSkill(emptySkillObj);
-        else findSkill();
-    }, [id]);
+    useEffect(() => id === "" ?
+        setSkill(emptySkillObj) :
+        Get(`/skill/${id}`)
+            .then(res => res.success && setSkill({ ...res.data })),
+        [id]);
 
-    const findSkill = async () => {
-        const res = await Get(`/skill/${id}`);
-        if (res.success) setSkill({ ...res.data });
-    }
     const updateAttr = attr => setSkill({ ...skill, ...attr });
     const onSubmit = async () => {
         if (id === "") await save();

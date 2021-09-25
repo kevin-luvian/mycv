@@ -2,7 +2,7 @@ import $ from "jquery";
 import { badStringID } from "../../util/utils";
 
 const htmlNotificationBlockID = "notificationBox";
-const destroyTime = 5000;
+const destroyTime = 2000;
 
 export const NotificationType = {
     blank: 0,

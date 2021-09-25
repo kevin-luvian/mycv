@@ -18,13 +18,13 @@ const publicMenu = [
     //         { name: "Wowo", url: "/xz" }]
     // },
     { name: "Contact", url: "/contact", submenu: [] },
-    { name: "Test", url: "/test", submenu: [] },
     { name: "Login", url: "/login", submenu: [] },
 ];
 
 const privateMenu = (function () {
     const privates = [
         { name: "Edit", url: "/edit", submenu: [] },
+        { name: "Test", url: "/test", submenu: [] },
         { name: "Logout", url: "/logout", submenu: [] }
     ];
     return publicMenu.slice(0, publicMenu.length - 1).concat(privates);

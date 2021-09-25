@@ -1,9 +1,9 @@
-import React, { useState, useRef, Fragment, useEffect } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import Button from "../../component/button/Button";
 import {
     TextInput,
 } from "../../component/input/Inputs";
-import { Get, Delete, Post, Put } from "../../axios/Axios";
+import { Get, Post, Put } from "../../axios/Axios";
 
 const emptyResumeObj = {
     title: "untitled",
@@ -18,16 +18,11 @@ const Form = ({ id = "", reload }) => {
 
     useEffect(() => console.log(resume), [resume]);
 
-    useEffect(() => {
-        if (id === "") setResume(emptyResumeObj);
-        else findResume();
-    }, [id]);
+    useEffect(() => id === "" ?
+        setResume(emptyResumeObj) :
+        Get(`/resume/${id}`).then(res => res.success && setResume({ ...res.data })),
+        [id]);
 
-    const findResume = async () => {
-        const res = await Get(`/resume/${id}`);
-        if (res.success) setResume({ ...res.data });
-        res.notify();
-    }
     const updateResume = attr => setResume({ ...resume, ...attr });
     const onSubmit = async () => {
         if (id === "") await save();

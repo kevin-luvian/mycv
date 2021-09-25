@@ -5,7 +5,6 @@ import { Oval as BtnOval } from "../button/Button";
 import { ImageCarousel } from "../carousel/Carousel";
 import { icons, iconColors, ColoredIcon } from "../decoration/Icons";
 import { SimpleValidation } from "../modal/Modal";
-import { Get, Post, Delete, Put } from "../../axios/Axios";
 
 export const BlankCard = ({ active, className, children, ...attr }) =>
     <div {...attr} className={concat(className, styles.blankCard, active && styles.active)}>

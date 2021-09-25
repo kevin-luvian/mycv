@@ -1,13 +1,10 @@
 import React, { useState, useRef, Fragment, useEffect } from "react";
 import Button from "../../component/button/Button";
-import Notification from "../../component/notification/Notification";
 import FadingModal from "../../component/modal/FadingModal";
 import FavIconInput from "../../component/input/FavIconInput";
 import { TextInput } from "../../component/input/Inputs";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
-import { UnderlinedTitle } from "../../component/decoration/Text";
 import { EditFunCardBorderless } from "../../component/card/FunCard";
-import styles from "./styles.module.scss";
 
 const emptyContact = {
     title: "untitled",
@@ -19,16 +16,13 @@ const Form = ({ id, reload }) => {
     const [contact, setContact] = useState({ title: "", icon: "", description: "" });
 
     useEffect(() => {
-        if ("" === id) setContact(emptyContact);
-        else findContact();
+        if ("" === id)
+            setContact(emptyContact);
+        else
+            Get(`/contact/${id}`)
+                .then(res => res.success && setContact(res.data));
     }, [id]);
 
-    const findContact = () =>
-        Get(`/contact/${id}`).then(res => res.success && setContact(res.data));
-    // {
-    //     const res = await Get(`/contact/${id}`);
-    //     if (res.success) setContact(res.data);
-    // }
     const changeAttr = attr => setContact({ ...contact, ...attr });
     const onSubmit = async () => {
         if (id === "") await save();

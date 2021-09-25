@@ -1,22 +1,12 @@
-import React, { useState, useRef, Fragment, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "../../component/button/Button";
-import Notification from "../../component/notification/Notification";
 import FadingModal from "../../component/modal/FadingModal";
-import {
-    IconInput,
-    TextInput,
-    MultiTextInput,
-    OptionInput,
-    optionItem,
-    SearchFilterInput
-} from "../../component/input/Inputs";
 import ResumeForm from "../../component/form/ResumeForm";
 import SkillForm from "../../component/form/SkillForm";
 import { EditResumeCard } from "../../component/card/ResumeCard";
-import { SkillCard, EditSkillCard } from "../../component/card/SkillCard";
-import { Get, Delete, Post, Put } from "../../axios/Axios";
+import { EditSkillCard } from "../../component/card/SkillCard";
+import { Get, Delete } from "../../axios/Axios";
 import { UnderlinedTitle } from "../../component/decoration/Text";
-import styles from "./styles.module.scss";
 
 const groupToCategory = data => {
     let group = {};

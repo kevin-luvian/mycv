@@ -1,9 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
 import { Get, Post } from '../axios/Axios';
-import { ResumeCard } from "../component/card/ResumeCard";
-import { SkillCard } from "../component/card/SkillCard";
-import { UnderlinedTitle, Banner } from '../component/decoration/Text';
+import { Banner } from '../component/decoration/Text';
 import { DirectoryCard } from '../component/card/BlankCard';
 import ContentPadding from "./extra/ContentPadding";
 

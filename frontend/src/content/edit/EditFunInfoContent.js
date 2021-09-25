@@ -1,10 +1,8 @@
 import { useEffect, Fragment, useState, useRef } from 'react';
 import FadingModal from "../../component/modal/FadingModal";
-import { SimpleValidation } from "../../component/modal/Modal";
 import FavIconInput from "../../component/input/FavIconInput";
 import { TextInput, MultiTextInput } from "../../component/input/Inputs";
-import { FunCard, EditFunCard, EditFunCardBorderless } from "../../component/card/FunCard";
-import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons";
+import { EditFunCard, EditFunCardBorderless } from "../../component/card/FunCard";
 import BlankCard from "../../component/card/BlankCard";
 import { Basic } from "../../component/button/Button";
 import { Get, Post, Delete, Put } from "../../axios/Axios";

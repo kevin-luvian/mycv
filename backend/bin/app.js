@@ -10,7 +10,8 @@ const allowedOrigins = [
     'https://kevinlh.herokuapp.com',
     'https://cvkevin.herokuapp.com',
     'https://mycv.atkev.site',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:9000',
 ];
 
 const app = express();
@@ -61,9 +62,9 @@ app.use('/api/directory', require("../routes/directory"));
 app.use('/api/auth', require("../routes/authentication"));
 app.use('/api/*', require("../routes/catchAll"));
 
-// app.use(express.static(path.join(__dirname, "frontend/build")));
+const parentDir = __dirname.split("/").slice(0, -2).join("/");
+app.use(express.static(path.join(parentDir, "frontend/build")));
 app.get("*", (req, res) => {
-    const parentDir = __dirname.split("/").slice(0, -2).join("/");
     const frontendFile = path.join(parentDir, "/frontend/build/index.html");
     res.sendFile(frontendFile);
 });
