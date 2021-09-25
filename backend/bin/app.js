@@ -61,6 +61,13 @@ app.use('/api/directory', require("../routes/directory"));
 app.use('/api/auth', require("../routes/authentication"));
 app.use('/api/*', require("../routes/catchAll"));
 
+// app.use(express.static(path.join(__dirname, "frontend/build")));
+app.get("*", (req, res) => {
+    const parentDir = __dirname.split("/").slice(0, -2).join("/");
+    const frontendFile = path.join(parentDir, "/frontend/build/index.html");
+    res.sendFile(frontendFile);
+});
+
 /**
  * wrap require from root directory
  * 
