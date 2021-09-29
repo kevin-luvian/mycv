@@ -11,8 +11,8 @@ const PageWrapper = ({ children }) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(actions.setTheme(themes.ocean));
-        window.setTimeout(() => dispatch(actions.setTheme(themes.forest)), 10000);
+        dispatch(actions.setTheme(themes.forest));
+        // window.setTimeout(() => dispatch(actions.setTheme(themes.forest)), 10000);
     }, [dispatch]);
 
     return (

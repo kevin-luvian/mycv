@@ -8,6 +8,7 @@ const dotenv = require("dotenv");
 const allowedOrigins = [
     process.env.CORS_URL,
     'https://kevinlh.herokuapp.com',
+    'http://kevinlh.herokuapp.com',
     'https://cvkevin.herokuapp.com',
     'https://mycv.atkev.site',
     'http://localhost:3000',

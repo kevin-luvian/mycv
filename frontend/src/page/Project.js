@@ -56,11 +56,11 @@ const Page = ({ ...props }) => {
             <ContentPadding>
                 <div className="row">
                     {projects?.map((p, i) =>
-                        <div key={i} className="col-6 mb-4">
+                        <div key={i} className="col-12 col-md-6 mb-4">
                             <DirectoryCard
                                 title={p.title}
                                 imgUrls={p.imageURLs}
-                                description={p.description}
+                                description={p.content}
                                 readMore={() => props.history.push(`/project/${p._id}`)} />
                         </div>
                     )}

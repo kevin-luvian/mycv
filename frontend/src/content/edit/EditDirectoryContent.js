@@ -180,19 +180,19 @@ const MainPage = ({ changePage }) => {
     return (
         <Fragment>
             <div className="row my-3 p-0">
-                <div className="col-10">
+                <div className="col-8 col-lg-10">
                     <SearchFilterInput
                         placeholder="Search Files"
                         onChange={val => setSearch(val)} />
                 </div>
-                <div className="col-2">
+                <div className="col-4 col-lg-2">
                     <Button className="w-100 h-100" onClick={onCreate}>Create</Button>
                 </div>
             </div>
 
             <div className="row">
                 {dirShown?.map((dir, index) =>
-                    <div key={index} className="col-6 px-3">
+                    <div key={index} className="col-12 col-lg-6 px-3">
                         <EditDirectoryCard
                             className="mb-3"
                             title={dir.title}

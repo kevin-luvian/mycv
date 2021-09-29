@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { Banner } from '../component/decoration/Text';
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
-import { Get, Post } from '../axios/Axios';
+import { Get } from '../axios/Axios';
 import { ImageCarousel } from "../component/carousel/Carousel";
 import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
@@ -14,7 +14,7 @@ const parseDir = (dir) => {
         type: dir?.type ?? '0',
         title: dir?.title ?? "",
         images: dir?.images ?? [],
-        imageURLs: [],
+        imageURLs: dir?.imageURLs ?? [],
         content: dir?.content ?? "",
         order: dir?.order ?? 0,
         childrens: dir?.childrens?.map(c => parseDir(c)) ?? []
@@ -95,9 +95,15 @@ const Page = ({ ...props }) => {
         // eslint-disable-next-line
     }, [props.match.params.id]);
 
+    // const findDir = id => async () => {
+    //     console.log("Finding Dir");
+    //     return await updateImageURLs(parseDir(await findDirByID(id)));
+    // };
+
     const findDir = id => async () => {
-        console.log("Finding Dir");
-        return await updateImageURLs(parseDir(await findDirByID(id)));
+        const dir = parseDir(await findDirByID(id));
+        console.log("Finding Dir", dir);
+        return dir;
     };
 
     const findDirByID = async id => {
@@ -105,12 +111,6 @@ const Page = ({ ...props }) => {
         res.notify();
         if (res.success) return res.data;
         return {};
-    }
-
-    const updateImageURLs = async dir => {
-        dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
-        dir.childrens = await Promise.all(dir.childrens.map(d => updateImageURLs(d)));
-        return dir;
     }
 
     return (

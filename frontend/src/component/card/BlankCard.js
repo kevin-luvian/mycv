@@ -18,7 +18,7 @@ export const DirectoryCard = ({ title, imgUrls = [], description, className, chi
 
         <ImageCarousel className="mb-3" urls={imgUrls} />
         <p>{description}</p>
-        <div className="d-flex justify-content-end">
+        <div className="d-flex mt-3 justify-content-end">
             <BtnOval.Default
                 style={{ padding: ".3rem .7rem" }}
                 onClick={readMore}>

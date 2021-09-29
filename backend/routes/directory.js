@@ -8,6 +8,12 @@ const resf = require("./responseFactory");
 const util = require("../util/utils");
 const debug = util.log("routes:directory");
 
+const addImageUrls = async (req, dir) => {
+    dir["imageURLs"] = await fileMetadataRepo.getUrls(req.headers.host, dir.images);
+    dir.childrens = await Promise.all(dir.childrens.map(c => addImageUrls(req, c)));
+    return dir;
+}
+
 router.get('/', tokenAuth.parseTokenUser, async (req, res) => {
     const user = tokenAuth.getLocalsUser(res);
     resf.r200(res, "directories found", await dirRepo.retrieve());
@@ -26,21 +32,19 @@ router.get('/:id', tokenAuth.parseTokenUser, async (req, res) => {
     const id = util.stringToMongooseId(req.params.id);
     if (!id) return resf.r400(res, "id is not valid");
 
-    const user = tokenAuth.getLocalsUser(res);
-    const role = user ? user.role : -1;
+    // const user = tokenAuth.getLocalsUser(res);
+    // const role = user ? user.role : -1;
 
-    const dir = await dirRepo.findFullById(id);
+    let dir = await dirRepo.findFullById(id);
     if (!dir) return resf.r404(res, "directories not found");
 
-    if (access.visibilityAccess(role, dir.type))
-        resf.r200(res, "directories found", dir);
-    else
-        resf.r401(res, "not authorized");
+    dir = await addImageUrls(req, dir);
+    resf.r200(res, "directories found", dir);
 });
 
 router.post('/', tokenAuth.admin, async (req, res) => {
     const data = parseDirObject(req.body);
-    if (await dirRepo.save(data))
+    if (await dirRepo.saveOne(data))
         resf.r200(res, "directory saved");
     else
         resf.r500(res, "saving failed");
@@ -48,7 +52,7 @@ router.post('/', tokenAuth.admin, async (req, res) => {
 
 router.post('/new', tokenAuth.admin, async (req, res) => {
     const data = parseDirObject({ title: "untitled", content: "[ ... ]", order: 0, type: "public" });
-    if (await dirRepo.save(data))
+    if (await dirRepo.saveOne(data))
         resf.r200(res, "directory saved");
     else
         resf.r500(res, "saving failed");
