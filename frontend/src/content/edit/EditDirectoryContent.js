@@ -3,20 +3,15 @@ import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons
 import { Divider } from "../../component/decoration/TileBreaker";
 import { ImageCarousel } from "../../component/carousel/Carousel";
 import Button from "../../component/button/Button";
-import FindInPageIcon from '@material-ui/icons/FindInPage';
 import {
-    IconInput,
     TextInput,
     MultiTextInput,
-    OptionInput,
-    optionItem,
     SearchFilterInput
 } from "../../component/input/Inputs";
 import parse from 'html-react-parser';
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
-import { BlankCard, DirectoryCard, EditDirectoryCard } from "../../component/card/BlankCard";
+import { BlankCard, EditDirectoryCard } from "../../component/card/BlankCard";
 import { SimpleValidation } from "../../component/modal/Modal";
-import BorderlessCard from "../../component/card/BorderlessCard";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 import styles from "./styles.module.scss";
 
@@ -62,7 +57,6 @@ const EditPage = ({ id, changePage }) => {
     const [directory, setDirectory] = useState(parseDir());
 
     useEffect(() => getDirectoryInfo(), [id]);
-    // useEffect(() => console.log(directory), [directory.images]);
     useEffect(() => updateImageUrls(), [directory.images]);
 
     const updateDirectory = (attr) => setDirectory({ ...directory, ...attr });
@@ -143,20 +137,21 @@ const MainPage = ({ changePage }) => {
     const [search, setSearch] = useState("");
 
     useEffect(() => fetchRoots(), []);
-    // useEffect(() => console.log(rootDirs), [rootDirs]);
     useEffect(() => updateDirShown(), [search, rootDirs]);
 
     const fetchRoots = async () => {
         const res = await Get("/directory/root");
-        if (res.success) {
-            const dirs = await Promise.all(res.data.map(async dir => {
-                dir = parseDir(dir);
+        res.notify();
+        if (!res.success) return;
+        const dirs = res.data.map(parseDir);
+        setRootDirs(dirs);
+        new Promise(async () => {
+            const mDirs = await Promise.all(dirs.map(async dir => {
                 dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
                 return dir;
             }));
             setRootDirs(dirs);
-        }
-        res.notify();
+        })
     }
 
     const stringIncludes = (strA = "", strB = "") =>
@@ -215,7 +210,7 @@ const ViewPage = () => {
     const [previousDirectories, setPreviousDirectories] = useState([{ title: "home", id: "" }]);
     const [currentDirectory, setCurrentDirectory] = useState({ title: "home", id: "" });
 
-    useEffect(() => console.log(previousDirectories), [previousDirectories]);
+    // useEffect(() => console.log(previousDirectories), [previousDirectories]);
     // useEffect(() => modifyPreviousDir, [currentDirectory]);
 
     const modifyPreviousDir = (title, id) => {
@@ -230,7 +225,7 @@ const ViewPage = () => {
     }
 
     const changeDir = (title, id) => {
-        console.log("changing dir", title, id)
+        // console.log("changing dir", title, id)
         modifyPreviousDir(title, id)
         setCurrentDirectory({ title, id });
     }
