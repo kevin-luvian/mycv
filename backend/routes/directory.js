@@ -32,13 +32,8 @@ router.get('/:id', tokenAuth.parseTokenUser, async (req, res) => {
     const id = util.stringToMongooseId(req.params.id);
     if (!id) return resf.r400(res, "id is not valid");
 
-    // const user = tokenAuth.getLocalsUser(res);
-    // const role = user ? user.role : -1;
-
     let dir = await dirRepo.findFullById(id);
     if (!dir) return resf.r404(res, "directories not found");
-
-    dir = await addImageUrls(req, dir);
     resf.r200(res, "directories found", dir);
 });
 
