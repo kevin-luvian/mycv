@@ -57,10 +57,10 @@ export const updateCache = async (store, dispatch, key, onUpdate, updateNow = fa
         const data = await onUpdate();
         if (data) {
             dispatch(actions.change(key, data));
-            return { isUpdated: true, data };
+            return { isUpdated: true, data: data };
         }
     }
-    return { isUpdated: false, data };
+    return { isUpdated: false, data: null };
 }
 
 /**
