@@ -35,6 +35,8 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
         return [section].concat(childrens);
     }, []);
 
+    const isUnclickable = (section) => !section || "" === section.content;
+
     const changeSection = useCallback((section, index) => {
         if (!section || "" === section.content) return;
         setActiveSectionIndex(index);
@@ -55,7 +57,9 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
                     <div
                         key={index}
                         className={concat(styles.menu,
-                            activeSectionIndex === index && styles.active)}
+                            activeSectionIndex === index && styles.active,
+                            isUnclickable(s) && styles.unclickable
+                        )}
                         style={{ paddingLeft: `${s.indent * 10}px` }}
                         onClick={() => changeSection(s, index)}>
                         <p>{s.title}</p>
@@ -89,21 +93,20 @@ const Page = ({ ...props }) => {
         setProject(project);
     }, [store, props.match.params.id]);
 
+    // eslint-disable-next-line
     useEffect(() => {
-        const id = props.match.params.id;
-        updateCache(store, dispatch, `directory-${id}`, findDir(id), true);
-        // eslint-disable-next-line
+        const id = props.match.params.id
+        console.log("finding dir", id);
+        findDir(id)
     }, [props.match.params.id]);
 
-    // const findDir = id => async () => {
-    //     console.log("Finding Dir");
-    //     return await updateImageURLs(parseDir(await findDirByID(id)));
-    // };
-
-    const findDir = id => async () => {
-        const dir = parseDir(await findDirByID(id));
-        console.log("Finding Dir", dir);
-        return dir;
+    const findDir = async id => {
+        const dirData = await findDirByID(id);
+        console.log("dir found", dirData);
+        updateCache(store, dispatch, `directory-${id}`, () => parseDir(dirData), true)
+            .then(() =>
+                updateCache(store, dispatch, `directory-${id}`, () => updateImageURLs(parseDir(dirData)), true)
+            );
     };
 
     const findDirByID = async id => {

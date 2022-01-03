@@ -3,7 +3,11 @@ import { icons, iconColors, ColoredIcon } from "../../component/decoration/Icons
 import { Divider } from "../../component/decoration/TileBreaker";
 import { ImageCarousel } from "../../component/carousel/Carousel";
 import Button from "../../component/button/Button";
-import { TextInput, MultiTextInput, SearchFilterInput } from "../../component/input/Inputs";
+import {
+    TextInput,
+    MultiTextInput,
+    SearchFilterInput
+} from "../../component/input/Inputs";
 import parse from 'html-react-parser';
 import { Link } from 'react-router-dom';
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
@@ -51,7 +55,8 @@ const SectionCard = ({ directory, onEdit, onDelete }) => {
 const EditPage = ({ id, changePage }) => {
     const [directory, setDirectory] = useState(parseDir());
 
-    // useEffect(() => console.log(directory), [directory.images]);
+    useEffect(() => getDirectoryInfo(), [id]);
+    useEffect(() => updateImageUrls(), [directory.images]);
 
     const updateDirectory = useCallback(
         attr => setDirectory(d => ({ ...d, ...attr })),
@@ -139,20 +144,23 @@ const MainPage = ({ changePage }) => {
     const [dirShown, setDirShown] = useState([]);
     const [search, setSearch] = useState("");
 
-    const fetchRoots = useCallback(
-        async () => {
-            const res = await Get("/directory/root");
-            if (res.success) {
-                const dirs = await Promise.all(res.data.map(async dir => {
-                    dir = parseDir(dir);
-                    dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
-                    return dir;
-                }));
-                setRootDirs(dirs);
-            }
-            res.notify();
-        },
-        [])
+    useEffect(() => fetchRoots(), []);
+    useEffect(() => updateDirShown(), [search, rootDirs]);
+
+    const fetchRoots = async () => {
+        const res = await Get("/directory/root");
+        res.notify();
+        if (!res.success) return;
+        const dirs = res.data.map(parseDir);
+        setRootDirs(dirs);
+        new Promise(async () => {
+            const mDirs = await Promise.all(dirs.map(async dir => {
+                dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
+                return dir;
+            }));
+            setRootDirs(dirs);
+        })
+    }
 
     const stringIncludes = (strA = "", strB = "") =>
         strA.toLowerCase().includes(strB.toLowerCase());
@@ -211,7 +219,7 @@ const ViewPage = () => {
     const [previousDirectories, setPreviousDirectories] = useState([{ title: "home", id: "" }]);
     const [currentDirectory, setCurrentDirectory] = useState({ title: "home", id: "" });
 
-    useEffect(() => console.log(previousDirectories), [previousDirectories]);
+    // useEffect(() => console.log(previousDirectories), [previousDirectories]);
     // useEffect(() => modifyPreviousDir, [currentDirectory]);
 
     const modifyPreviousDir = (title, id) => {
@@ -226,7 +234,7 @@ const ViewPage = () => {
     }
 
     const changeDir = (title, id) => {
-        console.log("changing dir", title, id)
+        // console.log("changing dir", title, id)
         modifyPreviousDir(title, id)
         setCurrentDirectory({ title, id });
     }

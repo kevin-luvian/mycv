@@ -37,18 +37,23 @@ const Page = ({ ...props }) => {
     useEffect(() => setProjects(store.project?.value ?? []), [store]);
 
     const fetchRoots = async () => {
-        let data = [];
         const res = await Get("/directory/root");
-        if (res.success) {
-            data = await Promise.all(res.data.map(async dir => {
-                dir = parseDir(dir);
-                dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
-                return dir;
-            }));
-        }
         res.notify();
-        return data;
+        if (res.success) {
+            updateCache(store, dispatch, "project", fetchImages(res.data), true);
+            console.log(res.data);
+            return res.data;
+        } else {
+            return [];
+        }
     }
+
+    const fetchImages = rootDirs => async () =>
+        Promise.all(rootDirs.map(async dir => {
+            dir = parseDir(dir);
+            dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
+            return dir;
+        }));
 
     return (
         <Fragment>
