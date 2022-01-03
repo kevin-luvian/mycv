@@ -14,7 +14,7 @@
 }
 
 .canvas {
-  min-height: 100vh;
+  min-height: 90vh !important;
   @include themify($themes) {
     background-color: themed("canvas");
   }
@@ -26,7 +26,7 @@
 }
 
 .content {
-  padding-top: .5rem;
+  padding-top: 0.5rem;
   @include media(desktop) {
     padding-top: 0;
     margin: 1rem 1.5rem;
