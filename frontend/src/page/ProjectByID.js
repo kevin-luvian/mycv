@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { Banner } from '../component/decoration/Text';
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
-import { Get } from '../axios/Axios';
+import { Get, Post } from '../axios/Axios';
 import { ImageCarousel } from "../component/carousel/Carousel";
 import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
@@ -35,7 +35,9 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
         return [section].concat(childrens);
     }, []);
 
-    const isUnclickable = (section) => !section || "" === section.content;
+    const isUnclickable = (section) => {
+        return !section || "" === section.content
+    };
 
     const changeSection = useCallback((section, index) => {
         if (!section || "" === section.content) return;
@@ -108,6 +110,12 @@ const Page = ({ ...props }) => {
                 updateCache(store, dispatch, `directory-${id}`, () => updateImageURLs(parseDir(dirData)), true)
             );
     };
+
+    const updateImageURLs = async dir => {
+        dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
+        dir.childrens = await Promise.all(dir.childrens.map(d => updateImageURLs(d)));
+        return dir;
+    }
 
     const findDirByID = async id => {
         const res = await Get(`/directory/${id}`);

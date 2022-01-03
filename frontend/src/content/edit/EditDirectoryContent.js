@@ -65,9 +65,10 @@ const EditPage = ({ id, changePage }) => {
     const updateImageUrls = useCallback(
         async () => {
             const res = await Post("/file/find-urls", directory?.images ?? []);
-            updateDirectory({ imageURLs: res.data });
+            if (res.success)
+                updateDirectory({ imageURLs: res.data });
         },
-        [directory.images, updateDirectory])
+        [directory.images, updateDirectory]);
 
     const getDirectoryInfo = useCallback(
         async () => {
@@ -144,10 +145,13 @@ const MainPage = ({ changePage }) => {
     const [dirShown, setDirShown] = useState([]);
     const [search, setSearch] = useState("");
 
-    useEffect(() => fetchRoots(), []);
-    useEffect(() => updateDirShown(), [search, rootDirs]);
+    useEffect(() => fetchRoots, []);
+    useEffect(() => updateDirShown, [search, rootDirs]);
 
-    const fetchRoots = async () => {
+    const updateDirShown = () =>
+        setDirShown(rootDirs.filter(dir => stringIncludes(dir.title, search)));
+
+    const fetchRoots = useCallback(async () => {
         const res = await Get("/directory/root");
         res.notify();
         if (!res.success) return;
@@ -158,9 +162,9 @@ const MainPage = ({ changePage }) => {
                 dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
                 return dir;
             }));
-            setRootDirs(dirs);
-        })
-    }
+            setRootDirs(mDirs);
+        });
+    }, []);
 
     const stringIncludes = (strA = "", strB = "") =>
         strA.toLowerCase().includes(strB.toLowerCase());
@@ -244,7 +248,7 @@ const ViewPage = () => {
             <h2 className="mb-4">Edit Directory</h2>
             <div className="mb-3">
                 {previousDirectories?.map((dir, index) =>
-                    <Link key={index}
+                    <Link key={index} to="#"
                         className={styles.links}
                         onClick={() => changeDir(dir.title, dir.id)}> /{dir.title}
                     </Link>)}
