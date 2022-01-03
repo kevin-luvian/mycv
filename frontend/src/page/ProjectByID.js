@@ -50,6 +50,8 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
         return [section].concat(childrens);
     }
 
+    const isUnclickable = (section) => !section || "" === section.content;
+
     const changeSection = (section, index) => {
         if (!section || "" === section.content) return;
         setActiveSectionIndex(index);
@@ -63,7 +65,9 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
                     <div
                         key={index}
                         className={concat(styles.menu,
-                            activeSectionIndex === index && styles.active)}
+                            activeSectionIndex === index && styles.active,
+                            isUnclickable(s) && styles.unclickable
+                        )}
                         style={{ paddingLeft: `${s.indent * 10}px` }}
                         onClick={() => changeSection(s, index)}>
                         <p>{s.title}</p>
@@ -88,17 +92,8 @@ const Page = ({ ...props }) => {
     const [project, setProject] = useState(parseDir());
     const [currentProject, setCurrentProject] = useState(parseDir());
 
-    // useEffect(() => console.log("Current Project:", currentProject()), [currentProject]);
-    // useEffect(() => onStart(props.match.params.id), [props.match.params.id]);
-
     const store = useStore();
     const dispatch = useDispatch();
-
-    // useEffect(() => {
-    //     const id = props.match.params.id;
-    //     onStart(id);
-    //     // eslint-disable-next-line
-    // }, [props.match.params.id]);
 
     useEffect(() => {
         const id = props.match.params.id;
@@ -108,18 +103,21 @@ const Page = ({ ...props }) => {
         // setProject( ?? {});
     }, [store]);
 
+    // eslint-disable-next-line
     useEffect(() => {
-        const id = props.match.params.id;
-        updateCache(store, dispatch, `directory-${id}`, findDir(id), true);
-        // eslint-disable-next-line
+        const id = props.match.params.id
+        console.log("finding dir", id);
+        findDir(id)
     }, [props.match.params.id]);
 
-    const findDir = id => async () => {
-        console.log("Finding Dir");
-        return await updateImageURLs(parseDir(await findDirByID(id)));
+    const findDir = async id => {
+        const dirData = await findDirByID(id);
+        console.log("dir found", dirData);
+        updateCache(store, dispatch, `directory-${id}`, () => parseDir(dirData), true)
+            .then(() =>
+                updateCache(store, dispatch, `directory-${id}`, () => updateImageURLs(parseDir(dirData)), true)
+            );
     };
-
-    const onStart = async id => setProject(await updateImageURLs(parseDir(await findDirByID(id))));
 
     const findDirByID = async id => {
         const res = await Get(`/directory/${id}`);

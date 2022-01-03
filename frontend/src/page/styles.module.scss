@@ -2,38 +2,50 @@
 @import "../style/variables";
 
 .wFit {
-    width: fit-content;
-    width: -moz-fit-content;
+  width: fit-content;
+  width: -moz-fit-content;
 }
 
 .sectionMenu {
-    // border-radius: 2rem;
-    border-style: solid;
-    border-width: 2px;
-    border-color: map-get($global, "muted");
-    box-shadow: map-get($shadow, "smoothAround");
+  // border-radius: 2rem;
+  border-style: solid;
+  border-width: 2px;
+  border-color: map-get($global, "muted");
+  box-shadow: map-get($shadow, "smoothAround");
 
-    .menu.active {
-        @include themify($themes) {
-            background-color: themed("button_color");
-            color: themed("button_textcolor");
-        }
+  .menu.active {
+    @include themify($themes) {
+      background-color: themed("button_color");
+      color: themed("button_textcolor");
     }
+  }
 
-    .menu {
-        cursor: pointer;
-        transition: map-get($transition, "ease");
-        padding: 0.3rem 0.7rem;
-        @include themify($themes) {
-            color: themed("text_color");
-            &:hover {
-                background-color: themed("button_color");
-                color: themed("button_textcolor");
-            }
-            &:active {
-                background-color: themed("button_active");
-                color: themed("button_hover_textcolor");
-            }
-        }
+  .menu.unclickable {
+    cursor: default !important;
+    @include themify($themes) {
+      background-color: lighten(themed("text_dim"), 30);
+      color: themed("text_color") !important;
+      &:hover {
+        background-color: lighten(themed("text_dim"), 30) !important;
+        color: themed("text_color") !important;
+      }
     }
+  }
+
+  .menu {
+    cursor: pointer;
+    transition: map-get($transition, "ease");
+    padding: 0.3rem 0.7rem;
+    @include themify($themes) {
+      color: themed("text_color");
+      &:hover {
+        background-color: themed("button_color");
+        color: themed("button_textcolor");
+      }
+      &:active {
+        background-color: themed("button_active");
+        color: themed("button_hover_textcolor");
+      }
+    }
+  }
 }
