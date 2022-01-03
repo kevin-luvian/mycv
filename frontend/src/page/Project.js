@@ -30,7 +30,7 @@ const Page = ({ ...props }) => {
     // useEffect(() => console.log("Props", props), []);
 
     useEffect(() => {
-        updateCache(store, dispatch, "project", fetchRoots, true);
+        updateCache(store, dispatch, "project", fetchRoots, false);
         // eslint-disable-next-line
     }, []);
 
@@ -41,7 +41,6 @@ const Page = ({ ...props }) => {
         res.notify();
         if (res.success) {
             updateCache(store, dispatch, "project", fetchImages(res.data), true);
-            console.log(res.data);
             return res.data;
         } else {
             return [];

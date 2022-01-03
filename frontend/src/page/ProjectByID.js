@@ -104,11 +104,9 @@ const Page = ({ ...props }) => {
 
     const findDir = async id => {
         const dirData = await findDirByID(id);
-        console.log("dir found", dirData);
-        updateCache(store, dispatch, `directory-${id}`, () => parseDir(dirData), true)
-            .then(() =>
-                updateCache(store, dispatch, `directory-${id}`, () => updateImageURLs(parseDir(dirData)), true)
-            );
+        const { isUpdated } = await updateCache(store, dispatch, `directory-${id}`, () => parseDir(dirData), false)
+        if (isUpdated)
+            updateCache(store, dispatch, `directory-${id}`, () => updateImageURLs(parseDir(dirData)), true)
     };
 
     const updateImageURLs = async dir => {
