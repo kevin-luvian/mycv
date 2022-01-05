@@ -35,21 +35,17 @@ const Page = ({ ...props }) => {
   }, [store]);
 
   useEffect(() => {
-    updateCache(store, dispatch, "project", fetchRoots, false);
+    updateCache(store, dispatch, "project", fetchRoots, false)
+      .then(() => setLoading(false));
     // eslint-disable-next-line
   }, []);
 
   const fetchRoots = async () => {
     const res = await Get("/directory/root");
     res.notify();
-    if (res.success) {
-      updateCache(store, dispatch, "project", fetchImages(res.data), true).then(
-        () => setLoading(false)
-      );
-      return res.data;
-    } else {
-      return [];
-    }
+    if (res.success)
+      return fetchImages(res.data);
+    return [];
   };
 
   const fetchImages = (rootDirs) => async () =>
