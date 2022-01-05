@@ -53,7 +53,6 @@ const StoreSync = () => {
             if (res.success) {
                 const data = parseMyInfoObject(res.data);
                 dispatch(actions.setFullname(data.fullname));
-                Notification.create("fetching cv data store");
             }
         }
         fetch();
