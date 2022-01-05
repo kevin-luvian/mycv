@@ -1,136 +1,155 @@
 @import "../../style/variables.scss";
 @keyframes opaqueIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes opaqueOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 $transitionDuration: 0.4s;
 .imageCarousel {
+  position: relative;
+
+  .buttons {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: map-get($zIndex, "carouselComponent");
+    overflow-y: hidden;
+
+    .prev,
+    .next {
+      pointer-events: fill;
+      cursor: pointer;
+      position: absolute;
+      height: 100%;
+      width: 7rem;
+      font-size: 3rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.164);
+      color: rgb(233, 233, 233);
+      transition: map-get($transition, "ease");
+      i {
+        margin: 0 1.5rem;
+        position: absolute;
+        transform: translate3d(0, -50%, 0);
+        top: 50%;
+      }
+      &:hover {
+        color: white;
+      }
+    }
+
+    .prev {
+      background-image: linear-gradient(
+        to right,
+        rgba(36, 36, 36, 0.5) 0,
+        rgba(0, 0, 0, 0) 100%
+      );
+      &:hover {
+        background-image: linear-gradient(
+          to right,
+          rgba(0, 0, 0, 0.5) 0,
+          rgba(0, 0, 0, 0.0001) 100%
+        );
+      }
+    }
+
+    .next {
+      right: 0;
+      i {
+        right: 0;
+      }
+      background-image: linear-gradient(
+        to left,
+        rgba(36, 36, 36, 0.5) 0,
+        rgba(0, 0, 0, 0.0001) 100%
+      );
+      &:hover {
+        background-image: linear-gradient(
+          to left,
+          rgba(0, 0, 0, 0.5) 0,
+          rgba(0, 0, 0, 0.0001) 100%
+        );
+      }
+    }
+  }
+
+  .carousel {
     position: relative;
-
-    .buttons {
+    width: 100%;
+    height: 20rem;
+    overflow: hidden;
+    background-color: rgba(236, 236, 236, 0.5);
+    .imageBlock {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: map-get($transition, "ease_slow");
+      transition-duration: $transitionDuration;
+      img {
+        z-index: 50;
         position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: map-get($zIndex, "carouselComponent");
-        overflow-y: hidden;
-
-        .prev,
-        .next {
-            cursor: pointer;
-            position: absolute;
-            height: 100%;
-            width: 7rem;
-            font-size: 3rem;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-            color: rgb(233, 233, 233);
-            transition: map-get($transition, "ease");
-            i {
-                margin: 0 1.5rem;
-                position: absolute;
-                transform: translate3d(0, -50%, 0);
-                top: 50%;
-            }
-            &:hover {
-                color: white;
-            }
-        }
-
-        .prev {
-            background-image: linear-gradient(to right, rgba(36, 36, 36, 0.5) 0, rgba(0, 0, 0, 0) 100%);
-            &:hover {
-                background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0.0001) 100%);
-            }
-        }
-
-        .next {
-            right: 0;
-            i {
-                right: 0;
-            }
-            background-image: linear-gradient(to left, rgba(36, 36, 36, 0.5) 0, rgba(0, 0, 0, 0.0001) 100%);
-            &:hover {
-                background-image: linear-gradient(to left, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0.0001) 100%);
-            }
-        }
+        max-width: 100%;
+        max-height: 100%;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
     }
-
-    .carousel {
-        position: relative;
-        width: 100%;
-        height: 20rem;
-        overflow: hidden;
-        background-color: rgba(236, 236, 236, 0.5);
-        .imageBlock {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: map-get($transition, "ease_slow");
-            transition-duration: $transitionDuration;
-            img {
-                position: absolute;
-                max-width: 100%;
-                max-height: 100%;
-                top: 50%;
-                transform: translate3d(-50%, -50%, 0);
-            }
-        }
-        .slideIn {
-            transform: translate3d(-100%, 0px, 0px);
-            animation-name: opaqueOut;
-            animation-duration: $transitionDuration;
-            opacity: 0;
-        }
-        .slideIn.target ~ .slideIn {
-            transform: translate3d(100%, 0px, 0px);
-        }
-        .slideIn.target {
-            transform: translate3d(0px, 0px, 0px);
-            animation-name: opaqueIn;
-            animation-duration: $transitionDuration;
-            opacity: 1;
-            z-index: map-get($zIndex, "carouselImg");
-        }
+    .slideIn {
+      transform: translate3d(-100%, 0px, 0px);
+      animation-name: opaqueOut;
+      animation-duration: $transitionDuration;
+      opacity: 0;
     }
-
-    .navigations {
-        position: absolute;
-        width: 100%;
-        transform: translateY(-1.5rem);
-        z-index: map-get($zIndex, "carouselComponent");
-        .container {
-            .circle {
-                cursor: pointer;
-                width: 0.7rem;
-                height: 0.7rem;
-                margin: auto 0;
-                border-radius: 10px;
-                border: solid 1px white;
-                margin-right: 0.3rem;
-                background-color: rgba(44, 44, 44, 0.5);
-                box-shadow: map-get($shadow, "tight");
-                :last-child {
-                    margin-right: 0;
-                }
-            }
-            .circle.target {
-                width: 0.9rem;
-                height: 0.9rem;
-                background-color: white;
-            }
-        }
+    .slideIn.target ~ .slideIn {
+      transform: translate3d(100%, 0px, 0px);
     }
+    .slideIn.target {
+      transform: translate3d(0px, 0px, 0px);
+      animation-name: opaqueIn;
+      animation-duration: $transitionDuration;
+      opacity: 1;
+      z-index: map-get($zIndex, "carouselImg");
+    }
+  }
+
+  .navigations {
+    position: absolute;
+    width: 100%;
+    transform: translateY(-1.5rem);
+    z-index: map-get($zIndex, "carouselComponent");
+    .container {
+      .circle {
+        cursor: pointer;
+        width: 0.7rem;
+        height: 0.7rem;
+        margin: auto 0;
+        border-radius: 10px;
+        border: solid 1px white;
+        margin-right: 0.3rem;
+        background-color: rgba(44, 44, 44, 0.5);
+        box-shadow: map-get($shadow, "tight");
+        :last-child {
+          margin-right: 0;
+        }
+      }
+      .circle.target {
+        width: 0.9rem;
+        height: 0.9rem;
+        background-color: white;
+      }
+    }
+  }
 }
