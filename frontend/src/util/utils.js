@@ -135,3 +135,12 @@ export const swap = (arr, from, to) => {
         return copyArr;
     } else return arr;
 }
+
+/**
+ * @param {string} url 
+ */
+export const fileExtFromURL = (url) => {
+    url = url.split('?')[0];
+    url = url.split('/').pop();
+    return url.includes('.') ? url.substring(url.lastIndexOf(".")) : "";
+}

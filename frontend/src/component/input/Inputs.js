@@ -46,8 +46,8 @@ export const MultiTextInput = ({ rows, rowsMax, className, label, value, onChang
     <TextField
         {...attr}
         multiline
-        rows={rows || 3}
-        rowsMax={rowsMax || 5}
+        minRows={rows || 3}
+        maxRows={rowsMax || 5}
         label={label}
         value={value}
         className={concat(styles.input, className)}

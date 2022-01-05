@@ -48,7 +48,7 @@ const Page = ({ ...props }) => {
     return [];
   };
 
-  const fetchImages = (rootDirs) => async () =>
+  const fetchImages = async (rootDirs) =>
     Promise.all(
       rootDirs.map(async (dir) => {
         dir = parseDir(dir);

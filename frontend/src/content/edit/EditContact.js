@@ -59,7 +59,6 @@ const Page = () => {
     const [editContactID, setEditContactID] = useState("");
 
     useEffect(() => getAll(), []);
-    useEffect(() => console.log("contacts", contacts), [contacts]);
 
     const getAll = async () => {
         const res = await Get("/contact");
@@ -67,7 +66,6 @@ const Page = () => {
         res.notify();
     }
     const editContact = id => {
-        console.log("edit contact id", id)
         setEditContactID(id);
         editModalRef.current.open();
     }

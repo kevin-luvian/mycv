@@ -223,9 +223,6 @@ const ViewPage = () => {
     const [previousDirectories, setPreviousDirectories] = useState([{ title: "home", id: "" }]);
     const [currentDirectory, setCurrentDirectory] = useState({ title: "home", id: "" });
 
-    // useEffect(() => console.log(previousDirectories), [previousDirectories]);
-    // useEffect(() => modifyPreviousDir, [currentDirectory]);
-
     const modifyPreviousDir = (title, id) => {
         let temp = previousDirectories;
         for (let i = 0; i < temp.length; i++) {
@@ -238,7 +235,6 @@ const ViewPage = () => {
     }
 
     const changeDir = (title, id) => {
-        // console.log("changing dir", title, id)
         modifyPreviousDir(title, id)
         setCurrentDirectory({ title, id });
     }
