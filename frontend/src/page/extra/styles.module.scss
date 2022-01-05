@@ -14,13 +14,13 @@
 }
 
 .canvas {
-  min-height: 90vh !important;
+  min-height: 100vh;
   @include themify($themes) {
     background-color: themed("canvas");
   }
   @include media(desktop) {
     margin: 1.5rem;
-    min-height: auto;
+    min-height: calc(100vh - 3rem);
     border-radius: $canvas_border_radius;
   }
 }
