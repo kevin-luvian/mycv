@@ -83,14 +83,18 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
 const ViewDirectory = ({ className, directory }) => (
   <div className={className}>
     {0 < (directory.imageURLs?.length || 0) && (
-      <ImageCarousel height="30rem" className="mb-3" urls={directory.imageURLs} />
+      <ImageCarousel
+        height="30rem"
+        className="mb-3"
+        urls={directory.imageURLs}
+      />
     )}
     <h1>{directory.title}</h1>
     {parse(directory.content)}
   </div>
 );
 
-const getProjectState = id => `project-dir-id-${id}`;
+const getProjectState = (id) => `project-dir-id-${id}`;
 
 const Page = ({ ...props }) => {
   document.title = "View Projects";
@@ -105,21 +109,19 @@ const Page = ({ ...props }) => {
 
   useEffect(() => {
     const project = JSON.parse(store[getProjectState(id)]?.value ?? "{}");
-    if (Object.entries(project).length === 0)
-      setLoading(true);
+    if (Object.entries(project).length === 0) setLoading(true);
     setProject(project);
   }, [store, id]);
 
   // eslint-disable-next-line
-  useEffect(() => {
-    findDir(id);
-  }, [id]);
+  useEffect(() => { findDir() }, []);
 
-  const findDir = async (id) => {
-    const dirData = await findDirByID(id);
-    const dirImgData = await updateImageURLs(parseDir(dirData));
-    updateCache(store, dispatch, getProjectState(id), () => JSON.stringify(dirImgData), true);
-    setLoading(false);
+  const findDir = async () => {
+    updateCache(store, dispatch, getProjectState(id), async () => {
+      const dirData = await findDirByID(id);
+      const dirImgData = await updateImageURLs(parseDir(dirData));
+      return JSON.stringify(dirImgData);
+    }).then(() => setLoading(false));
   };
 
   const updateImageURLs = async (dir) => {
