@@ -7,6 +7,7 @@ import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
 import styles from "./styles.module.scss";
 import parse from 'html-react-parser';
+import Loader from "../component/loader/hash";
 
 const parseDir = (dir) => {
     return {
@@ -83,41 +84,39 @@ const ViewDirectory = ({ className, directory }) =>
 const Page = ({ ...props }) => {
     document.title = "View Projects";
 
+    const [loading, setLoading] = useState(true);
     const [project, setProject] = useState(parseDir());
     const [currentProject, setCurrentProject] = useState(parseDir());
 
     const store = useStore();
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const id = props.match.params.id;
-        const project = store[`directory-${id}`]?.value ?? {};
-        setProject(project);
-    }, [store, props.match.params.id]);
-
     // eslint-disable-next-line
     useEffect(() => {
-        const id = props.match.params.id
-        console.log("finding dir", id);
-        findDir(id)
+        const id = props.match.params.id;
+        findDir(id);
     }, [props.match.params.id]);
 
     const findDir = async id => {
+        setLoading(true);
         const dirData = await findDirByID(id);
-        const { isUpdated } = await updateCache(store, dispatch, `directory-${id}`, () => parseDir(dirData), false)
-        if (isUpdated)
-            updateCache(store, dispatch, `directory-${id}`, () => updateImageURLs(parseDir(dirData)), true)
+        const dirImgData = await updateImageURLs(parseDir(dirData));
+        setProject(dirImgData);
+        setLoading(false);
     };
 
     const updateImageURLs = async dir => {
-        dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
+        const imagesID = dir?.images ?? [];
+        if (imagesID.length > 0)
+            dir.imageURLs = (await Post("/file/find-urls", imagesID)).data;
+        else
+            dir.imageURLs = [];
         dir.childrens = await Promise.all(dir.childrens.map(d => updateImageURLs(d)));
         return dir;
     }
 
     const findDirByID = async id => {
         const res = await Get(`/directory/${id}`);
-        res.notify();
         if (res.success) return res.data;
         return {};
     }
@@ -126,15 +125,19 @@ const Page = ({ ...props }) => {
         <Fragment>
             <Banner title="Project" className="mb-3" />
             <ContentPadding className="row">
-                <SectionsMenu
-                    className="col-3 pl-0"
-                    project={project}
-                    onChange={setCurrentProject} />
-                <ViewDirectory
-                    className="col-9 pr-0"
-                    directory={currentProject} />
-            </ContentPadding>
-        </Fragment>
+                {loading ? <Loader loading={loading} /> :
+                    <Fragment>
+                        <SectionsMenu
+                            className="col-3 pl-0"
+                            project={project}
+                            onChange={setCurrentProject} />
+                        <ViewDirectory
+                            className="col-9 pr-0"
+                            directory={currentProject} />
+                    </Fragment>
+                }
+            </ContentPadding >
+        </Fragment >
     );
 }
 
