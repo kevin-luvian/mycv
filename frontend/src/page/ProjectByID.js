@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect, useCallback } from "react";
 import { Banner } from "../component/decoration/Text";
 import { Get, Post } from "../axios/Axios";
 import { ImageCarousel } from "../component/carousel/Carousel";
+import { useStore, useDispatch, updateCache } from "../store/CacheStore";
 import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
 import styles from "./styles.module.scss";
@@ -89,24 +90,35 @@ const ViewDirectory = ({ className, directory }) => (
   </div>
 );
 
+const getProjectState = id => `project-dir-id-${id}`;
+
 const Page = ({ ...props }) => {
   document.title = "View Projects";
+  const id = props.match.params.id;
 
-  const [loading, setLoading] = useState(true);
+  const store = useStore();
+  const dispatch = useDispatch();
+
+  const [loading, setLoading] = useState(false);
   const [project, setProject] = useState(parseDir());
   const [currentProject, setCurrentProject] = useState(parseDir());
 
+  useEffect(() => {
+    const project = JSON.parse(store[getProjectState(id)]?.value ?? "{}");
+    if (Object.entries(project).length === 0)
+      setLoading(true);
+    setProject(project);
+  }, [store, id]);
+
   // eslint-disable-next-line
   useEffect(() => {
-    const id = props.match.params.id;
     findDir(id);
-  }, [props.match.params.id]);
+  }, [id]);
 
   const findDir = async (id) => {
-    setLoading(true);
     const dirData = await findDirByID(id);
     const dirImgData = await updateImageURLs(parseDir(dirData));
-    setProject(dirImgData);
+    updateCache(store, dispatch, getProjectState(id), () => JSON.stringify(dirImgData), true);
     setLoading(false);
   };
 
