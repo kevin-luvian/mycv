@@ -47,7 +47,7 @@ router.post('/', tokenAuth.admin, async (req, res) => {
 
 router.post('/new', tokenAuth.admin, async (req, res) => {
     const data = parseDirObject({ title: "untitled", content: "[ ... ]", order: 0, type: "public" });
-    if (await dirRepo.saveOne(data))
+    if (await dirRepo.saveOne({ ...data, root: true }))
         resf.r200(res, "directory saved");
     else
         resf.r500(res, "saving failed");
