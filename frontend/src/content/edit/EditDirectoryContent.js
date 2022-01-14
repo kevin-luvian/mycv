@@ -8,13 +8,13 @@ import {
     MultiTextInput,
     SearchFilterInput
 } from "../../component/input/Inputs";
-import parse from 'html-react-parser';
 import { Link } from 'react-router-dom';
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
 import { BlankCard, EditDirectoryCard } from "../../component/card/BlankCard";
 import { SimpleValidation } from "../../component/modal/Modal";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 import styles from "./styles.module.scss";
+import { parse } from "../../util/htmlParser";
 
 const parseDir = (dir) => ({
     _id: dir?._id ?? "",
@@ -99,6 +99,8 @@ const EditPage = ({ id, changePage }) => {
         res.notify();
     }
 
+    const parseDirContent = useCallback(() => parse(directory.content), [directory.content]);
+
     return (
         <Fragment>
             <h5>Section</h5>
@@ -135,7 +137,7 @@ const EditPage = ({ id, changePage }) => {
             <Divider className="my-5" />
 
             <ImageCarousel className="mb-3" urls={directory.imageURLs} />
-            {parse(directory.content)}
+            {parseDirContent()}
         </Fragment>
     )
 }

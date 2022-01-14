@@ -5,6 +5,7 @@ import { Banner } from "../component/decoration/Text";
 import { FunCardBorderless } from "../component/card/FunCard";
 import ContentPadding from "./extra/ContentPadding";
 import Loader from "../component/loader/hash";
+import { concat } from "../util/utils";
 
 const fetchFunction = (url) => async () => {
   const res = await Get(url);
@@ -22,33 +23,37 @@ const Page = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    updateCache(store, dispatch, "contact", fetchFunction("/contact"))
-      .then(() => setLoading(false));
+    updateCache(store, dispatch, "contact", fetchFunction("/contact")).then(
+      () => setLoading(false)
+    );
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     const contacts = store.contact?.value ?? [];
-    if (contacts.length === 0)
-      setLoading(true);
+    if (contacts.length === 0) setLoading(true);
     setContacts(contacts);
   }, [store]);
 
   return (
     <Fragment>
       <Banner title="Contact" className="mb-3" />
-      {loading ? <Loader /> :
-        <ContentPadding className="mt-5">
-          {contacts?.map((c, i) => (
-            <FunCardBorderless
-              key={i}
-              icon={c.icon}
-              title={c.title}
-              description={c.description}
-            />
-          ))}
-        </ContentPadding>
-      }
+      <ContentPadding className="row">
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="mt-3">
+            {contacts?.map((c, i) => (
+              <FunCardBorderless
+                key={i}
+                icon={c.icon}
+                title={c.title}
+                description={c.description}
+              />
+            ))}
+          </div>
+        )}
+      </ContentPadding>
     </Fragment>
   );
 };

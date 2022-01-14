@@ -6,7 +6,6 @@ import { useStore, useDispatch, updateCache } from "../store/CacheStore";
 import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
 import styles from "./styles.module.scss";
-import parse from "html-react-parser";
 import Loader from "../component/loader/hash";
 
 const parseDir = (dir) => {
@@ -80,8 +79,11 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
   );
 };
 
-const ViewDirectory = ({ className, directory }) => (
-  <div className={className}>
+const ViewDirectory = ({ className, directory }) => {
+  const parseDirContent = useCallback(() => {
+    return <p> can't parse directory content </p>
+  }, [directory.content]);
+  return <div className={className}>
     {0 < (directory.imageURLs?.length || 0) && (
       <ImageCarousel
         height="30rem"
@@ -90,9 +92,9 @@ const ViewDirectory = ({ className, directory }) => (
       />
     )}
     <h1>{directory.title}</h1>
-    {parse(directory.content)}
+    {parseDirContent()}
   </div>
-);
+};
 
 const getProjectState = (id) => `project-dir-id-${id}`;
 

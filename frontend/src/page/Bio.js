@@ -9,11 +9,11 @@ import Loader from "../component/loader/hash";
 
 const fetchFunction =
   (url, notify = true) =>
-    async () => {
-      const res = await Get(url);
-      if (notify) res.notify();
-      return res.data;
-    };
+  async () => {
+    const res = await Get(url);
+    if (notify) res.notify();
+    return res.data;
+  };
 
 const Page = () => {
   document.title = "Home - My Bio";
@@ -46,14 +46,19 @@ const Page = () => {
     const widos = store.whatido?.value ?? [];
     const ffacts = store.funfact?.value ?? [];
     if (Object.entries(myInfo).length + widos.length + ffacts.length > 0) {
-      setLoading(false)
+      setLoading(false);
     }
     setMyInfo(myInfo);
     setWhatIDos(widos);
     setFunFacts(ffacts);
   }, [store]);
 
-  if (loading) return <Loader />;
+  if (loading)
+    return (
+      <ContentPadding className="row">
+        <Loader />
+      </ContentPadding>
+    );
   return (
     <ContentPadding>
       <div className="row my-3">

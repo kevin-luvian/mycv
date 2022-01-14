@@ -56,32 +56,34 @@ const Page = () => {
   return (
     <Fragment>
       <Banner title="Resume" className="mb-3" />
-      {loading ? (
-        <Loader />
-      ) : (
-        <ContentPadding>
-          <div className="row mt-5">
-            {Object.keys(resumes).map((category, index) => (
-              <div key={index} className="col-12 col-md-6">
-                <UnderlinedTitle className="mb-3" text={category} />
-                {resumes[category].map((r, i) => (
-                  <ResumeCard key={i} className="mb-3" resume={r} />
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="row mt-4">
-            {Object.keys(skills).map((category, index) => (
-              <div key={index} className="col-12 col-md-6 my-3">
-                <UnderlinedTitle className="mb-3" text={category} />
-                {skills[category].map((s, i) => (
-                  <SkillCard key={i} className="mb-3" skill={s} />
-                ))}
-              </div>
-            ))}
-          </div>
-        </ContentPadding>
-      )}
+      <ContentPadding className="row">
+        {loading ? (
+          <Loader />
+        ) : (
+          <Fragment>
+            <div className="row mt-5">
+              {Object.keys(resumes).map((category, index) => (
+                <div key={index} className="col-12 col-md-6">
+                  <UnderlinedTitle className="mb-3" text={category} />
+                  {resumes[category].map((r, i) => (
+                    <ResumeCard key={i} className="mb-3" resume={r} />
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="row mt-4">
+              {Object.keys(skills).map((category, index) => (
+                <div key={index} className="col-12 col-md-6 my-3">
+                  <UnderlinedTitle className="mb-3" text={category} />
+                  {skills[category].map((s, i) => (
+                    <SkillCard key={i} className="mb-3" skill={s} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </Fragment>
+        )}
+      </ContentPadding>
     </Fragment>
   );
 };

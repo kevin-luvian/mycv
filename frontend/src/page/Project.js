@@ -60,11 +60,11 @@ const Page = ({ ...props }) => {
   return (
     <Fragment>
       <Banner title="Project" className="mb-3" />
-      {loading ? (
-        <Loader />
-      ) : (
-        <ContentPadding>
-          <div className="row">
+      <ContentPadding className="row">
+        {loading ? (
+          <Loader />
+        ) : (
+          <Fragment>
             {projects?.map((p, i) => (
               <div key={i} className="col-12 col-md-6 mb-4">
                 <DirectoryCard
@@ -75,9 +75,9 @@ const Page = ({ ...props }) => {
                 />
               </div>
             ))}
-          </div>
-        </ContentPadding>
-      )}
+          </Fragment>
+        )}
+      </ContentPadding>
     </Fragment>
   );
 };
