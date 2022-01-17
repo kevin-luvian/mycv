@@ -7,6 +7,7 @@ import { concat } from "../util/utils";
 import ContentPadding from "./extra/ContentPadding";
 import styles from "./styles.module.scss";
 import Loader from "../component/loader/hash";
+import { parse } from "../util/htmlParser";
 
 const parseDir = (dir) => {
   return {
@@ -80,20 +81,23 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
 };
 
 const ViewDirectory = ({ className, directory }) => {
-  const parseDirContent = useCallback(() => {
-    return <p> can't parse directory content </p>
-  }, [directory.content]);
-  return <div className={className}>
-    {0 < (directory.imageURLs?.length || 0) && (
-      <ImageCarousel
-        height="30rem"
-        className="mb-3"
-        urls={directory.imageURLs}
-      />
-    )}
-    <h1>{directory.title}</h1>
-    {parseDirContent()}
-  </div>
+  const parseDirContent = useCallback(
+    () => parse(directory.content),
+    [directory.content]
+  );
+  return (
+    <div className={className}>
+      {0 < (directory.imageURLs?.length || 0) && (
+        <ImageCarousel
+          height="30rem"
+          className="mb-3"
+          urls={directory.imageURLs}
+        />
+      )}
+      <h1>{directory.title}</h1>
+      {parseDirContent()}
+    </div>
+  );
 };
 
 const getProjectState = (id) => `project-dir-id-${id}`;
@@ -116,7 +120,9 @@ const Page = ({ ...props }) => {
   }, [store, id]);
 
   // eslint-disable-next-line
-  useEffect(() => { findDir() }, []);
+  useEffect(() => {
+    findDir();
+  }, []);
 
   const findDir = async () => {
     updateCache(store, dispatch, getProjectState(id), async () => {
