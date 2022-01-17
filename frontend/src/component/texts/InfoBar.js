@@ -5,11 +5,13 @@ import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 export const Tips = ({ className, children, ...props }) => (
   <div className={concat(className, styles.infobar)} {...props}>
     <div className={styles.verticalbar} />
-    <div className="col my-auto">
+    <div className="col my-auto py-3">
       <div className={styles.icon}>
         <EmojiObjectsIcon />
       </div>
     </div>
-    <p className="pr-4 pl-2 py-3" children={children} />
+    <div className="w-100 my-auto py-3">
+      <p className={concat(styles.text)} children={children} />
+    </div>
   </div>
 );

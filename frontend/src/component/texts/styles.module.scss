@@ -12,14 +12,17 @@
     background-color: lighten(themed("primary"), 50);
   }
 
-  p {
+  .text {
+    text-align: justify;
+    padding-left: 0.5rem;
+    padding-right: 1.5rem;
     @include themify($themes) {
       color: themed("text_color");
     }
   }
 
   .verticalbar {
-    width: 0.7rem;
+    width: 0.4rem;
     @include themify($themes) {
       background-color: themed("primary");
     }
