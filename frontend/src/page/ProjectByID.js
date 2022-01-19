@@ -8,6 +8,7 @@ import ContentPadding from "./extra/ContentPadding";
 import styles from "./styles.module.scss";
 import Loader from "../component/loader/hash";
 import { parse } from "../util/htmlParser";
+import { useWindowSize } from "../util/hooks";
 
 const parseDir = (dir) => {
   return {
@@ -25,6 +26,7 @@ const parseDir = (dir) => {
 const SectionsMenu = ({ project, onChange, className, ...props }) => {
   const [sections, setSections] = useState([]);
   const [activeSectionIndex, setActiveSectionIndex] = useState(-1);
+  const screen = useWindowSize();
 
   const createSectionMenu = useCallback((section, indent = 0) => {
     if (!section) return [];
@@ -59,7 +61,7 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
   }, [project, createSectionMenu, changeSection]);
 
   return (
-    <div {...props} className={className}>
+    <div {...props} className={concat(className, screen.mobile && "px-3")}>
       <div className={styles.sectionMenu}>
         {sections.map((s, index) => (
           <div
@@ -85,6 +87,8 @@ const ViewDirectory = ({ className, directory }) => {
     () => parse(directory.content),
     [directory.content]
   );
+  const screen = useWindowSize();
+
   return (
     <div className={className}>
       {0 < (directory.imageURLs?.length || 0) && (
@@ -94,8 +98,10 @@ const ViewDirectory = ({ className, directory }) => {
           urls={directory.imageURLs}
         />
       )}
-      <h1>{directory.title}</h1>
-      {parseDirContent()}
+      <div className={screen.mobile && "px-3"}>
+        <h1>{directory.title}</h1>
+        {parseDirContent()}
+      </div>
     </div>
   );
 };
@@ -112,6 +118,7 @@ const Page = ({ ...props }) => {
   const [loading, setLoading] = useState(false);
   const [project, setProject] = useState(parseDir());
   const [currentProject, setCurrentProject] = useState(parseDir());
+  const screen = useWindowSize();
 
   useEffect(() => {
     const project = JSON.parse(store[getProjectState(id)]?.value ?? "{}");
@@ -158,11 +165,14 @@ const Page = ({ ...props }) => {
         ) : (
           <Fragment>
             <SectionsMenu
-              className="col-3 pl-0"
+              className="col-12 col-sm-3 mb-4 px-0"
               project={project}
               onChange={setCurrentProject}
             />
-            <ViewDirectory className="col-9 pr-0" directory={currentProject} />
+            <ViewDirectory
+              className={concat("col px-0", !screen.mobile && "pl-3")}
+              directory={currentProject}
+            />
           </Fragment>
         )}
       </ContentPadding>

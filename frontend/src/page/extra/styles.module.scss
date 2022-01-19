@@ -27,6 +27,8 @@
 
 .content {
   padding-top: 0.5rem;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   @include media(desktop) {
     padding-top: 0;
     margin: 1rem 1.5rem;

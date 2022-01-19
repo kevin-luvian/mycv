@@ -4,14 +4,33 @@ import { cnord } from "./utils";
 import { Basic } from "../component/button/Button";
 import { Heading } from "../component/texts/Heading";
 import { Tips } from "../component/texts/InfoBar";
+import { ParserError, ParserWrapper } from "../component/texts/ParserWrapper";
 
-export const parse = (s) => {
+/**
+ * @param {String} html
+ */
+export const parse = (html) => {
   try {
-    const parsed = ReactHtmlParser(s, { transform });
-    return parsed;
+    return (
+      <ParserWrapper>
+        {ReactHtmlParser(modifyRawHTML(html), { transform })}
+      </ParserWrapper>
+    );
   } catch (err) {
-    return <p> error, cant parse html content </p>;
+    return (
+      <ParserError>
+        error, cant parse html content <br className="mb-3" /> {err.message}
+      </ParserError>
+    );
   }
+};
+
+/**
+ * @param {String} s
+ */
+const modifyRawHTML = (s) => {
+  s = s.replace("#_url", window.location.host);
+  return s;
 };
 
 /**
@@ -38,5 +57,4 @@ const transform = (node, index) => {
  * @param {DomElement} node
  */
 const convCH = (node, index) =>
-  node.children?.map((e) => convertNodeToElement(e, index + 1, transform)) ||
-  [];
+  node.children?.map((e, i) => transform(e, index + i)) || [];

@@ -9353,6 +9353,11 @@ react-router@5.2.1:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
+react-screentype-hook@^1.0.17:
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/react-screentype-hook/-/react-screentype-hook-1.0.17.tgz#3b6e56011244db6d54f75541a513b9ac8ebd018d"
+  integrity sha512-iXqB0AmVhBHJJVs+FHpa8Q5KbsADvu9ST2XGmuotdU9jIeC1VIrTS5JdMaBqudZHE55KqZ2B66toh1OR/f6afQ==
+
 react-scripts@4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-4.0.3.tgz#b1cafed7c3fa603e7628ba0f187787964cb5d345"

@@ -1,5 +1,18 @@
 @import "../../style/theme";
 
+.parserWrapper {
+  @include themify($themes) {
+    color: themed("text_color");
+  }
+}
+
+.parserError {
+  font-size: .9em;
+  padding: .7rem;
+  background-color: map-get($global, "danger");
+  color: map-get($global, "light");
+}
+
 .heading {
   margin: 1rem 0;
   font-size: 28px;
