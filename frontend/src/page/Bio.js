@@ -6,6 +6,8 @@ import { TitleBreak } from "../component/decoration/TileBreaker";
 import ContentPadding from "./extra/ContentPadding";
 import { Get } from "../axios/Axios";
 import Loader from "../component/loader/hash";
+import { concat } from "../util/utils";
+import { useWindowSize } from "../util/hooks";
 
 const fetchFunction =
   (url, notify = true) =>
@@ -25,6 +27,7 @@ const Page = () => {
 
   const store = useStore();
   const dispatch = useDispatch();
+  const screen = useWindowSize();
 
   useEffect(() => {
     Promise.all([
@@ -60,14 +63,14 @@ const Page = () => {
       </ContentPadding>
     );
   return (
-    <ContentPadding>
+    <ContentPadding className={concat(!screen.desktop && "px-3")}>
       <div className="row my-3">
         <ProfileImage
           className="col-12 col-sm-5 px-4"
           imageURL={myInfo.imageFile?.url}
         />
         <Description
-          className="col-12 col-sm-7"
+          className={concat("col-12 col-sm-7", screen.mobile && "py-5")}
           fullname={myInfo.fullname}
           description={myInfo.description}
           cvURL={myInfo.cvFile?.url}
@@ -84,7 +87,10 @@ const Page = () => {
           />
         ))}
       </div>
-      <TitleBreak title="Fun Facts" className="pt-3" />
+      <TitleBreak
+        title="Fun Facts"
+        className={concat("pt-3", screen.mobile && "mt-5")}
+      />
       <div className="row mt-4">
         {funFacts.map((val, index) => (
           <FunCard

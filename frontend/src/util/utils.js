@@ -151,3 +151,5 @@ export const fileExtFromURL = (url) => {
   url = url.split("/").pop();
   return url.includes(".") ? url.substring(url.lastIndexOf(".")) : "";
 };
+
+export const getFilenameFromURL = (url) => url.split("/").pop();

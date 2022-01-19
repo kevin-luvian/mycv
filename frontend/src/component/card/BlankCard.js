@@ -6,6 +6,7 @@ import { ImageCarousel } from "../carousel/Carousel";
 import { icons, iconColors, ColoredIcon } from "../decoration/Icons";
 import { SimpleValidation } from "../modal/Modal";
 import { parse } from "../../util/htmlParser";
+import { Link } from "react-router-dom";
 
 export const BlankCard = ({ active, className, children, ...attr }) => (
   <div
@@ -22,7 +23,7 @@ export const DirectoryCard = ({
   description,
   className,
   children,
-  readMore,
+  readMoreURL,
 }) => {
   const parsedContent = useCallback(() => parse(description), [description]);
 
@@ -34,9 +35,11 @@ export const DirectoryCard = ({
       <ImageCarousel className="mb-3" urls={imgUrls} />
       <p>{parsedContent()}</p>
       <div className="d-flex mt-3 justify-content-end">
-        <BtnOval.Default style={{ padding: ".3rem .7rem" }} onClick={readMore}>
-          read more
-        </BtnOval.Default>
+        <Link to={readMoreURL}>
+          <BtnOval.Default style={{ padding: ".3rem .7rem" }}>
+            read more
+          </BtnOval.Default>
+        </Link>
       </div>
     </BlankCard>
   );

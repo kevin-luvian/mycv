@@ -159,7 +159,7 @@ const Page = ({ ...props }) => {
   return (
     <Fragment>
       <Banner title="Project" className="mb-3" />
-      <ContentPadding className="row">
+      <ContentPadding className={concat("row", screen.tablet && "px-3")}>
         {loading ? (
           <Loader />
         ) : (

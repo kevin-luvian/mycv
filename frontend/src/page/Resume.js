@@ -6,6 +6,8 @@ import { SkillCard } from "../component/card/SkillCard";
 import { UnderlinedTitle, Banner } from "../component/decoration/Text";
 import ContentPadding from "./extra/ContentPadding";
 import Loader from "../component/loader/hash";
+import { concat } from "../util/utils";
+import { useWindowSize } from "../util/hooks";
 
 const groupToCategory = (data) => {
   let group = {};
@@ -28,6 +30,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [resumes, setResumes] = useState([]);
   const [skills, setSkills] = useState([]);
+  const screen = useWindowSize();
 
   document.title = "View My Resumes";
 
@@ -45,23 +48,26 @@ const Page = () => {
   }, [store]);
 
   useEffect(() => {
-    updateCache(store, dispatch, "resume", fetchFunction("/resume"))
-      .then(async () => {
+    updateCache(store, dispatch, "resume", fetchFunction("/resume")).then(
+      async () => {
         await updateCache(store, dispatch, "skill", fetchFunction("/skill"));
         setLoading(false);
-      });
+      }
+    );
     // eslint-disable-next-line
   }, []);
 
   return (
     <Fragment>
       <Banner title="Resume" className="mb-3" />
-      <ContentPadding className="row">
+      <ContentPadding
+        className={concat(screen.desktop && "mt-5", !screen.desktop && "px-3")}
+      >
         {loading ? (
           <Loader />
         ) : (
           <Fragment>
-            <div className="row mt-5">
+            <div className="row">
               {Object.keys(resumes).map((category, index) => (
                 <div key={index} className="col-12 col-md-6">
                   <UnderlinedTitle className="mb-3" text={category} />
@@ -76,7 +82,11 @@ const Page = () => {
                 <div key={index} className="col-12 col-md-6 my-3">
                   <UnderlinedTitle className="mb-3" text={category} />
                   {skills[category].map((s, i) => (
-                    <SkillCard key={i} className="mb-3" skill={s} />
+                    <SkillCard
+                      key={i}
+                      className={screen.mobile ? "mb-4" : "mb-3"}
+                      skill={s}
+                    />
                   ))}
                 </div>
               ))}
