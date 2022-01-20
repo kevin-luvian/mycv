@@ -50,7 +50,10 @@ const FileInput = ({ onUploaded }) => {
   const getUploadTimeStr = (time, success) => {
     if (time == 0) return "";
     const seconds = (time / 1000).toFixed(1);
-    return `took ${seconds}s` + success ? "to upload." : ", upload failed.";
+    return concat(
+      `took ${seconds}s`,
+      success ? "to upload." : ", upload failed."
+    );
   };
 
   const changeFile = (event) => {
