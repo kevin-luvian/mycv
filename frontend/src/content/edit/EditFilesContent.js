@@ -22,21 +22,9 @@ import {
   icons,
 } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
-import {
-  btyeToKB,
-  concat,
-  KBToMB,
-  parseByteToString,
-  parseMSToString,
-} from "../../util/utils";
+import { concat, parseByteToString, parseMSToString } from "../../util/utils";
 import styles from "./styles.module.scss";
-import {
-  Post,
-  Delete,
-  Put,
-  getInstance,
-  getCancelToken,
-} from "../../axios/Axios";
+import { Post, Delete, Put, getCancelToken } from "../../axios/Axios";
 import $ from "jquery";
 import { useStore, useDispatch, updateFiles } from "../../store/CacheStore";
 import ResponsivePlayer from "../../component/videoplayer/ResponsivePlayer";
@@ -130,7 +118,7 @@ const FileInput = ({ onUploaded }) => {
 
   return (
     <Fragment>
-      <div className={styles.fileInput}>
+      <div className={concat("p-3", styles.fileInput)}>
         <div className={styles.form}>
           <div className="col-8 col-lg-9 pl-0">
             <IconInput
@@ -292,6 +280,8 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
 
   const downloadFile = () => window.open(cFile().url, "_blank");
 
+  const fileURL = () => (open ? cFile().url : "");
+
   return (
     <Fragment>
       {showThis() && (
@@ -335,11 +325,11 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
           <div className={styles.content} ref={contentRef}>
             {cFile().contentType.includes("image") && (
               <div className="w-100 text-center mb-2">
-                <img src={open ? cFile().url : ""} alt="" />
+                <img src={fileURL()} alt="" />
               </div>
             )}
             {cFile().contentType.includes("video") && (
-              <ResponsivePlayer className="mt-3" source={cFile().url} />
+              <ResponsivePlayer className="mt-3" source={fileURL()} />
             )}
             <div className={styles.contentDesc}>
               <p>group: {cFile().group}</p>
