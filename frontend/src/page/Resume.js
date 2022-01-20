@@ -60,9 +60,7 @@ const Page = () => {
   return (
     <Fragment>
       <Banner title="Resume" className="mb-3" />
-      <ContentPadding
-        className={concat(screen.desktop && "mt-5", !screen.desktop && "px-3")}
-      >
+      <ContentPadding className={concat(screen.desktop ? "mt-5" : "px-3")}>
         {loading ? (
           <Loader />
         ) : (

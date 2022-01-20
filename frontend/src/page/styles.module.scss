@@ -47,5 +47,9 @@
         color: themed("button_hover_textcolor");
       }
     }
+
+    p {
+      word-wrap: break-word;
+    }
   }
 }

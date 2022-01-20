@@ -2,6 +2,10 @@
 @import "./responsive.scss";
 @import "./theme.scss";
 
+.opaque {
+  opacity: 0;
+}
+
 #notificationBox {
   z-index: map-get($zIndex, "notification");
   position: fixed;

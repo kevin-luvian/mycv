@@ -36,14 +36,22 @@ const Page = () => {
 
   return (
     <ContentPadding>
-      <div id={styles.editRoot} className="row py-3">
+      <div
+        id={styles.editRoot}
+        className={concat(screen.desktop ? "" : "mx-3", "row py-3")}
+      >
         <EditMenu
-          className={concat("col-12 col-sm-4 col-lg-3 pb-3 pr-3")}
+          className={concat(
+            screen.mobile ? "mb-3" : "pr-3",
+            "col-12 col-sm-4 col-lg-3 pb-3 px-0"
+          )}
           contents={contents}
           pageIndex={index}
           setPageIndex={setIndex}
         />
-        <div className="col-12 col-sm-8 col-lg-9 pl-0">{contents[index].page}</div>
+        <div className="col-12 col-sm-8 col-lg-9 px-0">
+          {contents[index].page}
+        </div>
       </div>
     </ContentPadding>
   );

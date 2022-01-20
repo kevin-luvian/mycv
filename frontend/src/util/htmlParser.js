@@ -5,7 +5,7 @@ import { Basic } from "../component/button/Button";
 import { Heading } from "../component/texts/Heading";
 import { Tips } from "../component/texts/InfoBar";
 import { ParserError, ParserWrapper } from "../component/texts/ParserWrapper";
-
+import { Link } from "react-router-dom";
 /**
  * @param {String} html
  */
@@ -49,6 +49,14 @@ const transform = (node, index) => {
       return <Heading {...props} children={convCH(node, index)} />;
     case "tips":
       return <Tips {...props} children={convCH(node, index)} />;
+    case "links":
+      return (
+        <Link
+          {...props}
+          to={node.attribs["to"] ?? "#"}
+          children={convCH(node, index)}
+        />
+      );
   }
   return convertNodeToElement(node, index, transform);
 };

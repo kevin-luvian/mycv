@@ -9,6 +9,7 @@ import styles from "./styles.module.scss";
 import Loader from "../component/loader/hash";
 import { parse } from "../util/htmlParser";
 import { useWindowSize } from "../util/hooks";
+import { Err404 } from "./Error";
 
 const parseDir = (dir) => {
   return {
@@ -61,15 +62,15 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
   }, [project, createSectionMenu, changeSection]);
 
   return (
-    <div {...props} className={concat(className, screen.mobile && "px-3")}>
+    <div {...props} className={concat(className, screen.mobile ? "px-3" : "")}>
       <div className={styles.sectionMenu}>
         {sections.map((s, index) => (
           <div
             key={index}
             className={concat(
               styles.menu,
-              activeSectionIndex === index && styles.active,
-              isUnclickable(s) && styles.unclickable
+              activeSectionIndex === index ? styles.active : "",
+              isUnclickable(s) ? styles.unclickable : ""
             )}
             style={{ paddingLeft: `${s.indent * 10}px` }}
             onClick={() => changeSection(s, index)}
@@ -90,7 +91,7 @@ const ViewDirectory = ({ className, directory }) => {
   const screen = useWindowSize();
 
   return (
-    <div className={className}>
+    <div className={concat(className, !screen.mobile ? "overflow-auto" : "")}>
       {0 < (directory.imageURLs?.length || 0) && (
         <ImageCarousel
           height="30rem"
@@ -98,10 +99,7 @@ const ViewDirectory = ({ className, directory }) => {
           urls={directory.imageURLs}
         />
       )}
-      <div className={screen.mobile && "px-3"}>
-        <h1>{directory.title}</h1>
-        {parseDirContent()}
-      </div>
+      <div className={screen.mobile ? "px-3" : ""}>{parseDirContent()}</div>
     </div>
   );
 };
@@ -115,6 +113,7 @@ const Page = ({ ...props }) => {
   const store = useStore();
   const dispatch = useDispatch();
 
+  const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
   const [project, setProject] = useState(parseDir());
   const [currentProject, setCurrentProject] = useState(parseDir());
@@ -123,20 +122,26 @@ const Page = ({ ...props }) => {
   useEffect(() => {
     const project = JSON.parse(store[getProjectState(id)]?.value ?? "{}");
     if (Object.entries(project).length === 0) setLoading(true);
+    else setLoading(false);
     setProject(project);
   }, [store, id]);
 
   // eslint-disable-next-line
   useEffect(() => {
-    findDir();
-  }, []);
+    findDir(id);
+  }, [id]);
 
-  const findDir = async () => {
-    updateCache(store, dispatch, getProjectState(id), async () => {
-      const dirData = await findDirByID(id);
-      const dirImgData = await updateImageURLs(parseDir(dirData));
-      return JSON.stringify(dirImgData);
-    }).then(() => setLoading(false));
+  const findDir = async (id) => {
+    const dirData = await findDirByID(id);
+    if (dirData == null) {
+      setNotFound(true);
+      return;
+    }
+    const dirImgData = await updateImageURLs(parseDir(dirData));
+
+    updateCache(store, dispatch, getProjectState(id), () =>
+      JSON.stringify(dirImgData)
+    ).then(() => setLoading(false));
   };
 
   const updateImageURLs = async (dir) => {
@@ -153,13 +158,23 @@ const Page = ({ ...props }) => {
   const findDirByID = async (id) => {
     const res = await Get(`/directory/${id}`);
     if (res.success) return res.data;
-    return {};
+    else return null;
   };
 
+  if (notFound)
+    return (
+      <Fragment>
+        <Banner title="Project" className="mb-3" />
+        <Err404 message="Project not found !" />
+      </Fragment>
+    );
   return (
     <Fragment>
-      <Banner title="Project" className="mb-3" />
-      <ContentPadding className={concat("row", screen.tablet && "px-3")}>
+      <Banner
+        title={project.title ? `Project - ${project.title}` : "Project"}
+        className="mb-3"
+      />
+      <ContentPadding className={concat("row", screen.tablet ? "px-3" : "")}>
         {loading ? (
           <Loader />
         ) : (
@@ -170,7 +185,7 @@ const Page = ({ ...props }) => {
               onChange={setCurrentProject}
             />
             <ViewDirectory
-              className={concat("col px-0", !screen.mobile && "pl-3")}
+              className={concat("col px-0", !screen.mobile ? "ml-3" : "")}
               directory={currentProject}
             />
           </Fragment>

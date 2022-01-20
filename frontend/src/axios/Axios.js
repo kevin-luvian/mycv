@@ -30,7 +30,10 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 401) {
-      Notification.create("Error: unauthorized error, JWT token discarded", Notification.type.danger);
+      Notification.create(
+        "Error: unauthorized error, JWT token discarded",
+        Notification.type.danger
+      );
       console.log("Error: unauthorized error, JWT token discarded");
       store.dispatch(actions.clear);
     }
@@ -51,7 +54,9 @@ class APIRes {
     this.other = other;
   }
   notify() {
-    const type = this.success ? Notification.type.success : Notification.type.danger;
+    const type = this.success
+      ? Notification.type.success
+      : Notification.type.danger;
     Notification.create(this.message, type);
   }
   /**
@@ -70,8 +75,10 @@ class APIRes {
   }
 }
 
-const responseError = err =>
+const responseError = (err) =>
   APIRes.constructFail(err.response?.data.message || "response not received");
+
+export const getInstance = () => instance;
 
 /**
  * axios post wrapper for better compatibility
@@ -82,23 +89,27 @@ const responseError = err =>
  * @returns {Promise<APIRes>} wrapped result
  */
 export const Post = (path, data, config) =>
-  instance.post(path, data, config)
-    .then(res => APIRes.constructRes(res))
-    .catch(err => responseError(err));
+  instance
+    .post(path, data, config)
+    .then((res) => APIRes.constructRes(res))
+    .catch((err) => responseError(err));
 
 export const Put = (path, data) =>
-  instance.put(path, data)
-    .then(res => APIRes.constructRes(res))
-    .catch(err => responseError(err));
+  instance
+    .put(path, data)
+    .then((res) => APIRes.constructRes(res))
+    .catch((err) => responseError(err));
 
-export const Get = path =>
-  instance.get(path)
-    .then(res => APIRes.constructRes(res))
-    .catch(err => responseError(err));
+export const Get = (path) =>
+  instance
+    .get(path)
+    .then((res) => APIRes.constructRes(res))
+    .catch((err) => responseError(err));
 
-export const Delete = path =>
-  instance.delete(path)
-    .then(res => APIRes.constructRes(res))
-    .catch(err => responseError(err));
+export const Delete = (path) =>
+  instance
+    .delete(path)
+    .then((res) => APIRes.constructRes(res))
+    .catch((err) => responseError(err));
 
 export default instance;

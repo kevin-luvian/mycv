@@ -63,14 +63,14 @@ const Page = () => {
       </ContentPadding>
     );
   return (
-    <ContentPadding className={concat(!screen.desktop && "px-3")}>
+    <ContentPadding className={concat(!screen.desktop ? "px-3" : "")}>
       <div className="row my-3">
         <ProfileImage
           className="col-12 col-sm-5 px-4"
           imageURL={myInfo.imageFile?.url}
         />
         <Description
-          className={concat("col-12 col-sm-7", screen.mobile && "py-5")}
+          className={concat("col-12 col-sm-7", screen.mobile ? "py-5" : "")}
           fullname={myInfo.fullname}
           description={myInfo.description}
           cvURL={myInfo.cvFile?.url}
@@ -89,7 +89,7 @@ const Page = () => {
       </div>
       <TitleBreak
         title="Fun Facts"
-        className={concat("pt-3", screen.mobile && "mt-5")}
+        className={concat("pt-3", screen.mobile ? "mt-5" : "")}
       />
       <div className="row mt-4">
         {funFacts.map((val, index) => (

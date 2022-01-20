@@ -22,7 +22,7 @@ import {
   icons,
 } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
-import { concat } from "../../util/utils";
+import { btyeToKB, concat, KBToMB, parseByteToString } from "../../util/utils";
 import styles from "./styles.module.scss";
 import { Post, Delete, Put } from "../../axios/Axios";
 import $ from "jquery";
@@ -30,6 +30,11 @@ import { useStore, useDispatch, updateFiles } from "../../store/CacheStore";
 import ResponsivePlayer from "../../component/videoplayer/ResponsivePlayer";
 
 const FileInput = ({ onUploaded }) => {
+  const [upload, setUpload] = useState({
+    loading: false,
+    success: false,
+    time: 0,
+  });
   const [file, setFile] = useState(undefined);
   const [fileUrl, setFileUrl] = useState(undefined);
   const [filename, setFilename] = useState("");
@@ -42,22 +47,33 @@ const FileInput = ({ onUploaded }) => {
 
   const hiddenInput = useRef();
 
+  const getUploadTimeStr = (time, success) => {
+    if (time == 0) return "";
+    const seconds = (time / 1000).toFixed(1);
+    return `took ${seconds}s` + success ? "to upload." : ", upload failed.";
+  };
+
   const changeFile = (event) => {
     setFile(event.target.files[0]);
     setFilename(event.target.files[0].name);
+    setUploadTime(0);
   };
   const triggerInput = () => hiddenInput.current.click();
-  const upload = async () => {
+  const uploadFile = async () => {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
 
       const headers = { filename, group };
+      let time = Date.now();
+      setUpload({ ...upload, loading: true });
       const res = await Post("/file", formData, { headers });
       if (res.success) {
-        Notification.create(res.message, Notification.type.success);
         onUploaded();
-      } else Notification.create(res.message, Notification.type.danger);
+        time = Date.now() - time;
+      }
+      res.notify();
+      setUpload({ success: res.success, loading: false, time: time });
     } else {
       Notification.create("no file is selected", Notification.type.warning);
     }
@@ -67,60 +83,74 @@ const FileInput = ({ onUploaded }) => {
     setFileUrl(undefined);
     setFilename("");
     setGroup("");
+    setUpload({
+      success: false,
+      loading: false,
+      time: 0,
+    });
   };
 
   return (
-    <div className={styles.fileInput}>
-      <div className={styles.form}>
-        <div className="col-8 col-lg-9 pl-0">
-          <IconInput
-            className="mb-0"
-            label="file"
-            value={filename}
-            onChange={setFilename}
-            onClick={triggerInput}
-            icon={FindInPageIcon}
+    <Fragment>
+      <div className={styles.fileInput}>
+        <div className={styles.form}>
+          <div className="col-8 col-lg-9 pl-0">
+            <IconInput
+              className="mb-0"
+              label="file"
+              value={filename}
+              onChange={setFilename}
+              onClick={triggerInput}
+              icon={FindInPageIcon}
+            />
+          </div>
+          <div className="col-4 col-lg-3 pr-0 my-auto">
+            <Button
+              loading={upload.loading}
+              className="w-100"
+              onClick={uploadFile}
+            >
+              submit
+            </Button>
+          </div>
+          <input
+            ref={hiddenInput}
+            className="d-none"
+            type="file"
+            onChange={changeFile}
           />
         </div>
-        <div className="col-4 col-lg-3 pr-0 my-auto">
-          <Button className="w-100" onClick={upload}>
-            submit
-          </Button>
-        </div>
-        <input
-          ref={hiddenInput}
-          className="d-none"
-          type="file"
-          onChange={changeFile}
-        />
+        {file && (
+          <Fragment>
+            <div className={concat(styles.form, "mt-3")}>
+              <div className="col-8 col-lg-9 pl-0">
+                <TextInput
+                  className="mb-0"
+                  label="group"
+                  value={group}
+                  onChange={setGroup}
+                />
+              </div>
+              <div className="col-4 col-lg-3 pr-0 my-auto">
+                <BtnBasic.Danger className="w-100" onClick={clear}>
+                  clear
+                </BtnBasic.Danger>
+              </div>
+            </div>
+            {fileUrl && (
+              <div className="text-center">
+                <img src={fileUrl} alt="file" />
+              </div>
+            )}
+            <p className="mt-3">type: {file.type}</p>
+            <p>size: {parseByteToString(file.size)}</p>
+            <p>
+              {upload.time > 0 && getUploadTimeStr(upload.time, upload.success)}
+            </p>
+          </Fragment>
+        )}
       </div>
-      {file && (
-        <Fragment>
-          <div className={concat(styles.form, "mt-3")}>
-            <div className="col-8 col-lg-9 pl-0">
-              <TextInput
-                className="mb-0"
-                label="group"
-                value={group}
-                onChange={setGroup}
-              />
-            </div>
-            <div className="col-4 col-lg-3 pr-0 my-auto">
-              <BtnBasic.Danger className="w-100" onClick={clear}>
-                clear
-              </BtnBasic.Danger>
-            </div>
-          </div>
-          {fileUrl && (
-            <div className="text-center">
-              <img src={fileUrl} alt="file" />
-            </div>
-          )}
-          <p>type: {file.type}</p>
-          <p>size: {file.size}</p>
-        </Fragment>
-      )}
-    </div>
+    </Fragment>
   );
 };
 
@@ -250,7 +280,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
                 onClick={() => deleteModalRef.current.open()}
               />
               <ColoredIcon
-                className={concat(styles.expand, open && styles.rotated)}
+                className={concat(styles.expand, open ? styles.rotated : "")}
                 color={iconColors.default}
                 icon={icons.arrowDown}
                 onClick={() => setOpen(!open)}
@@ -265,12 +295,11 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
             )}
             {cFile().contentType.includes("video") && (
               <ResponsivePlayer className="mt-3" source={cFile().url} />
-              // <ResponsivePlayer source='https://www.youtube.com/watch?v=ysz5S6PUM-U' />
             )}
             <div className={styles.contentDesc}>
               <p>group: {cFile().group}</p>
               <p>type: {cFile().contentType}</p>
-              <p>size: {cFile().size}</p>
+              <p>size: {parseByteToString(cFile().size)}</p>
               <p>upload date: {cFile().uploadDate}</p>
               <Divider className="mt-3 mb-2" />
               <p style={{ overflowWrap: "break-word" }}>{cFile().url}</p>

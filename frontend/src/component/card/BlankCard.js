@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 export const BlankCard = ({ active, className, children, ...attr }) => (
   <div
     {...attr}
-    className={concat(className, styles.blankCard, active && styles.active)}
+    className={concat(className, styles.blankCard, active ? styles.active : "")}
   >
     {children}
   </div>
@@ -33,7 +33,7 @@ export const DirectoryCard = ({
       <h1>{title}</h1>
 
       <ImageCarousel className="mb-3" urls={imgUrls} />
-      <p>{parsedContent()}</p>
+      {parsedContent()}
       <div className="d-flex mt-3 justify-content-end">
         <Link to={readMoreURL}>
           <BtnOval.Default style={{ padding: ".3rem .7rem" }}>

@@ -153,3 +153,25 @@ export const fileExtFromURL = (url) => {
 };
 
 export const getFilenameFromURL = (url) => url.split("/").pop();
+
+/**
+ * @param {number} byte
+ */
+export const btyeToKB = (byte) => byte / 1000;
+
+/**
+ * @param {number} kb
+ */
+export const KBToMB = (kb) => kb / 1000;
+
+/**
+ * @param {number} byte
+ */
+export const parseByteToString = (byte) => {
+  const kb = btyeToKB(byte);
+  if (kb < 1000) {
+    return kb.toFixed(0) + " KB";
+  }
+  const mb = KBToMB(kb);
+  return mb.toFixed(1) + " MB";
+};
