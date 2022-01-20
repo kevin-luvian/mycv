@@ -280,7 +280,17 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
 
   const downloadFile = () => window.open(cFile().url, "_blank");
 
-  const fileURL = () => (open ? cFile().url : "");
+  const renderContent = () => {
+    if (cFile().contentType.includes("image")) {
+      return (
+        <div className="w-100 text-center mb-2">
+          <img src={cFile().url} alt="" />
+        </div>
+      );
+    } else if (cFile().contentType.includes("video")) {
+      return <ResponsivePlayer className="mt-3" source={cFile().url} />;
+    }
+  };
 
   return (
     <Fragment>
@@ -323,14 +333,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
             </div>
           </div>
           <div className={styles.content} ref={contentRef}>
-            {cFile().contentType.includes("image") && (
-              <div className="w-100 text-center mb-2">
-                <img src={fileURL()} alt="" />
-              </div>
-            )}
-            {cFile().contentType.includes("video") && (
-              <ResponsivePlayer className="mt-3" source={fileURL()} />
-            )}
+            {open && renderContent()}
             <div className={styles.contentDesc}>
               <p>group: {cFile().group}</p>
               <p>type: {cFile().contentType}</p>
