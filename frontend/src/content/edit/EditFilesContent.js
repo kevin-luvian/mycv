@@ -22,14 +22,29 @@ import {
   icons,
 } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
-import { btyeToKB, concat, KBToMB, parseByteToString } from "../../util/utils";
+import {
+  btyeToKB,
+  concat,
+  KBToMB,
+  parseByteToString,
+  parseMSToString,
+} from "../../util/utils";
 import styles from "./styles.module.scss";
-import { Post, Delete, Put } from "../../axios/Axios";
+import {
+  Post,
+  Delete,
+  Put,
+  getInstance,
+  getCancelToken,
+} from "../../axios/Axios";
 import $ from "jquery";
 import { useStore, useDispatch, updateFiles } from "../../store/CacheStore";
 import ResponsivePlayer from "../../component/videoplayer/ResponsivePlayer";
+import { LinearProgress } from "@material-ui/core";
 
 const FileInput = ({ onUploaded }) => {
+  const [cancelToken, setCancelToken] = useState(null);
+  const [progress, setProgress] = useState(0);
   const [upload, setUpload] = useState({
     loading: false,
     success: false,
@@ -49,11 +64,8 @@ const FileInput = ({ onUploaded }) => {
 
   const getUploadTimeStr = (time, success) => {
     if (time == 0) return "";
-    const seconds = (time / 1000).toFixed(1);
-    return concat(
-      `took ${seconds}s`,
-      success ? "to upload." : ", upload failed."
-    );
+    const append = success ? " to upload." : ", upload failed.";
+    return `took ${parseMSToString(time)}${append}`;
   };
 
   const changeFile = (event) => {
@@ -63,20 +75,34 @@ const FileInput = ({ onUploaded }) => {
   };
   const triggerInput = () => hiddenInput.current.click();
   const uploadFile = async () => {
+    resetUpload();
     if (file) {
+      setUpload({ ...upload, loading: true });
+      let time = Date.now();
+
       const formData = new FormData();
       formData.append("file", file);
 
-      const headers = { filename, group };
-      let time = Date.now();
-      setUpload({ ...upload, loading: true });
-      const res = await Post("/file", formData, { headers });
-      if (res.success) {
-        onUploaded();
-        time = Date.now() - time;
-      }
+      const cancelToken = getCancelToken();
+      setCancelToken(cancelToken);
+      const res = await Post("/file", formData, {
+        cancelToken: cancelToken.token,
+        headers: { filename, group },
+        onUploadProgress: (progress) => {
+          if (progress.lengthComputable) {
+            const value = Math.floor((progress.loaded / progress.total) * 100);
+            setProgress(value);
+          }
+        },
+      });
+      setUpload({
+        success: res.success,
+        loading: false,
+        time: Date.now() - time,
+      });
+
+      if (res.success) onUploaded();
       res.notify();
-      setUpload({ success: res.success, loading: false, time: time });
     } else {
       Notification.create("no file is selected", Notification.type.warning);
     }
@@ -87,6 +113,10 @@ const FileInput = ({ onUploaded }) => {
     setFilename("");
     setGroup("");
     resetUpload();
+    if (cancelToken != null) {
+      cancelToken.cancel();
+      setCancelToken(null);
+    }
   };
 
   const resetUpload = () => {
@@ -95,6 +125,7 @@ const FileInput = ({ onUploaded }) => {
       loading: false,
       time: 0,
     });
+    setProgress(0);
   };
 
   return (
@@ -151,9 +182,16 @@ const FileInput = ({ onUploaded }) => {
             )}
             <p className="mt-3">type: {file.type}</p>
             <p>size: {parseByteToString(file.size)}</p>
-            <p>
-              {upload.time > 0 && getUploadTimeStr(upload.time, upload.success)}
-            </p>
+            {!upload.loading && upload.time > 0 && (
+              <p>{getUploadTimeStr(upload.time, upload.success)}</p>
+            )}
+            {upload.loading && (
+              <LinearProgress
+                className="mt-3"
+                variant="determinate"
+                value={progress}
+              />
+            )}
           </Fragment>
         )}
       </div>

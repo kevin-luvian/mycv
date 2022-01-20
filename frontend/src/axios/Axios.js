@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { store } from "../redux/Store";
 import { actions } from "../redux/reducers/AuthReducer";
 import Notification from "../component/notification/Notification";
@@ -80,12 +80,14 @@ const responseError = (err) =>
 
 export const getInstance = () => instance;
 
+export const getCancelToken = () => axios.CancelToken.source();
+
 /**
  * axios post wrapper for better compatibility
  * @param {boolean} success
  * @param {string} message
  * @param {any} data
- * @param {any} config
+ * @param {AxiosRequestConfig?} config
  * @returns {Promise<APIRes>} wrapped result
  */
 export const Post = (path, data, config) =>

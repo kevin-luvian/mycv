@@ -175,3 +175,12 @@ export const parseByteToString = (byte) => {
   const mb = KBToMB(kb);
   return mb.toFixed(1) + " MB";
 };
+
+export const parseMSToString = (ms) => {
+  const seconds = ms / 1000;
+  if (seconds < 60) {
+    return seconds.toFixed(1) + " seconds";
+  }
+  const minutes = seconds / 60;
+  return minutes.toFixed(0) + " minutes";
+};
