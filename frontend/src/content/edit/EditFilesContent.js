@@ -56,7 +56,7 @@ const FileInput = ({ onUploaded }) => {
   const changeFile = (event) => {
     setFile(event.target.files[0]);
     setFilename(event.target.files[0].name);
-    setUploadTime(0);
+    resetUpload();
   };
   const triggerInput = () => hiddenInput.current.click();
   const uploadFile = async () => {
@@ -83,6 +83,10 @@ const FileInput = ({ onUploaded }) => {
     setFileUrl(undefined);
     setFilename("");
     setGroup("");
+    resetUpload();
+  };
+
+  const resetUpload = () => {
     setUpload({
       success: false,
       loading: false,
