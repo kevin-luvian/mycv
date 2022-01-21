@@ -30,7 +30,7 @@ export function BasicElement({ className, children, loading, ...attr }) {
       )}
       disabled={loading}
     >
-      <div className={styles.content}> {children} </div>
+      <div className={styles.content}> {loading ? "loading" : children} </div>
     </button>
   );
 }

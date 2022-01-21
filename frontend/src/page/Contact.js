@@ -5,7 +5,6 @@ import { Banner } from "../component/decoration/Text";
 import { FunCardBorderless } from "../component/card/FunCard";
 import ContentPadding from "./extra/ContentPadding";
 import Loader from "../component/loader/hash";
-import { concat } from "../util/utils";
 
 const fetchFunction = (url) => async () => {
   const res = await Get(url);
@@ -38,20 +37,19 @@ const Page = () => {
   return (
     <Fragment>
       <Banner title="Contact" className="mb-3" />
-      <ContentPadding className="row">
+      <ContentPadding className="row pt-3">
         {loading ? (
           <Loader />
         ) : (
-          <div className="mt-3">
-            {contacts?.map((c, i) => (
-              <FunCardBorderless
-                key={i}
-                icon={c.icon}
-                title={c.title}
-                description={c.description}
-              />
-            ))}
-          </div>
+          contacts?.map((c, i) => (
+            <FunCardBorderless
+              key={i}
+              icon={c.icon}
+              title={c.title}
+              description={c.description}
+              className="col-12 col-md-8"
+            />
+          ))
         )}
       </ContentPadding>
     </Fragment>

@@ -5,6 +5,8 @@ import { Banner } from "../component/decoration/Text";
 import { DirectoryCard } from "../component/card/BlankCard";
 import ContentPadding from "./extra/ContentPadding";
 import Loader from "../component/loader/hash";
+import { useWindowSize } from "../util/hooks";
+import { concat } from "../util/utils";
 
 const parseDir = (dir) => {
   return {
@@ -19,7 +21,7 @@ const parseDir = (dir) => {
   };
 };
 
-const Page = ({ ...props }) => {
+const Page = () => {
   document.title = "View My Projects";
 
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,7 @@ const Page = ({ ...props }) => {
 
   const store = useStore();
   const dispatch = useDispatch();
+  const screen = useWindowSize();
 
   useEffect(() => {
     const projects = store.project?.value ?? [];
@@ -64,18 +67,22 @@ const Page = ({ ...props }) => {
         {loading ? (
           <Loader />
         ) : (
-          <Fragment>
-            {projects?.map((p, i) => (
-              <div key={i} className="col-12 col-md-6 mb-4">
-                <DirectoryCard
-                  title={p.title}
-                  imgUrls={p.imageURLs}
-                  description={p.content}
-                  readMoreURL={`/project/${p._id}`}
-                />
-              </div>
-            ))}
-          </Fragment>
+          projects?.map((p, i) => (
+            <div
+              key={i}
+              className={concat(
+                screen.mobile ? "px-0 mt-0 mb-1" : "mb-4",
+                "col-12 col-md-6"
+              )}
+            >
+              <DirectoryCard
+                title={p.title}
+                imgUrls={p.imageURLs}
+                description={p.content}
+                readMoreURL={`/project/${p._id}`}
+              />
+            </div>
+          ))
         )}
       </ContentPadding>
     </Fragment>

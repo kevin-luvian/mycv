@@ -84,6 +84,7 @@ const Page = () => {
             title={val.title}
             description={val.description}
             icon={val.favicon}
+            className="col-12 col-sm-6 col-lg-4"
           />
         ))}
       </div>
