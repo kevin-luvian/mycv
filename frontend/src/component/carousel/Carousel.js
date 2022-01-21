@@ -2,6 +2,7 @@ import styles from "./styles.module.scss";
 import { useState } from "react";
 import { concat, fileExtFromURL } from "../../util/utils";
 import ResponsivePlayer from "../videoplayer/ResponsivePlayer";
+import CustomPlayer from "../videoplayer/CustomPlayer";
 
 export const ImageCarousel = ({ urls, className, height = "20rem" }) => {
   const [currTarget, setCurrTarget] = useState(0);
@@ -40,7 +41,7 @@ export const ImageCarousel = ({ urls, className, height = "20rem" }) => {
           let fElem = <img src={url} alt="carousel" />;
           switch (ext) {
             case ".mp4":
-              fElem = <ResponsivePlayer source={url} />;
+              fElem = <CustomPlayer source={url} />;
               break;
           }
           return (

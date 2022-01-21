@@ -6,6 +6,7 @@ import { Heading } from "../component/texts/Heading";
 import { Tips } from "../component/texts/InfoBar";
 import { ParserError, ParserWrapper } from "../component/texts/ParserWrapper";
 import { Link } from "react-router-dom";
+import CustomPlayer from "../component/videoplayer/CustomPlayer";
 /**
  * @param {String} html
  */
@@ -57,6 +58,8 @@ const transform = (node, index) => {
           children={convCH(node, index)}
         />
       );
+    case "custom-player":
+      return <CustomPlayer source={node.attribs["source"] ?? ""} />;
   }
   return convertNodeToElement(node, index, transform);
 };
