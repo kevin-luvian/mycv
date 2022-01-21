@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 
-const useVideoPlayer = (videoElement) => {
+const useVideoPlayer = (videoElement, wrapperElement) => {
   const [playerState, setPlayerState] = useState({
     isPlaying: false,
     progress: 0,
     speed: 1,
     isMuted: false,
+    fullscreen: false,
   });
 
   const togglePlay = () => {
@@ -53,6 +54,24 @@ const useVideoPlayer = (videoElement) => {
       : (videoElement.current.muted = false);
   }, [playerState.isMuted, videoElement]);
 
+  const toggleFullscreen = (show) => {
+    if (show) {
+      if (wrapperElement.current.requestFullscreen) {
+        wrapperElement.current.requestFullscreen();
+      } else if (wrapperElement.current.mozRequestFullScreen) {
+        wrapperElement.current.mozRequestFullScreen();
+      } else if (wrapperElement.current.webkitRequestFullscreen) {
+        wrapperElement.current.webkitRequestFullscreen();
+      } else if (wrapperElement.current.msRequestFullscreen) {
+        wrapperElement.current.msRequestFullscreen();
+      }
+    } else {
+      document.exitFullscreen();
+    }
+
+    setPlayerState({ ...playerState, fullscreen: show });
+  };
+
   return {
     playerState,
     togglePlay,
@@ -60,6 +79,7 @@ const useVideoPlayer = (videoElement) => {
     handleVideoProgress,
     handleVideoSpeed,
     toggleMute,
+    toggleFullscreen,
   };
 };
 

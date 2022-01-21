@@ -7,17 +7,19 @@ import ProjectByID from "./ProjectByID";
 import Login from "./Login";
 import Logout from "./Logout";
 import Edit from "./Edit";
+import Test from "./Test";
 
 const Exported = {
-    Bio,
-    Edit,
-    Login,
-    Logout,
-    Resume,
-    Contact,
-    Project,
-    ProjectByID,
-    PageWrapper
+  Bio,
+  Edit,
+  Login,
+  Logout,
+  Resume,
+  Contact,
+  Project,
+  ProjectByID,
+  PageWrapper,
+  Test,
 };
 
 export default Exported;
