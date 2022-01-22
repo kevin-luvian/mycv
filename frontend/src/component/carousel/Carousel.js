@@ -41,7 +41,7 @@ export const ImageCarousel = ({ urls, className, height = "20rem" }) => {
           let fElem = <img src={url} alt="carousel" />;
           switch (ext) {
             case ".mp4":
-              fElem = <CustomPlayer source={url} />;
+              fElem = <CustomPlayer source={url} height="100%" />;
               break;
           }
           return (

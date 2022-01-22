@@ -10,7 +10,7 @@ import { concat } from "../../util/utils";
  * source: string
  * }} param0
  */
-const CustomPlayer = ({ source, maxHeight = "3rem" }) => {
+const CustomPlayer = ({ source, height = "20rem" }) => {
   const videoElement = useRef(null);
   const wrapperElement = useRef(null);
   const {
@@ -23,12 +23,8 @@ const CustomPlayer = ({ source, maxHeight = "3rem" }) => {
     toggleFullscreen,
   } = useVideoPlayer(videoElement, wrapperElement);
   return (
-    <div className={styles.customVideoContainer}>
-      <div
-        className={styles["vid-wrapper"]}
-        ref={wrapperElement}
-        style={{ height: "20rem" }}
-      >
+    <div className={styles.customVideoContainer} style={{ height: height }}>
+      <div className={styles["vid-wrapper"]} ref={wrapperElement}>
         <video
           src={source}
           ref={videoElement}
