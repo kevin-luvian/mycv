@@ -62,7 +62,7 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
   }, [project, createSectionMenu, changeSection]);
 
   return (
-    <div {...props} className={concat(className, screen.mobile ? "px-3" : "")}>
+    <div {...props} className={className}>
       <div className={styles.sectionMenu}>
         {sections.map((s, index) => (
           <div
