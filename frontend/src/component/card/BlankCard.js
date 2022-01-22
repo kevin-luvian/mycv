@@ -23,7 +23,7 @@ export const DirectoryCard = ({
   description,
   className,
   children,
-  readMoreURL,
+  readMoreURL = "#",
 }) => {
   const parsedContent = useCallback(() => parse(description), [description]);
 

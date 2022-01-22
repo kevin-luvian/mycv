@@ -10,6 +10,7 @@ $shadow: (
 $transition: (
   ease: all 0.2s ease,
   ease_slow: all 1s ease,
+  ease_in_out: all 0.3s ease-in-out,
 );
 
 $navbar: (

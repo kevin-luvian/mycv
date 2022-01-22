@@ -54,7 +54,7 @@ const transform = (node, index) => {
       return (
         <Link
           {...props}
-          to={node.attribs["to"] ?? "#"}
+          to={node.attribs["to"] ? node.attribs["to"] : "#"}
           children={convCH(node, index)}
         />
       );

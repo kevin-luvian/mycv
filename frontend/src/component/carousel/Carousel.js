@@ -53,7 +53,7 @@ export const ImageCarousel = ({ urls, className, height = "20rem" }) => {
                 isTarget(index)
               )}
             >
-              <div>{fElem}</div>
+              <div className={styles.elem}>{fElem}</div>
             </div>
           );
         })}

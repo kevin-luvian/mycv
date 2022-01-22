@@ -9,10 +9,11 @@ const useVideoPlayer = (videoElement, wrapperElement) => {
     fullscreen: false,
   });
 
-  const togglePlay = () => {
+  const togglePlay = (play = null) => {
+    if (play == null) play = !playerState.isPlaying;
     setPlayerState({
       ...playerState,
-      isPlaying: !playerState.isPlaying,
+      isPlaying: play,
     });
   };
 
@@ -25,14 +26,11 @@ const useVideoPlayer = (videoElement, wrapperElement) => {
   const handleOnTimeUpdate = () => {
     const progress =
       (videoElement.current.currentTime / videoElement.current.duration) * 100;
-    setPlayerState({
-      ...playerState,
-      progress,
-    });
+    setPlayerState({ ...playerState, progress });
   };
 
-  const handleVideoProgress = (event) => {
-    const manualChange = Number(event.target.value);
+  const handleVideoProgress = (value) => {
+    const manualChange = Number(value);
     videoElement.current.currentTime =
       (videoElement.current.duration / 100) * manualChange;
     setPlayerState({ ...playerState, progress: manualChange });
