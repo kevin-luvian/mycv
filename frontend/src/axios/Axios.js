@@ -2,12 +2,10 @@ import axios, { AxiosRequestConfig } from "axios";
 import { store } from "../redux/Store";
 import { actions } from "../redux/reducers/AuthReducer";
 import Notification from "../component/notification/Notification";
+import env from "../util/envs";
 
 const instance = axios.create({
-  baseURL: "https://kevinlh.herokuapp.com/api",
-  // baseURL: "http://localhost:9000/api",
-  // baseURL: process.env.CVEXPRESS_API_URL,
-  // baseURL: "https://mycv.atkev.site",
+  baseURL: env.API_URL,
 });
 
 instance.interceptors.request.use(

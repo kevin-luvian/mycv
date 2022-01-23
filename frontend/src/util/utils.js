@@ -1,4 +1,11 @@
 /**
+ * get the host string of this current app instance
+ */
+export function currentHost() {
+  return window.location.host;
+}
+
+/**
  * check if value is null return default.
  */
 export function cnord(v, d) {
