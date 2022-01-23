@@ -74,7 +74,7 @@ class APIRes {
 }
 
 const responseError = (err) =>
-  APIRes.constructFail(err.response?.data.message || "response not received");
+  APIRes.constructFail(err?.response?.data.message || "response not received");
 
 export const getInstance = () => instance;
 

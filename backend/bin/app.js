@@ -7,8 +7,7 @@ const env = require("../util/envs");
 const { logObject } = require("../util/utils");
 
 logObject(env);
-const allowedOrigins = [...env.CORS_URLS, `localhost:${env.PORT}`];
-console.log("alloweb origins", allowedOrigins);
+const allowedOrigins = [...env.CORS_URLS, `http://localhost:${env.PORT}`];
 
 const app = express();
 
