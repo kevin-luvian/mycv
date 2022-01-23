@@ -57,7 +57,7 @@ const addFilesUrl = (host, arr) => {
 const fileUrl = (host, fileID, filename) => {
   const protocol = env.NODE_ENV === "development" ? "http" : "https";
   const routeURL = require("../routes/file").routeURL;
-  const filename = filename.replace(/\s+/g, "%20");
+  filename = filename.replace(/\s+/g, "%20");
   return `${protocol}://${host}${routeURL}/${fileID}/${filename}`;
 };
 
