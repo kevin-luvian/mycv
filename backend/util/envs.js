@@ -3,6 +3,7 @@ const { cnord } = require("./utils");
 require("dotenv").config(); // uses .env file
 
 const environments = {
+  NODE_ENV: process.env.NODE_ENV,
   USERNAME_APP: process.env.USERNAME_APP,
   PASSWORD_APP: process.env.PASSWORD_APP,
   PORT: process.env.PORT || "9000",

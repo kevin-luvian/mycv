@@ -61,7 +61,7 @@ window.env = {
   "WINDOWPATH": "2",
   "npm_package_browserslist_development_0": ">0.2%",
   "npm_package_dependencies_axios": "^0.21.1",
-  "PATH": "/tmp/yarn--1642924656258-0.5449730989190482:/home/kevinluvian/Documents/projects/mycv/frontend/node_modules/.bin:/home/kevinluvian/.config/yarn/link/node_modules/.bin:/home/kevinluvian/.yarn/bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/lib/node_modules/npm/bin/node-gyp-bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/bin/node_modules/npm/bin/node-gyp-bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/go/bin:~/flutter/bin",
+  "PATH": "/tmp/yarn--1642925215507-0.03956570142226612:/home/kevinluvian/Documents/projects/mycv/frontend/node_modules/.bin:/home/kevinluvian/.config/yarn/link/node_modules/.bin:/home/kevinluvian/.yarn/bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/lib/node_modules/npm/bin/node-gyp-bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/bin/node_modules/npm/bin/node-gyp-bin:/home/kevinluvian/.nvm/versions/node/v16.13.2/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/go/bin:~/flutter/bin",
   "NODE": "/home/kevinluvian/.nvm/versions/node/v16.13.2/bin/node",
   "SESSION_MANAGER": "local/pop-os:@/tmp/.ICE-unix/3725,unix/pop-os:/tmp/.ICE-unix/3725",
   "INVOCATION_ID": "e76a2ad11d9d41cb9f8cef35e6f9c823",
@@ -135,5 +135,5 @@ window.env = {
   "INIT_CWD": "/home/kevinluvian/Documents/projects/mycv/frontend",
   "npm_package_dependencies_react": "^17.0.1",
   "NODE_ENV": "development",
-  "API_URL": "http://localhost:9000/api"
+  "API_URL": "https://mycv.atkev.tech/api"
 };

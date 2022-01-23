@@ -76,6 +76,7 @@ const Page = () => {
               )}
             >
               <DirectoryCard
+                key={i}
                 title={p.title}
                 imgUrls={p.imageURLs}
                 description={p.content}

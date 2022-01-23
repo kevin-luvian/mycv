@@ -30,7 +30,7 @@ export const DirectoryCard = ({
   return (
     <BlankCard className={concat(className, "p-3")}>
       {children}
-      <h1>{title}</h1>
+      <h1 style={{ wordWrap: "break-word" }}>{title}</h1>
 
       <ImageCarousel className="mb-3" urls={imgUrls} />
       {parsedContent()}

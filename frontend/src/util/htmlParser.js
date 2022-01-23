@@ -1,6 +1,6 @@
 import { DomElement } from "htmlparser2";
 import ReactHtmlParser, { convertNodeToElement } from "react-html-parser";
-import { cnord } from "./utils";
+import { cnord, simpleID } from "./utils";
 import { Basic } from "../component/button/Button";
 import { Heading } from "../component/texts/Heading";
 import { Tips } from "../component/texts/InfoBar";
@@ -37,29 +37,37 @@ const modifyRawHTML = (s) => {
 /**
  * @param {DomElement} node
  */
-const transform = (node, index) => {
+const transform = (node, _ = null) => {
+  const index = simpleID();
   node.attribs = cnord(node.attribs, {});
   const props = {
-    key: index,
     className: node.attribs["class"],
   };
+  console.log(props.key);
   switch (node.name) {
     case "primary-button":
-      return <Basic.Default {...props} children={convCH(node, index)} />;
+      return <Basic.Default {...props} key={index} children={convCH(node)} />;
     case "heading":
-      return <Heading {...props} children={convCH(node, index)} />;
+      return <Heading {...props} key={index} children={convCH(node)} />;
     case "tips":
-      return <Tips {...props} children={convCH(node, index)} />;
+      return <Tips {...props} key={index} children={convCH(node)} />;
     case "links":
       return (
         <Link
           {...props}
+          key={index}
           to={node.attribs["to"] ? node.attribs["to"] : "#"}
           children={convCH(node, index)}
         />
       );
     case "custom-player":
-      return <CustomPlayer source={node.attribs["source"] ?? ""} />;
+      return (
+        <CustomPlayer
+          {...props}
+          key={index}
+          source={node.attribs["source"] ?? ""}
+        />
+      );
   }
   return convertNodeToElement(node, index, transform);
 };
@@ -67,5 +75,4 @@ const transform = (node, index) => {
 /**
  * @param {DomElement} node
  */
-const convCH = (node, index) =>
-  node.children?.map((e, i) => transform(e, index + i)) || [];
+const convCH = (node) => node.children?.map((e) => transform(e)) || [];
