@@ -4,6 +4,16 @@ const env = require("../util/envs");
 const util = require("../util/utils");
 
 /**
+ * @typedef {Object} FileMetadata
+ * @property {string} _id
+ * @property {string} filename
+ * @property {string} group
+ * @property {string} contentType
+ * @property {string} uploadDate
+ * @property {number} size
+ */
+
+/**
  * find all File Metadata lean
  *
  * @return {Promise<Object[]>} Array of object
@@ -92,6 +102,7 @@ const deleteById = async (id) => {
 /**
  * find File Metadata by id
  * @param {Types.ObjectId} id
+ * @returns {Promise<FileMetadata>}
  */
 const findById = (id) => FileMetadata.findOne({ _id: id }).lean();
 

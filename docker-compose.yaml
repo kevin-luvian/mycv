@@ -1,9 +1,20 @@
 version: "3"
 
 services:
-  mycv:
+  # mycv:
+  #   restart: unless-stopped
+  #   build: .
+  #   ports:
+  #     - 9000:9000
+  mongodb:
     restart: unless-stopped
-    build: .
+    image: "mongo:latest"
+    environment:
+      - MONGO_INITDB_DATABASE=mongodb
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo-js:ro
+      - ./mongo-volume:/data/db
     ports:
-      - 9000:9000
-  
+      - 27017:27017

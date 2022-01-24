@@ -2,7 +2,18 @@ const debug = require("../util/utils").log("repository:fileRepository");
 const mongoose = require("mongoose");
 const mongodb = require("mongodb");
 const { Readable } = require("stream");
+var GridStream = require("gridfs-stream");
 
+/**
+ * @param {*} id
+ * @returns {Promise<{
+ * _id: string
+ * length: number
+ * chunkSize: number
+ * uploadDate: string
+ * md5: string
+ * }>}
+ */
 const findFileById = async (id) => {
   const modb = mongoose.connection.db;
   const file = await modb
@@ -41,21 +52,35 @@ const deleteById = async (id) => {
   }
 };
 
-const downloadStream = (res, id) => {
+const downloadStream = (id, { start = undefined, end = undefined }) => {
   const modb = mongoose.connection.db;
+  //   const gfs = GridStream(modb, mongodb);
+  //   const readStream = gfs.createReadStream({ _id: id, root: "file" });
+
+  //   //error handling, e.g. file does not exist
+  //   readStream.on("error", function (err) {
+  //     console.log("An error occurred!", err);
+  //     throw err;
+  //   });
+
+  //   return readStream;
+
   const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
-  const downloadStream = bucket.openDownloadStream(id);
+  const downloadStream = bucket.openDownloadStream(id, { start, end });
+  return downloadStream;
 
   // downloadStream.
   // downloadStream.read(bytesToWriteTo);
-  downloadStream.pipe(res);
+  //   downloadStream.pipe(res, { end: true });
 
-  // downloadStream.on('data', chunk => res.write(chunk));
-  // downloadStream.on('error', err => {
+  //   downloadStream.on("data", (chunk) => {
+  //     res.write(chunk);
+  //   });
+  //   downloadStream.on("error", (err) => {
   //     debug("downloadStream", "on error:", err);
-  //     res.status(404)
-  // });
-  // downloadStream.on('end', () => res.end());
+  //     res.status(404);
+  //   });
+  //   downloadStream.on("end", () => res.end());
 };
 
 const uploadStream = (req) =>
