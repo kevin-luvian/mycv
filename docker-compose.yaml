@@ -3,7 +3,7 @@ version: "3"
 services:
   mycv:
     restart: unless-stopped
-    build: ./
+    build: .
     ports:
       - 9000:9000
   
