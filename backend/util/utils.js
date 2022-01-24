@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const appID = Math.floor(Math.random() * 100);
+
 const logObject = (obj) => {
   for (const key in obj) {
     console.log(key + ": " + obj[key]);
@@ -77,6 +79,7 @@ const cleanNull = (arr) => {
 };
 
 module.exports = {
+  appID,
   log,
   logObject,
   cnord,
