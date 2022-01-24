@@ -9,11 +9,11 @@
     "autoprefixer": "^10.3.5",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "env-cmd": "^10.1.0",
     "jquery": "^3.6.0",
     "popper.js": "^1.16.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-dotenv": "^0.1.3",
     "react-html-parser": "^2.0.2",
     "react-player": "^2.9.0",
     "react-redux": "^7.2.2",
@@ -27,8 +27,8 @@
     "sass": "^1.42.1"
   },
   "scripts": {
-    "start": "react-dotenv && react-scripts start",
-    "build": "react-dotenv && react-scripts --max_old_space_size=4096 build",
+    "start": "env-cmd -f ./.env.dev react-scripts start",
+    "build": "env-cmd -f ./.env.prod react-scripts --max_old_space_size=900 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

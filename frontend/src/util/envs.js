@@ -1,7 +1,5 @@
-import dotenv from "react-dotenv";
-
 const environments = {
-  NODE_ENV: dotenv?.NODE_ENV || "development",
-  API_URL: dotenv?.API_URL || "http://localhost:9000/api",
+  NODE_ENV: process.env.REACT_APP_NODE_ENV || "development",
+  API_URL: process.env.REACT_APP_API_URL || "http://localhost:9000/api",
 };
 export default environments;
