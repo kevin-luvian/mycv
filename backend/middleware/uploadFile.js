@@ -15,6 +15,7 @@ const upload = multer({
 const uploadMiddleware = upload.single("file");
 
 const uploadFile = (req, res, next) => {
+  console.log("Uploading File");
   const minutes10 = 10 * 60 * 1000;
   req.socket.setTimeout(minutes10);
 
