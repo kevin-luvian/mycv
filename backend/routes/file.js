@@ -122,26 +122,34 @@ router.get("/page/:num", async (req, res) => {
 });
 
 router.post("/", tokenAuth.admin, upload, async (req, res) => {
+  const minutes10 = 10 * 60 * 1000;
+  req.socket.setTimeout(minutes10);
+
   const id = await fileRepo.uploadStream(req);
   if (!id) return resf.r500(res, "Error uploading file");
 
   console.log("File Uploaded");
 
-  // Create a Metadata
-  const fileMetaAttr = createFileMetadata(
-    req.file,
-    id,
-    req.headers.filename,
-    req.headers.group
-  );
-  const isCreated = await fileMetadataRepo.create(fileMetaAttr);
+  try {
+    // Create a Metadata
+    const fileMetaAttr = createFileMetadata(
+      req.file,
+      id,
+      req.headers.filename,
+      req.headers.group
+    );
+    const isCreated = await fileMetadataRepo.create(fileMetaAttr);
 
-  if (isCreated) {
-    resf.r200(res, "File uploaded successfully");
-  } else {
-    // failed to create, delete uploaded files
-    fileRepo.deleteById(fileMetaAttr._id);
-    resf.r500(res, "File Metadata creation failed");
+    if (isCreated) {
+      resf.r200(res, "File uploaded successfully");
+    } else {
+      // failed to create, delete uploaded files
+      fileRepo.deleteById(fileMetaAttr._id);
+      resf.r500(res, "File Metadata creation failed");
+    }
+  } catch (err) {
+    const message = err ? err.message : "an error occured";
+    resf.r500(res, message, err);
   }
 });
 
