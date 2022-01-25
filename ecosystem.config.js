@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "[MYCV] main cluster",
+      name: "[MYCV] main",
       script: "./backend/bin/www",
       instances: 2,
       exec_mode: "cluster",
@@ -12,13 +12,14 @@ module.exports = {
       },
     },
     {
-      name: "[MYCV] worker 1",
+      name: "[MYCV] file worker",
       script: "./backend/bin/www",
-      instances: 1,
-      exec_mode: "fork",
+      instances: 2,
+      exec_mode: "cluster",
       env: {
         NODE_ENV: "production",
-        API_URL: "http://localhost:9001/api",
+        MONGO_DB:
+          "mongodb://root:password@localhost:27017/mongodb?authSource=admin&retryWrites=true&w=majority",
         PORT: 9001,
       },
     },
