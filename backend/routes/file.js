@@ -22,17 +22,16 @@ router.get("/:id/*", async (req, res) => {
   const file = await fileRepo.findFileById(id);
   if (!file) return resf.r400(res, "file not found");
 
-  // const metadata = await fileMetadataRepo.findById(id);
-  // const start = 0;
-  // const end = file.length - 1;
-  // const headers = {
-  //   "Content-Range": `bytes ${start}-${end}/${file.length}`,
-  //   "Accept-Ranges": "bytes",
-  //   "Content-Length": file.length - start,
-  //   "Content-Type": metadata.contentType,
-  // };
-  // // HTTP Status 206 for Partial Content
-  // res.writeHead(206, headers);
+  const metadata = await fileMetadataRepo.findById(id);
+  const start = 0;
+  const end = file.length - 1;
+  const headers = {
+    "Content-Range": `bytes ${start}-${end}/${file.length}`,
+    "Accept-Ranges": "bytes",
+    "Content-Length": file.length - start,
+    "Content-Type": metadata.contentType,
+  };
+  res.writeHead(200, headers);
 
   const dstream = fileRepo.downloadStream(id);
   dstream.pipe(res);
