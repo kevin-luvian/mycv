@@ -27,7 +27,11 @@ router.get("/:id/*", async (req, res) => {
     const metadata = await fileMetadataRepo.findById(id);
 
     const size = file.length;
-    const range = req.headers.range;
+    let range = req.headers.range;
+    if (range == null && metadata.contentType.includes("video")) {
+      range = "0";
+    }
+
     if (range != null) {
       const parts = range.replace(/bytes=/, "").split("-");
 
