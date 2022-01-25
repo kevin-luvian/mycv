@@ -5,15 +5,11 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const env = require("../util/envs");
 const { logObject } = require("../util/utils");
-const timeout = require('connect-timeout');
 
 logObject(env);
 const allowedOrigins = [...env.CORS_URLS, `http://localhost:${env.PORT}`];
 
 const app = express();
-
-const minutes10 = 10 * 60 * 1000;
-app.use(timeout(minutes10));
 
 app.use(
   cors({
@@ -76,10 +72,5 @@ app.get("*", (req, res) => {
  * @param {string} name path from root
  */
 app.rootRequire = (name) => require(`${__dirname}/${name}`);
-
-function haltOnTimedout(req, res, next) {
-  if (!req.timedout) next();
-}
-app.use(haltOnTimedout);
 
 module.exports = app;
