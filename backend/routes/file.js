@@ -30,12 +30,21 @@ router.get("/:id/*", async (req, res) => {
     const range = req.headers.range;
     if (range != null) {
       const parts = range.replace(/bytes=/, "").split("-");
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : size;
+
+      let start = parseInt(parts[0], 10);
+      if (isNaN(start)) {
+        start = 0;
+      }
+
+      const chunk3mb = 3 * 1000 * 1000;
+      let end = parts[1] ? parseInt(parts[1], 10) : start + chunk3mb;
+      if (end > size) {
+        end = size;
+      }
 
       console.log(start, end, "size:", size);
 
-      if (start > size || end > size) {
+      if (start > size) {
         res.writeHead(416, {
           "Content-Range": `bytes */${size}`,
         });
