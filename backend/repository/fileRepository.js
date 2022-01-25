@@ -52,7 +52,7 @@ const deleteById = async (id) => {
   }
 };
 
-const downloadStream = (id, { start = undefined, end = undefined }) => {
+const downloadStream = (id, options) => {
   const modb = mongoose.connection.db;
   //   const gfs = GridStream(modb, mongodb);
   //   const readStream = gfs.createReadStream({ _id: id, root: "file" });
@@ -66,7 +66,7 @@ const downloadStream = (id, { start = undefined, end = undefined }) => {
   //   return readStream;
 
   const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
-  const downloadStream = bucket.openDownloadStream(id, { start, end });
+  const downloadStream = bucket.openDownloadStream(id, options);
   return downloadStream;
 
   // downloadStream.

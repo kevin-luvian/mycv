@@ -18,23 +18,53 @@ router.get("/", tokenAuth.admin, async (req, res) => {
 });
 
 router.get("/:id/*", async (req, res) => {
-  const id = util.stringToMongooseId(req.params.id);
-  const file = await fileRepo.findFileById(id);
-  if (!file) return resf.r400(res, "file not found");
+  try {
+    console.log("Getting stream");
+    const id = util.stringToMongooseId(req.params.id);
+    const file = await fileRepo.findFileById(id);
+    if (!file) return resf.r400(res, "file not found");
 
-  const metadata = await fileMetadataRepo.findById(id);
-  const start = 0;
-  const end = file.length - 1;
-  const headers = {
-    "Content-Range": `bytes ${start}-${end}/${file.length}`,
-    "Accept-Ranges": "bytes",
-    "Content-Length": file.length - start,
-    "Content-Type": metadata.contentType,
-  };
-  res.writeHead(200, headers);
+    const metadata = await fileMetadataRepo.findById(id);
 
-  const dstream = fileRepo.downloadStream(id);
-  dstream.pipe(res);
+    const size = file.length;
+    const range = req.headers.range;
+    if (range != null) {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : size;
+
+      console.log(start, end, "size:", size);
+
+      if (start > size || end > size) {
+        res.writeHead(416, {
+          "Content-Range": `bytes */${size}`,
+        });
+        res.end();
+        return;
+      }
+
+      const dstream = fileRepo.downloadStream(id, { start, end });
+
+      const headers = {
+        "Content-Range": `bytes ${start}-${end}/${size}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": end - start,
+        "Content-Type": metadata.contentType,
+      };
+      res.writeHead(206, headers);
+      dstream.pipe(res);
+    } else {
+      const head = {
+        "Content-Length": size,
+        "Content-Type": metadata.contentType,
+      };
+      res.writeHead(200, head);
+      const dstream = fileRepo.downloadStream(id);
+      dstream.pipe(res);
+    }
+  } catch (err) {
+    resf.r500(res, "stream failed", err);
+  }
 });
 
 router.post("/find-urls", async (req, res) => {
