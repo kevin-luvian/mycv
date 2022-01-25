@@ -19,7 +19,6 @@ router.get("/", tokenAuth.admin, async (req, res) => {
 
 router.get("/:id/*", async (req, res) => {
   try {
-    console.log("Getting stream");
     const id = util.stringToMongooseId(req.params.id);
     const file = await fileRepo.findFileById(id);
     if (!file) return resf.r400(res, "file not found");
@@ -41,14 +40,12 @@ router.get("/:id/*", async (req, res) => {
       }
 
       const chunk3mb = 3 * 1000 * 1000;
-      let end = parts[1] ? parseInt(parts[1], 10) : start + chunk3mb;
-      if (end > size) {
-        end = size;
+      let end = parts[1] ? parseInt(parts[1], 10) : start + chunk3mb - 1;
+      if (end > size - 1) {
+        end = size - 1;
       }
 
-      console.log(start, end, "size:", size);
-
-      if (start > size) {
+      if (start > size - 1) {
         res.writeHead(416, {
           "Content-Range": `bytes */${size}`,
         });
@@ -56,12 +53,12 @@ router.get("/:id/*", async (req, res) => {
         return;
       }
 
-      const dstream = fileRepo.downloadStream(id, { start, end });
+      const dstream = fileRepo.downloadStream(id, { start, end: end + 1 });
 
       const headers = {
         "Content-Range": `bytes ${start}-${end}/${size}`,
         "Accept-Ranges": "bytes",
-        "Content-Length": end - start,
+        "Content-Length": end - start + 1,
         "Content-Type": metadata.contentType,
       };
       res.writeHead(206, headers);
@@ -131,8 +128,6 @@ router.post("/", tokenAuth.admin, upload, async (req, res) => {
 
   const id = await fileRepo.uploadStream(req);
   if (!id) return resf.r500(res, "Error uploading file");
-
-  console.log("File Uploaded");
 
   try {
     // Create a Metadata
