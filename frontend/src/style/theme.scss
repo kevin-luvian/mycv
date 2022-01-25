@@ -1,0 +1,88 @@
+$global: (
+  light: white,
+  dark: black,
+  dim: #a5a5a5,
+  muted: #d5d5d5,
+  success: #28a745,
+  warning: #ffc107,
+  danger: #dc3545,
+  default: #343a40,
+);
+
+$forest: (
+  primary: #0973d6,
+  secondary: #a5a5a5,
+);
+
+$ocean: (
+  primary: #002a29,
+  secondary: #007a79,
+  tertiary: #c7cedf,
+  lightBrown: #976f4f,
+  darkBrown: #4d2a16,
+);
+
+$themes: (
+  forest: (
+    primary: map-get($forest, "primary"),
+    secondary: map-get($forest, "secondary"),
+    tertiary: map-get($forest, "tertiary"),
+    // =============================================================
+    root: map-get($forest, "primary"),
+    root_top: map-get($global, "light"),
+    canvas: map-get($global, "light"),
+    // =============================================================
+    button_color: map-get($forest, "primary"),
+    button_hover: darken(map-get($forest, "primary"), 7%),
+    button_active: darken(map-get($forest, "primary"), 21%),
+    button_textcolor: map-get($global, "light"),
+    button_hover_textcolor: map-get($global, "light"),
+    // =============================================================
+    text_color: #333,
+    text_dim: rgb(129, 129, 129),
+  ),
+  // ==[ OCEAN ]====================================================
+  ocean:
+    (
+      primary: map-get($ocean, "primary"),
+      secondary: map-get($ocean, "secondary"),
+      tertiary: map-get($ocean, "tertiary"),
+      // =============================================================
+      root: map-get($ocean, "primary"),
+      root_top: map-get($global, "light"),
+      canvas: map-get($global, "light"),
+      // =============================================================
+      button_color: map-get($ocean, "primary"),
+      button_hover: darken(map-get($ocean, "primary"), 7%),
+      button_active: lighten(map-get($ocean, "primary"), 7%),
+      button_textcolor: map-get($global, "light"),
+      button_hover_textcolor: map-get($global, "light"),
+      // =============================================================
+      text_color: #333,
+      text_dim: rgb(129, 129, 129),
+    ),
+);
+
+@mixin themify($themes: $themes) {
+  @each $theme, $map in $themes {
+    :global(.theme#{$theme}) & {
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), "#{$key}");
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+
+      @content;
+      $theme-map: null !global;
+    }
+  }
+}
+
+@function themed($key) {
+  @return map-get($theme-map, $key);
+}

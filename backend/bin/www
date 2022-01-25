@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+const app = require("./app");
+const mongoose = require("mongoose");
+const startup = require("./serverstartup");
+const env = require("../util/envs");
+
+/**
+ * Setup config.
+ */
+const port = env.PORT;
+
+/**
+ * Database setup
+ */
+
+mongoose.connect(env.MONGO_DB, {
+  poolSize: 10,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+});
+const connection = mongoose.connection;
+connection.on(
+  "error",
+  console.error.bind(console, "[setup] MongoDB connection error:")
+);
+connection.once("open", function () {
+  console.log("[setup] MongoDB connection established");
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  app.listen(port, function (err) {
+    if (err) console.log("Error in server setup");
+    console.log("[setup] Server listening on Port", port);
+
+    startup();
+  });
+});

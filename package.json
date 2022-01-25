@@ -1,0 +1,22 @@
+{
+  "name": "mycv",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./backend/bin/www",
+    "heroku-postbuild": "cd ./frontend && npm install --only=dev && npm install && npm run build"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "gridfs-stream": "^1.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.18",
+    "mongoose-paginate": "^5.0.3",
+    "multer": "^1.4.2",
+    "multer-gridfs-storage": "^4.2.0"
+  }
+}

@@ -1,0 +1,154 @@
+@import "../../style/variables.scss";
+@import "../../style//theme.scss";
+
+$colorWarning: map-get($global, "warning");
+$colorDanger: map-get($global, "danger");
+$colorDark: map-get($global, "default");
+
+.button {
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  transition: map-get($transition, "ease");
+  box-shadow: map-get($shadow, "tight");
+}
+
+.button.loading {
+  cursor: default;
+  background-color: map-get($global, "dim") !important;
+  .content {
+    opacity: 0;
+  }
+}
+
+.button.loading::after {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  border: 4px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.button.colorDefault {
+  @include themify($themes) {
+    background-color: themed("button_color");
+    color: themed("button_textcolor");
+    &:hover {
+      background-color: themed("button_hover");
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: themed("button_active");
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.button.colorWarning {
+  @include themify($themes) {
+    background-color: $colorWarning;
+    color: themed("button_textcolor");
+    &:hover {
+      background-color: darken($colorWarning, 7%);
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: lighten($colorWarning, 7%);
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.button.colorDanger {
+  @include themify($themes) {
+    background-color: $colorDanger;
+    color: themed("button_textcolor");
+    &:hover {
+      background-color: darken($colorDanger, 7%);
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: lighten($colorDanger, 7%);
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.oval {
+  border: unset;
+  border-radius: 2rem;
+  border-style: solid;
+  border-width: 2px;
+  padding: 0.5rem 1.5rem;
+}
+
+.oval.colorDefault {
+  @include themify($themes) {
+    border-color: themed("button_color");
+    background-color: themed("canvas");
+    color: themed("text_color");
+    &:hover {
+      background-color: themed("button_color");
+      color: themed("button_hover_textcolor");
+    }
+    &:active {
+      background-color: themed("button_active");
+      border-color: themed("button_active");
+      color: themed("button_hover_textcolor");
+    }
+  }
+}
+
+.oval.colorDark {
+  border-color: $colorDark;
+  @include themify($themes) {
+    background-color: themed("canvas");
+    color: themed("text_color");
+    &:hover {
+      background-color: $colorDark;
+      color: themed("canvas");
+    }
+    &:active {
+      background-color: darken($colorDark, 7%);
+      border-color: darken($colorDark, 7%);
+      color: themed("canvas");
+    }
+  }
+}
+
+.oval.colorDanger {
+  border-color: $colorDanger;
+  @include themify($themes) {
+    background-color: themed("canvas");
+    color: themed("text_color");
+    &:hover {
+      background-color: $colorDanger;
+      color: themed("canvas");
+    }
+    &:active {
+      background-color: darken($colorDanger, 7%);
+      border-color: darken($colorDanger, 7%);
+      color: themed("canvas");
+    }
+  }
+}

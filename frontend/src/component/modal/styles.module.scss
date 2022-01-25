@@ -1,0 +1,101 @@
+@import "../../style/theme";
+@import "../../style/variables";
+@import "../../style/responsive";
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: map-get($zIndex, "modal") !important;
+}
+
+$dimColor: map-get($global, "muted");
+.paper {
+    padding: 0.7rem;
+    max-width: 95vw;
+    max-height: 95vh;
+    border-radius: $modal_border_radius;
+    border-width: 3px;
+    border-style: solid;
+    border-color: lighten($dimColor, 7%);
+    box-shadow: map-get($shadow, "smoothAround");
+    transition: map-get($transition, "ease");
+
+    @include themify($themes) {
+        background-color: themed("canvas");
+        color: themed("text_color");
+    }
+
+    .iclose {
+        float: right;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    .content {
+        padding: 1.5rem 3.5rem;
+
+        @include media(phone) {
+            padding: 1rem;
+        }
+    }
+}
+
+.simpleValidation {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    .buttons {
+        margin-left: auto;
+        margin-right: auto;
+        width: fit-content;
+        width: -moz-fit-content;
+        button {
+            margin-top: 0.5rem;
+            &:first-child {
+                margin-right: 1rem;
+            }
+        }
+    }
+}
+
+.selectableModal {
+    .container {
+        min-width: 80vw;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        .searchField {
+            margin-top: 0.5rem;
+        }
+        .elementContainer {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 0.5rem 0.5rem 0.5rem;
+            .element {
+                cursor: pointer;
+                margin-top: 1rem;
+                margin-right: 1rem;
+                transition: map-get($transition, "ease");
+            }
+        }
+        .actionContainer {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+            width: 100%;
+            justify-content: space-between;
+            @include media(phone) {
+                .pagination {
+                    width: 100%;
+                    div {
+                        margin: 0 auto;
+                    }
+                }
+                button {
+                    margin-top: 0.5rem;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+            }
+        }
+    }
+}

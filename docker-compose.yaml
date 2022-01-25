@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  # mycv:
+  #   restart: unless-stopped
+  #   build: .
+  #   ports:
+  #     - 9000:9000
+  mongodb:
+    restart: unless-stopped
+    image: "mongo:4.4.12"
+    environment:
+      - MONGO_INITDB_DATABASE=mongodb
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - ./mongo-volume:/data/db
+    ports:
+      - 27017:27017

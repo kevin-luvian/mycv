@@ -1,0 +1,35 @@
+$medium: 991.98px;
+$small: 767.98px;
+$extraSmall: 575.98px;
+
+@mixin media($point) {
+  @if $point == extra {
+    @media (min-width: $medium) {
+      @content;
+    }
+  } @else if $point == desktop {
+    @media (min-width: $small) {
+      @content;
+    }
+  } @else if $point == notDesktop {
+    @media (max-width: $small) and (min-width: $medium) {
+      @content;
+    }
+  } @else if $point == tablet {
+    @media (min-width: $extraSmall) and (max-width: $small) {
+      @content;
+    }
+  } @else if $point == notTablet {
+    @media (max-width: $extraSmall) and (min-width: $small) {
+      @content;
+    }
+  } @else if $point == phone {
+    @media (max-width: $extraSmall) {
+      @content;
+    }
+  } @else if $point == notPhone {
+    @media (min-width: $extraSmall) {
+      @content;
+    }
+  }
+}

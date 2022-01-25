@@ -1,0 +1,73 @@
+@import "../../style/theme";
+@import "../../style/variables";
+
+.input {
+  width: 100%;
+  margin-bottom: 1.5rem !important;
+}
+
+.iconInput {
+  svg {
+    cursor: pointer;
+    @include themify($themes) {
+      fill: themed("text_dim");
+      &:hover {
+        fill: themed("text_color");
+      }
+    }
+  }
+}
+
+.inputBorder {
+  border-radius: $button_border_radius;
+  border: solid 0.08em map-get($global, "muted");
+}
+
+.selectedFilename {
+  display: flex;
+}
+
+$searchFilterInputHeight: 2.5rem;
+.searchFilterInput {
+  border-radius: $button_border_radius;
+  border: solid 0.08em map-get($global, "muted");
+  display: flex;
+  height: fit-content;
+  height: -moz-fit-content;
+  .icon {
+    padding: 0.7rem;
+    width: $searchFilterInputHeight;
+    height: $searchFilterInputHeight;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .inputField {
+    width: 100%;
+    display: flex;
+    margin: 0 0.5rem;
+    .search {
+      height: $searchFilterInputHeight;
+      width: 100%;
+      border: unset;
+      transition: map-get($transition, "ease");
+      @include themify($themes) {
+        color: themed("text_color");
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+    i {
+      cursor: pointer;
+      margin: auto 0;
+      font-size: 0.9em;
+      transition: map-get($transition, "ease");
+      @include themify($themes) {
+        color: themed("text_dim");
+        &:hover {
+          color: themed("text_color");
+        }
+      }
+    }
+  }
+}

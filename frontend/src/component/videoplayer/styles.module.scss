@@ -1,0 +1,113 @@
+@import "../../style/variables.scss";
+@import "../../style/responsive.scss";
+
+.wrapper {
+  position: relative;
+  padding-top: 56.25%;
+  .player {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.customVideoContainer {
+  width: 100%;
+
+  video {
+    width: 100%;
+    height: 100%;
+  }
+
+  .vid-wrapper {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    background-color: lighten(black, 15);
+
+    &:hover {
+      .controls {
+        height: 3rem;
+        transform: translateY(0%);
+        opacity: 1;
+      }
+    }
+  }
+
+  .controls {
+    overflow: hidden;
+    padding: 0 1rem;
+    position: absolute;
+    bottom: 2rem;
+    height: 0.5rem;
+    width: 100%;
+    max-width: 40rem;
+
+    opacity: 0;
+    transform: translateY(150%);
+    transition: map-get($transition, "ease_in_out");
+
+    .box {
+      padding: 0 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      height: 100%;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+
+      i {
+        color: white;
+      }
+
+      // &:hover {
+      //   background: rgba(255, 255, 255, 0.7);
+      //   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+      //   i {
+      //     color: lighten(black, 30);
+      //   }
+      // }
+    }
+
+    .progress {
+      $thumb-shadow-color: rgba(49, 49, 49, 0.16);
+
+      max-width: 70%;
+      flex: 0 0 70%;
+      color: white;
+      height: 5px;
+
+      :global(.MuiSlider-track),
+      :global(.MuiSlider-rail) {
+        border-radius: 10px;
+        height: inherit;
+      }
+
+      :global(.MuiSlider-thumb) {
+        transform: translate(-50%, -50%);
+        top: 50%;
+        margin: 0;
+        box-shadow: 0 0px 0px 1px $thumb-shadow-color;
+
+        &:hover {
+          transition: all 0.3s cubic-bezier(0.47, 1.64, 0.41, 0.8) 0s;
+          box-shadow: 0 0px 0px 8px $thumb-shadow-color;
+        }
+      }
+      :global(.MuiSlider-active) {
+        width: 20px;
+        height: 20px;
+        box-shadow: 0 0px 0px 14px $thumb-shadow-color;
+      }
+    }
+  }
+}

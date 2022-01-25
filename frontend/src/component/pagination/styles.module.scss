@@ -1,0 +1,42 @@
+@import "../../style/theme";
+@import "../../style/variables";
+
+.basicPagination {
+    @include themify($themes) {
+        display: flex;
+        height: 100%;
+        margin: auto 0;
+        width: fit-content;
+        width: -moz-fit-content;
+        .pagenum {
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            margin: auto 0;
+            border-right: unset !important;
+            transition: map-get($transition, "ease");
+            border: 1px solid themed("button_color");
+            &:last-child {
+                border-right: 1px solid themed("button_color") !important;
+            }
+            &:hover {
+                background-color: themed("button_hover");
+                color: themed("button_hover_textcolor");
+            }
+            &:active {
+                background-color: themed("button_active");
+                color: themed("button_textcolor");
+            }
+        }
+        .pagenum.active {
+            background-color: themed("button_hover");
+            color: themed("button_textcolor");
+        }
+
+        .more {
+            position: absolute;
+            background-color: white;
+        }
+    }
+}

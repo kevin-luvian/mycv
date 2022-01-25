@@ -1,0 +1,227 @@
+@import "../../style/theme.scss";
+@import "../../style/responsive.scss";
+@import "../../style/variables.scss";
+
+li {
+  list-style-type: none;
+}
+
+.arrow {
+  font-size: 1.3rem;
+  @include themify($themes) {
+    fill: themed("text_color");
+  }
+}
+
+#nav {
+  padding: 0 1rem;
+  width: 100%;
+  align-items: center;
+  box-shadow: map-get($shadow, "smooth");
+  @include themify($themes) {
+    background-color: themed("canvas");
+  }
+
+  @include media(desktop) {
+    border-radius: $canvas_border_radius $canvas_border_radius 0 0;
+  }
+}
+
+#toolbar {
+  height: map-get($navbar, "toolbar_height");
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -16px;
+  margin-left: -16px;
+  div {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  @include media(desktop) {
+    padding: 1rem 1rem 3rem 1rem;
+  }
+}
+
+#logoname {
+  z-index: map-get($zIndex, "toolbar");
+  display: flex;
+  flex-basis: content;
+  padding: 0 15px;
+  height: fit-content;
+  height: -moz-fit-content;
+  p {
+    width: fit-content;
+    width: -moz-fit-content;
+    line-height: map-get($navbar, "logo_size");
+  }
+
+  #logo {
+    width: map-get($navbar, "logo_size");
+    height: map-get($navbar, "logo_size");
+    font-weight: bold;
+    font-size: larger;
+    text-align: center;
+    vertical-align: middle;
+    // padding: 4px 8px;
+    border-radius: 10rem;
+    @include themify($themes) {
+      color: themed("canvas");
+      background-color: themed("root");
+    }
+  }
+
+  #name {
+    margin-left: 0.5rem;
+    font-size: large;
+    font-weight: bold;
+    span {
+      font-weight: normal;
+    }
+  }
+
+  @include media(desktop) {
+    padding: 0;
+  }
+}
+
+#menubar {
+  z-index: map-get($zIndex, "toolbar");
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  #snackbar {
+    width: map-get($navbar, "logo_size");
+    height: map-get($navbar, "logo_size");
+    padding: 7px;
+    float: right;
+    cursor: pointer;
+    transition: map-get($transition, "ease");
+    border-radius: 50%;
+    &:hover {
+      background-color: lighten(map-get($global, "dim"), 30%);
+    }
+    &:active {
+      background-color: lighten(map-get($global, "dim"), 20%);
+    }
+  }
+
+  @include media(desktop) {
+    flex-grow: unset;
+    display: none;
+  }
+}
+
+#links {
+  // location
+  z-index: map-get($zIndex, "toolbarMenu");
+  display: block;
+  position: absolute;
+  top: map-get($navbar, "toolbar_height");
+  width: 100%;
+  padding-bottom: 1rem;
+
+  // look attr
+  box-shadow: map-get($shadow, "tight");
+  transition: map-get($transition, "ease");
+  @include themify($themes) {
+    background-color: themed("canvas");
+  }
+
+  // toggle active
+  transform: translateY(-100%);
+  opacity: 0;
+
+  ul {
+    margin-bottom: 0;
+  }
+
+  li {
+    cursor: pointer;
+    text-align: center;
+    margin: 0 1rem;
+  }
+
+  p {
+    transition: map-get($transition, "ease");
+    padding: 0.3rem 0;
+    &:hover {
+      @include themify($themes) {
+        background-color: themed("root");
+        color: themed("root_top");
+        .arrow {
+          fill: themed("root_top");
+        }
+      }
+    }
+  }
+
+  @include media(desktop) {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    flex-grow: 1;
+    padding: 0;
+    top: 0;
+    width: fit-content;
+    width: -moz-fit-content;
+
+    // looks
+    box-shadow: unset;
+    @include themify($themes) {
+      background-color: unset;
+    }
+
+    // always active
+    transform: translateY(0%) !important;
+    opacity: 1 !important;
+
+    li {
+      width: fit-content;
+      width: -moz-fit-content;
+      margin: 0;
+      text-align: left;
+      &:first-child {
+        margin-left: auto;
+      }
+    }
+    p {
+      font-size: 0.9em;
+      padding: 0 0.5rem;
+      line-height: map-get($navbar, "logo_size");
+    }
+  }
+}
+
+.submenu {
+  display: none;
+  padding: 0.5rem 0;
+}
+
+.submenu.active {
+  display: block;
+  @include themify($themes) {
+    background-color: themed("canvas");
+  }
+  @include media(desktop) {
+    position: absolute;
+    min-width: 5rem;
+    padding: 0.5rem;
+    margin: 0.3rem;
+    margin-top: 0.5rem;
+    box-shadow: map-get($shadow, "smoothAround");
+    li {
+      margin: 0 !important;
+      width: 7rem !important;
+    }
+  }
+}
+
+.menu.active {
+  @include themify($themes) {
+    background-color: themed("root");
+    color: themed("root_top");
+  }
+}
