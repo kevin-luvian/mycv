@@ -68,21 +68,13 @@
       i {
         color: white;
       }
-
-      // &:hover {
-      //   background: rgba(255, 255, 255, 0.7);
-      //   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-      //   i {
-      //     color: lighten(black, 30);
-      //   }
-      // }
     }
 
     .progress {
       $thumb-shadow-color: rgba(49, 49, 49, 0.16);
 
-      max-width: 70%;
-      flex: 0 0 70%;
+      width: unset;
+      flex-grow: 1;
       color: white;
       height: 5px;
 

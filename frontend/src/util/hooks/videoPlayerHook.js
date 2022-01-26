@@ -52,22 +52,44 @@ const useVideoPlayer = (videoElement, wrapperElement) => {
       : (videoElement.current.muted = false);
   }, [playerState.isMuted, videoElement]);
 
-  const toggleFullscreen = (show) => {
-    if (show) {
-      if (wrapperElement.current.requestFullscreen) {
-        wrapperElement.current.requestFullscreen();
-      } else if (wrapperElement.current.mozRequestFullScreen) {
-        wrapperElement.current.mozRequestFullScreen();
-      } else if (wrapperElement.current.webkitRequestFullscreen) {
-        wrapperElement.current.webkitRequestFullscreen();
-      } else if (wrapperElement.current.msRequestFullscreen) {
-        wrapperElement.current.msRequestFullscreen();
-      }
-    } else {
-      document.exitFullscreen();
-    }
+  const toggleFullscreen = (show = null) => {
+    try {
+      if (show == null) show = !playerState.fullscreen;
+      if (show) {
+        if (wrapperElement.current.requestFullscreen) {
+          wrapperElement.current.requestFullscreen();
+        } else if (wrapperElement.current.mozRequestFullScreen) {
+          wrapperElement.current.mozRequestFullScreen();
+        } else if (wrapperElement.current.webkitRequestFullscreen) {
+          wrapperElement.current.webkitRequestFullscreen();
+        } else if (wrapperElement.current.msRequestFullscreen) {
+          wrapperElement.current.msRequestFullscreen();
+        }
+      } else {
+        const isCurrWindowFullscreen =
+          document.fullScreen ||
+          document.mozFullScreen ||
+          document.webkitIsFullScreen;
 
-    setPlayerState({ ...playerState, fullscreen: show });
+        if (!isCurrWindowFullscreen) {
+          setPlayerState({ ...playerState, fullscreen: false });
+          return;
+        }
+        if (document.exitFullscreen) {
+          document.exitFullscreen(); // Standard
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen(); // Blink
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen(); // Gecko
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen(); // Old IE
+        }
+      }
+
+      setPlayerState({ ...playerState, fullscreen: show });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return {

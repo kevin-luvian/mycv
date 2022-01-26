@@ -8,4 +8,8 @@
   transition: map-get($transition, "ease_in_out");
   border: 1px solid transparent;
   background-color: transparent;
+
+  svg {
+    color: white;
+  }
 }

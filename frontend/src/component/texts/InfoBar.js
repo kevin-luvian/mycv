@@ -10,8 +10,6 @@ export const Tips = ({ className, children, ...props }) => (
         <EmojiObjectsIcon />
       </div>
     </div>
-    <div className="w-100 my-auto py-3">
-      <p className={concat(styles.text)} children={children} />
-    </div>
+    <div className={concat(styles.text, "w-100 my-auto py-3")}>{children}</div>
   </div>
 );
