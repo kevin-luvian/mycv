@@ -7,7 +7,7 @@ import { Tips } from "../component/texts/InfoBar";
 import { ParserError, ParserWrapper } from "../component/texts/ParserWrapper";
 import { Link } from "react-router-dom";
 import CustomPlayer from "../component/videoplayer/CustomPlayer";
-import { PreCode } from "../component/texts/PreCode";
+import { PreCodeHighlight } from "../component/texts/PreCodeHightlight";
 /**
  * @param {String} html
  */
@@ -53,8 +53,9 @@ const transform = (node, _ = null) => {
       return <Tips {...props} key={index} children={convCH(node)} />;
     case "pre-code":
       return (
-        <PreCode
+        <PreCodeHighlight
           label={node.attribs["label"]}
+          language={node.attribs["language"]}
           {...props}
           key={index}
           children={convCH(node)}
