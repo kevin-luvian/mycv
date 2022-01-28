@@ -3,7 +3,7 @@ version: "3"
 services:
   mycv:
     restart: unless-stopped
-    image: "wkeplon/mycv:latest"
+    build: .
     env_file:
       - ./.env.docker
     ports:
