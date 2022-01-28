@@ -8,6 +8,8 @@ import { ParserError, ParserWrapper } from "../component/texts/ParserWrapper";
 import { Link } from "react-router-dom";
 import CustomPlayer from "../component/videoplayer/CustomPlayer";
 import { PreCodeHighlight } from "../component/texts/PreCodeHightlight";
+import envs from "./envs";
+
 /**
  * @param {String} html
  */
@@ -32,6 +34,7 @@ export const parse = (html) => {
  */
 const modifyRawHTML = (s) => {
   s = s.replace("#_url", window.location.host);
+  s = s.replace(/#_file/g, envs.API_URL + "/file");
   return s;
 };
 
