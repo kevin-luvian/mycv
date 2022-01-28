@@ -29,6 +29,7 @@
   "scripts": {
     "start": "env-cmd -f ./.env.dev react-scripts start",
     "build": "env-cmd -f ./.env.prod react-scripts --max_old_space_size=900 build",
+    "build:nolimit": "env-cmd -f ./.env.prod react-scripts --max_old_space_size=7000 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
