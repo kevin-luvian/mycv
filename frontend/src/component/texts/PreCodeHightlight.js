@@ -6,7 +6,7 @@ import { materialLight as ccolor } from "react-syntax-highlighter/dist/esm/style
 export const PreCodeHighlight = ({
   label,
   className,
-  children,
+  children = "",
   language = "javascript",
   ...props
 }) => (

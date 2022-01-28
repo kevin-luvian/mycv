@@ -52,37 +52,23 @@ const deleteById = async (id) => {
   }
 };
 
+/**
+ * @param {number} id 
+ * @param {{
+ * start: number
+ * end: number
+ * }} options 
+ */
 const downloadStream = (id, options) => {
   const modb = mongoose.connection.db;
-  //   const gfs = GridStream(modb, mongodb);
-  //   const readStream = gfs.createReadStream({ _id: id, root: "file" });
-
-  //   //error handling, e.g. file does not exist
-  //   readStream.on("error", function (err) {
-  //     console.log("An error occurred!", err);
-  //     throw err;
-  //   });
-
-  //   return readStream;
-
   const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
   const downloadStream = bucket.openDownloadStream(id, options);
   return downloadStream;
-
-  // downloadStream.
-  // downloadStream.read(bytesToWriteTo);
-  //   downloadStream.pipe(res, { end: true });
-
-  //   downloadStream.on("data", (chunk) => {
-  //     res.write(chunk);
-  //   });
-  //   downloadStream.on("error", (err) => {
-  //     debug("downloadStream", "on error:", err);
-  //     res.status(404);
-  //   });
-  //   downloadStream.on("end", () => res.end());
 };
 
+/**
+ * @returns {Promise<number?>}
+ */
 const uploadStream = (req) =>
   new Promise((resolve, reject) => {
     const readableTrackStream = new Readable();
