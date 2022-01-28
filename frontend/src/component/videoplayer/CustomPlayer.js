@@ -3,6 +3,8 @@ import useVideoPlayer from "../../util/hooks/videoPlayerHook";
 import { ButtonIcon } from "../button/ButtonIcon";
 import styles from "./styles.module.scss";
 import Slider from "@material-ui/core/Slider";
+import FullscreenIcon from "@material-ui/icons/FullscreenRounded";
+import FullscreenExitIcon from "@material-ui/icons/FullscreenExitRounded";
 import { concat } from "../../util/utils";
 
 /**
@@ -34,7 +36,7 @@ const CustomPlayer = ({ source, height = "20rem" }) => {
         />
         <div className={styles.controls}>
           <div className={styles.box}>
-            <ButtonIcon onClick={() => togglePlay()}>
+            <ButtonIcon className="pl-1 pr-3" onClick={() => togglePlay()}>
               {!playerState.isPlaying ? (
                 <i className="fa fa-play" />
               ) : (
@@ -49,6 +51,13 @@ const CustomPlayer = ({ source, height = "20rem" }) => {
               className={styles.progress}
               onChange={(_, val) => handleVideoProgress(val)}
             />
+            <ButtonIcon className="pl-2" onClick={() => toggleFullscreen()}>
+              {!playerState.fullscreen ? (
+                <FullscreenIcon />
+              ) : (
+                <FullscreenExitIcon />
+              )}
+            </ButtonIcon>
             {/* <input
               className={styles.progress}
               type="range"

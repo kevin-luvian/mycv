@@ -7,8 +7,8 @@
 }
 
 .parserError {
-  font-size: .9em;
-  padding: .7rem;
+  font-size: 0.9em;
+  padding: 0.7rem;
   background-color: map-get($global, "danger");
   color: map-get($global, "light");
 }
@@ -55,6 +55,49 @@
       width: 40px;
       height: 40px;
       color: white;
+    }
+  }
+}
+
+.precode {
+  $precodeBG: #e0eeff;
+  $precodeShadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.4);
+  margin: 5px;
+
+  .labelClear {
+    padding-top: 7px;
+    overflow-y: clip;
+  }
+
+  .label {
+    position: relative;
+    z-index: 3;
+    font-weight: bold;
+    padding: 0.5em;
+    background-color: $precodeBG;
+    box-shadow: $precodeShadow;
+    overflow: hidden;
+    color: #595959;
+    width: fit-content;
+    margin-bottom: 0px;
+    @include themify($themes) {
+      border-bottom: 3px solid themed("primary");
+    }
+  }
+
+  .codeblock {
+    border-radius: 0rem 0.5rem 0.5rem 0.5rem !important;
+    background: $precodeBG none repeat scroll 0% 0% !important;
+    box-shadow: $precodeShadow;
+    margin: 0px !important;
+    padding: 0px !important;
+    code {
+      background: unset !important;
+      font-family: "Fira Code", monospace;
+      display: block;
+      letter-spacing: normal;
+      padding: 0.5em 1em;
+      color: #3f6061 !important;
     }
   }
 }

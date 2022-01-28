@@ -7,6 +7,7 @@ import { Tips } from "../component/texts/InfoBar";
 import { ParserError, ParserWrapper } from "../component/texts/ParserWrapper";
 import { Link } from "react-router-dom";
 import CustomPlayer from "../component/videoplayer/CustomPlayer";
+import { PreCodeHighlight } from "../component/texts/PreCodeHightlight";
 /**
  * @param {String} html
  */
@@ -43,7 +44,6 @@ const transform = (node, _ = null) => {
   const props = {
     className: node.attribs["class"],
   };
-  console.log(props.key);
   switch (node.name) {
     case "primary-button":
       return <Basic.Default {...props} key={index} children={convCH(node)} />;
@@ -51,6 +51,16 @@ const transform = (node, _ = null) => {
       return <Heading {...props} key={index} children={convCH(node)} />;
     case "tips":
       return <Tips {...props} key={index} children={convCH(node)} />;
+    case "pre-code":
+      return (
+        <PreCodeHighlight
+          label={node.attribs["label"]}
+          language={node.attribs["language"]}
+          {...props}
+          key={index}
+          children={convCH(node)}
+        />
+      );
     case "links":
       return (
         <Link
