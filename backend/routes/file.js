@@ -123,13 +123,13 @@ router.get("/page/:num", async (req, res) => {
 });
 
 router.post("/", tokenAuth.admin, upload, async (req, res) => {
-  const minutes10 = 10 * 60 * 1000;
-  req.socket.setTimeout(minutes10);
-
-  const id = await fileRepo.uploadStream(req);
-  if (!id) return resf.r500(res, "Error uploading file");
-
   try {
+    const minutes10 = 10 * 60 * 1000;
+    req.socket.setTimeout(minutes10);
+
+    const id = await fileRepo.uploadStream(req);
+    if (!id) return resf.r500(res, "Error uploading file");
+
     // Create a Metadata
     const fileMetaAttr = createFileMetadata(
       req.file,

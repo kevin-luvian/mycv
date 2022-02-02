@@ -1,17 +1,24 @@
 import { Fragment } from "react";
-import { PreCode } from "../component/texts/PreCode";
+import { PreCodeHighlight } from "../component/texts/PreCodeHightlight";
 
 export const Page = () => {
   document.title = "Test - Test Page";
 
   return (
     <Fragment>
-      <PreCode className="">{`
-      dependencies:
-        flutter:
-          sdk: flutter
-        responsive_framework: ^0.1.4
-      `}</PreCode>
+      <PreCodeHighlight
+        label="super_hightlight.js"
+        language="javascript"
+      >{`import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+const Component = () => {
+  const codeString = '(num) => num + 1';
+  return (
+    <SyntaxHighlighter language="javascript" style={docco}>
+      {codeString}
+    </SyntaxHighlighter>
+  );
+};`}</PreCodeHighlight>
     </Fragment>
   );
 };

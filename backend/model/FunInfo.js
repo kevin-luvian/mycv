@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require("../bin/mongoose");
 
 const schema = mongoose.Schema({
-    title: { type: String },
-    description: { type: String },
-    favicon: { type: String },
-    type: { type: Number },
+  title: { type: String },
+  description: { type: String },
+  favicon: { type: String },
+  type: { type: Number },
 });
 
-module.exports = mongoose.model("FunInfo", schema);
+module.exports = mongoose.main_conn.model("FunInfo", schema);

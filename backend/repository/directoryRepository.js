@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("../bin/mongoose");
 const Directory = require("../model/Directory");
 const access = require("../model/Access");
 const util = require("../util/utils");
@@ -7,8 +7,6 @@ const debug = util.log("repository:myInfoRepository");
 const findAll = () => Directory.find({}).lean();
 
 const findRoots = () => Directory.find({ root: true }).lean();
-
-const findByType = type => Directory.find({ type }).lean();
 
 const retrieve = async () => {
     const dirs = await Directory.find({}).lean();

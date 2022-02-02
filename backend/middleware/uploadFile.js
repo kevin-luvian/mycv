@@ -15,8 +15,8 @@ const upload = multer({
 const uploadMiddleware = upload.single("file");
 
 const uploadFile = (req, res, next) => {
-  const minutes10 = 10 * 60 * 1000;
-  req.socket.setTimeout(minutes10);
+  const minutes30 = 30 * 60 * 1000;
+  req.socket.setTimeout(minutes30);
 
   uploadMiddleware(req, res, (err) => {
     if (err) return resf.r400(res, "Upload Request Validation Failed");
