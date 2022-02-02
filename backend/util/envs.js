@@ -8,6 +8,7 @@ const environments = {
   PASSWORD_APP: process.env.PASSWORD_APP,
   PORT: cnord(process.env.PORT, "9000"),
   MONGO_DB: process.env.MONGO_DB,
+  MONGO_DB_FILE: process.env.MONGO_DB_FILE,
   JWT_TOKEN_SECRET: process.env.JWT_TOKEN_SECRET,
   SALT_ROUNDS: process.env.SALT_ROUNDS,
   JWT_TOKEN_SECRET: process.env.JWT_TOKEN_SECRET,

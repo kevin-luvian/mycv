@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const FunInfo = require("../model/FunInfo");
 const util = require("../util/utils");
 const debug = util.log("repository:myInfoRepository");
@@ -15,7 +14,7 @@ const findByType = type => FunInfo.find({ type: type }).lean();
 
 /** 
  * delete FunInfo object by id
- * @param {mongoose.Types.ObjectId} id document _id
+ * @param {import("mongoose").Types.ObjectId} id document _id
  * @return {Promise<boolean>}
  */
 const deleteById = async id => {

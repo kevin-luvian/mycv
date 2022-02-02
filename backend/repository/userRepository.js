@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("../bin/mongoose");
 const User = require("../model/User");
 const access = require("../model/Access");
 const util = require("../util/utils");

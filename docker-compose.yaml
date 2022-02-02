@@ -1,24 +1,6 @@
 version: "3"
 
 services:
-  mycv:
-    restart: unless-stopped
-    build: .
-    env_file:
-      - ./.env.docker
-    ports:
-      - 9000:9000
-    depends_on:
-      - mongodb
-  mycv-file:
-    restart: unless-stopped
-    build: .
-    env_file:
-      - ./.env.docker
-    ports:
-      - 9001:9000
-    depends_on:
-      - mongodb
   mongodb:
     container_name: mongodb
     restart: unless-stopped

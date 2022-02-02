@@ -1,8 +1,9 @@
 const debug = require("../util/utils").log("repository:fileRepository");
-const mongoose = require("mongoose");
+const mongoose = require("../bin/mongoose");
 const mongodb = require("mongodb");
 const { Readable } = require("stream");
-var GridStream = require("gridfs-stream");
+
+const file_connection = () => mongoose.file_conn.db;
 
 /**
  * @param {*} id
@@ -15,7 +16,7 @@ var GridStream = require("gridfs-stream");
  * }>}
  */
 const findFileById = async (id) => {
-  const modb = mongoose.connection.db;
+  const modb = file_connection();
   const file = await modb
     .collection(`${collection}.files`)
     .findOne({ _id: id })
@@ -37,7 +38,7 @@ const findFileById = async (id) => {
  */
 const deleteById = async (id) => {
   try {
-    const modb = mongoose.connection.db;
+    const modb = file_connection();
     const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
     bucket.delete(id, (err) => {
       if (err) {
@@ -53,14 +54,14 @@ const deleteById = async (id) => {
 };
 
 /**
- * @param {number} id 
+ * @param {number} id
  * @param {{
  * start: number
  * end: number
- * }} options 
+ * }} options
  */
 const downloadStream = (id, options) => {
-  const modb = mongoose.connection.db;
+  const modb = file_connection();
   const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
   const downloadStream = bucket.openDownloadStream(id, options);
   return downloadStream;
@@ -75,7 +76,7 @@ const uploadStream = (req) =>
     readableTrackStream.push(req.file.buffer);
     readableTrackStream.push(null);
 
-    const modb = mongoose.connection.db;
+    const modb = file_connection();
     const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
 
     const uploadStream = bucket.openUploadStream();

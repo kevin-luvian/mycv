@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("../bin/mongoose");
 
 const schema = mongoose.Schema({
     title: { type: String },
@@ -6,4 +6,4 @@ const schema = mongoose.Schema({
     description: { type: String }
 });
 
-module.exports = mongoose.model("Contact", schema);
+module.exports = mongoose.main_conn.model("Contact", schema);
