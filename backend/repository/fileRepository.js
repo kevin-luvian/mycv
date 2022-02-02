@@ -89,6 +89,7 @@ const uploadStream = (req) =>
       readableTrackStream.pipe(uploadStream);
       console.log("Upload stream created");
 
+      uploadStream.on("pipe", (src) => console.log(src));
       uploadStream.on("error", (err) => {
         console.log("[Error] ", err);
         reject(null);
