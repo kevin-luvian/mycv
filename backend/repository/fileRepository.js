@@ -73,6 +73,9 @@ const downloadStream = (id, options) => {
 const uploadStream = (req) =>
   new Promise((resolve, reject) => {
     try {
+      const minutes10 = 10 * 60 * 1000;
+      req.socket.setTimeout(minutes10);
+
       console.log("Uploading");
       const readableTrackStream = new Readable();
       readableTrackStream.push(req.file.buffer);
