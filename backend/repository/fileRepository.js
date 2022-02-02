@@ -72,22 +72,28 @@ const downloadStream = (id, options) => {
  */
 const uploadStream = (req) =>
   new Promise((resolve, reject) => {
-    console.log("Uploading");
-    const readableTrackStream = new Readable();
-    readableTrackStream.push(req.file.buffer);
-    readableTrackStream.push(null);
+    try {
+      console.log("Uploading");
+      const readableTrackStream = new Readable();
+      readableTrackStream.push(req.file.buffer);
+      readableTrackStream.push(null);
 
-    const modb = file_connection();
-    const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
+      const modb = file_connection();
+      const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
+      console.log("Bucket created");
 
-    const uploadStream = bucket.openUploadStream();
-    readableTrackStream.pipe(uploadStream);
+      const uploadStream = bucket.openUploadStream();
+      readableTrackStream.pipe(uploadStream);
+      console.log("Upload stream created");
 
-    uploadStream.on("error", (err) => {
+      uploadStream.on("error", (err) => {
+        console.log("[Error] ", err);
+        reject(null);
+      });
+      uploadStream.on("finish", () => resolve(uploadStream.id));
+    } catch (err) {
       console.log("[Error] ", err);
-      reject(null);
-    });
-    uploadStream.on("finish", () => resolve(uploadStream.id));
+    }
   });
 
 const collection = "file";
