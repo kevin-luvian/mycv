@@ -72,6 +72,7 @@ const downloadStream = (id, options) => {
  */
 const uploadStream = (req) =>
   new Promise((resolve, reject) => {
+    console.log("Uploading");
     const readableTrackStream = new Readable();
     readableTrackStream.push(req.file.buffer);
     readableTrackStream.push(null);
@@ -82,7 +83,10 @@ const uploadStream = (req) =>
     const uploadStream = bucket.openUploadStream();
     readableTrackStream.pipe(uploadStream);
 
-    uploadStream.on("error", () => reject(null));
+    uploadStream.on("error", (err) => {
+      console.log("[Error] ", err);
+      reject(null);
+    });
     uploadStream.on("finish", () => resolve(uploadStream.id));
   });
 
