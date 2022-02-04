@@ -96,7 +96,10 @@ const uploadStream = (req) =>
         console.log("[Error] ", err);
         reject(null);
       });
-      uploadStream.on("finish", () => resolve(uploadStream.id));
+      uploadStream.on("finish", () => {
+        fs.unlink(filePath, () => {});
+        resolve(uploadStream.id);
+      });
     } catch (err) {
       console.log("[Error] ", err);
     }
