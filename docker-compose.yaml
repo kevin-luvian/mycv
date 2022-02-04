@@ -6,6 +6,6 @@ services:
     restart: unless-stopped
     image: "mongo:4.4.12"
     volumes:
-      - ./mongo-volume:/data/db
+      - ../mongo-volume:/data/db
     ports:
       - 27017:27017
