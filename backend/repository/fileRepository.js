@@ -99,6 +99,7 @@ const uploadStream = (req) =>
         reject(null);
       });
       uploadStream.on("finish", () => {
+        console.log("file saved");
         fs.unlink(filePath, () => {});
         resolve(uploadStream.id);
       });
