@@ -1,7 +1,7 @@
 const debug = require("../util/utils").log("repository:fileRepository");
 const mongoose = require("../bin/mongoose");
 const mongodb = require("mongodb");
-const { Readable } = require("stream");
+const fs = require("fs");
 
 const file_connection = () => mongoose.file_conn.db;
 
@@ -77,24 +77,20 @@ const uploadStream = (req) =>
       req.socket.setTimeout(minutes10);
 
       console.log("Uploading");
-      const readableTrackStream = new Readable();
+      const readStream = fs.createReadStream(req.file.path);
 
-      console.log(req.file);
       console.log();
       console.log("======================================================");
+      console.log(req.file);
+      console.log("======================================================");
       console.log();
-      console.log(req.file.buffer);
-
-      readableTrackStream.push(req.file.buffer);
-      readableTrackStream.push(null);
 
       const modb = file_connection();
       const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
       console.log("Bucket created");
 
       const uploadStream = bucket.openUploadStream();
-      readableTrackStream.pipe(uploadStream);
-      console.log("Upload stream created");
+      readStream.pipe(uploadStream);
 
       uploadStream.on("error", (err) => {
         console.log("[Error] ", err);
