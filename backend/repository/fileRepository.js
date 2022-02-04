@@ -76,14 +76,16 @@ const uploadStream = (req) =>
       const minutes10 = 10 * 60 * 1000;
       req.socket.setTimeout(minutes10);
 
-      console.log("Uploading");
-      const readStream = fs.createReadStream(req.file.path);
+      const filePath = req.file.path;
 
-      console.log();
-      console.log("======================================================");
-      console.log(req.file);
-      console.log("======================================================");
-      console.log();
+      console.log("Uploading");
+      const readStream = fs.createReadStream(filePath);
+
+      // console.log();
+      // console.log("======================================================");
+      // console.log(req.file);
+      // console.log("======================================================");
+      // console.log();
 
       const modb = file_connection();
       const bucket = new mongodb.GridFSBucket(modb, { bucketName: collection });
