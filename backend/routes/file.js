@@ -130,6 +130,8 @@ router.post("/", tokenAuth.admin, upload, async (req, res) => {
     const id = await fileRepo.uploadStream(req);
     if (!id) return resf.r500(res, "Error uploading file");
 
+    console.log("Upload Successfull");
+
     // Create a Metadata
     const fileMetaAttr = createFileMetadata(
       req.file,
