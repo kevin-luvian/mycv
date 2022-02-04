@@ -25,7 +25,10 @@ const uploadFile = (req, res, next) => {
   console.log("validate upload");
 
   uploadMiddleware(req, res, (err) => {
-    if (err) return resf.r400(res, "Upload Request Validation Failed");
+    if (err) {
+      console.error(err);
+      return resf.r400(res, "Upload Request Validation Failed");
+    }
     return next();
   });
 };
