@@ -78,6 +78,13 @@ const uploadStream = (req) =>
 
       console.log("Uploading");
       const readableTrackStream = new Readable();
+
+      console.log(req.file);
+      console.log();
+      console.log("======================================================");
+      console.log();
+      console.log(req.file.buffer);
+
       readableTrackStream.push(req.file.buffer);
       readableTrackStream.push(null);
 
