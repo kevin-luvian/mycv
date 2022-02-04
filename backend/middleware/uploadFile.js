@@ -3,7 +3,12 @@ const resf = require("../routes/responseFactory");
 
 const mb1000 = 1000 * 1000 * 1000;
 
-const storage = multer.memoryStorage();
+// const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: "../uploads",
+  filename: (req, file, callback) => callback(null, file.originalname),
+});
+
 const upload = multer({
   storage: storage,
   limits: {
