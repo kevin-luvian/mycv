@@ -1,7 +1,7 @@
 const mongoose = require("../bin/mongoose");
 const paginate = require("mongoose-paginate");
 
-const schema = mongoose.file_conn.Schema({
+const schema = mongoose.Schema({
   group: { type: String },
   filename: { type: String },
   contentType: { type: String },
