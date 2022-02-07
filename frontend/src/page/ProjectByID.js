@@ -27,7 +27,6 @@ const parseDir = (dir) => {
 const SectionsMenu = ({ project, onChange, className, ...props }) => {
   const [sections, setSections] = useState([]);
   const [activeSectionIndex, setActiveSectionIndex] = useState(-1);
-  const screen = useWindowSize();
 
   const createSectionMenu = useCallback((section, indent = 0) => {
     if (!section) return [];
@@ -84,10 +83,10 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
 };
 
 const ViewDirectory = ({ className, directory }) => {
-  const parseDirContent = useCallback(
-    () => parse(directory.content),
-    [directory.content]
-  );
+  // const parseDirContent = useCallback(
+  //   () => parse(directory.content),
+  //   [directory.content]
+  // );
   const screen = useWindowSize();
 
   return (
@@ -99,7 +98,9 @@ const ViewDirectory = ({ className, directory }) => {
           urls={directory.imageURLs}
         />
       )}
-      <div className={screen.mobile ? "px-3" : ""}>{parseDirContent()}</div>
+      <div className={screen.mobile ? "px-3" : ""}>
+        {parse(directory.content)}
+      </div>
     </div>
   );
 };
