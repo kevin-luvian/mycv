@@ -82,7 +82,7 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
   );
 };
 
-const ViewDirectory = ({ className, directory, parsedContent }) => {
+const ViewDirectory = ({ className, directory }) => {
   const screen = useWindowSize();
   return (
     <div className={concat(className, !screen.mobile ? "overflow-auto" : "")}>
@@ -94,7 +94,7 @@ const ViewDirectory = ({ className, directory, parsedContent }) => {
         />
       )}
       <div className={screen.mobile ? "px-3" : ""}>
-        {parsedContent}
+        {parse(directory.content)}
       </div>
     </div>
   );
@@ -183,7 +183,6 @@ const Page = ({ ...props }) => {
             <ViewDirectory
               className={concat("col px-0", !screen.mobile ? "ml-3" : "")}
               directory={currentProject}
-              parsedContent={parse(currentProject.content)}
             />
           </Fragment>
         )}
