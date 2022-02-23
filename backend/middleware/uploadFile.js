@@ -1,7 +1,7 @@
 const multer = require("multer");
 const resf = require("../routes/responseFactory");
 
-const mb1000 = 1000 * 1000 * 1000;
+const GB = 1000 * 1000 * 1000;
 
 // const storage = multer.memoryStorage();
 const storage = multer.diskStorage({
@@ -14,7 +14,7 @@ const upload = multer({
   limits: {
     fields: 1,
     files: 1,
-    fileSize: mb1000,
+    fileSize: 2 * GB,
   },
 });
 const uploadMiddleware = upload.single("file");
