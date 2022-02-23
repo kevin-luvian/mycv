@@ -14,6 +14,7 @@ router.get("/", tokenAuth.admin, async (req, res) => {
     req.headers.host,
     await fileMetadataRepo.retrieveLean()
   );
+  files.sort((a, b) => (a.filename < b.filename ? -1 : 1));
   resf.r200(res, "files found", files);
 });
 
