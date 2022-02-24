@@ -22,7 +22,7 @@ import {
   icons,
 } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
-import { concat, parseByteToString, parseMSToString } from "../../util/utils";
+import { concat, fileNameFromUrl, parseByteToString, parseMSToString } from "../../util/utils";
 import styles from "./styles.module.scss";
 import { Post, Delete, Put, getCancelToken } from "../../axios/Axios";
 import $ from "jquery";
@@ -278,7 +278,26 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
     }
   };
 
-  const downloadFile = () => window.open(cFile().url, "_blank");
+  const downloadFileTemp = () => window.open(cFile().url, "_blank");
+
+  /**
+   * @param {string} path 
+   */
+  const downloadFile = (path) => {
+    // Create a new link
+    const anchor = document.createElement('a');
+    anchor.href = path;
+    anchor.download = fileNameFromUrl(path);
+
+    // Append to the DOM
+    document.body.appendChild(anchor);
+
+    // Trigger `click` event
+    anchor.click();
+
+    // Remove element from DOM
+    document.body.removeChild(anchor);
+  };
 
   const renderContent = () => {
     if (cFile().contentType.includes("image")) {
@@ -317,7 +336,7 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
               <ColoredIcon
                 color={iconColors.primary}
                 icon={icons.download}
-                onClick={downloadFile}
+                onClick={() => downloadFile(cFile().url)}
               />
               <ColoredIcon
                 color={iconColors.danger}

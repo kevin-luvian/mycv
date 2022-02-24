@@ -191,3 +191,14 @@ export const parseMSToString = (ms) => {
   const minutes = seconds / 60;
   return minutes.toFixed(0) + " minutes";
 };
+
+/**
+ * @param {string} url 
+ */
+export function fileNameFromUrl(url) {
+  var matches = url.match(/\/([^\/?#]+)[^\/]*$/);
+  if (matches.length > 1) {
+    return matches[1];
+  }
+  return null;
+}
