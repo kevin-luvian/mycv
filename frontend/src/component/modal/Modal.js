@@ -59,7 +59,6 @@ export const SelectableModal = forwardRef((
     }));
 
     const reset = () => {
-        setSearch("");
         setSelectedIndex(valueIndex);
     };
 

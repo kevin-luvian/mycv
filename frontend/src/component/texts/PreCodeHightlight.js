@@ -4,8 +4,8 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialLight as ccolor } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export const PreCodeHighlight = ({
-  label,
-  className,
+  label = "",
+  className = "",
   children = "",
   language = "javascript",
   ...props
@@ -18,10 +18,10 @@ export const PreCodeHighlight = ({
     </div>
     <SyntaxHighlighter
       className={styles.codeblock}
-      language={language}
+      language={`${language}`}
       style={ccolor}
     >
-      {children}
+      {`${children}`}
     </SyntaxHighlighter>
   </div>
 );
