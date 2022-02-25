@@ -127,8 +127,9 @@ export const SearchFilterInput = ({
   placeholder,
   onEnter,
   onChange,
+  initialValue,
 }) => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialValue);
   const inputRef = useRef();
 
   const enterIt = useCallback(() => onEnter?.(search), [onEnter, search]);

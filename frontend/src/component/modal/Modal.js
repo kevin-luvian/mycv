@@ -97,6 +97,7 @@ export const SelectableModal = forwardRef((
             <div className={styles.container}>
                 <h5 className={styles.title}>{title ?? "Select an element to continue"}</h5>
                 <SearchFilterInput
+                    initialValue={search}
                     className={styles.searchField}
                     onChange={val => setSearch(val)} />
                 <div style={{ overflowY: "auto", height: "50rem" }}>
