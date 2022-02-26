@@ -4,10 +4,6 @@ import { concat, fileExtFromURL } from "../../util/utils";
 import CustomPlayer from "../videoplayer/CustomPlayer";
 
 export const ImageCarousel = ({ urls = [], className, height = "20rem" }) => {
-  if (urls.length == 0) {
-    return <div></div>;
-  }
-
   const [currTarget, setCurrTarget] = useState(0);
 
   const changeTarget = (index) => {
@@ -16,6 +12,10 @@ export const ImageCarousel = ({ urls = [], className, height = "20rem" }) => {
     setCurrTarget(index);
   };
   const isTarget = (index) => (index === currTarget ? styles.target : "");
+
+  if (urls.length == 0) {
+    return <div></div>;
+  }
 
   return (
     <div className={concat(styles.imageCarousel, className)}>
