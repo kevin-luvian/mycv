@@ -1,6 +1,6 @@
 import { DomElement } from "htmlparser2";
 import ReactHtmlParser, { convertNodeToElement } from "react-html-parser";
-import { cnord, simpleID } from "./utils";
+import { cnord, simpleID, splitStr } from "./utils";
 import { Basic } from "../component/button/Button";
 import { Heading } from "../component/texts/Heading";
 import { Tips } from "../component/texts/InfoBar";
@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import CustomPlayer from "../component/videoplayer/CustomPlayer";
 import { PreCodeHighlight } from "../component/texts/PreCodeHightlight";
 import envs from "./envs";
+import { ImageCarousel } from "../component/carousel/Carousel";
 
 /**
  * @param {String} html
@@ -29,12 +30,14 @@ export const parse = (html) => {
   }
 };
 
+const baseFileURL = envs.API_URL + "/file";
+
 /**
  * @param {String} s
  */
 const modifyRawHTML = (s) => {
   s = s.replace("#_url", window.location.host);
-  s = s.replace(/#_file/g, envs.API_URL + "/file");
+  s = s.replace(/#_file/g, baseFileURL);
   return s;
 };
 
@@ -54,6 +57,21 @@ const transform = (node, _ = null) => {
       return <Heading {...props} key={index} children={convCH(node)} />;
     case "tips":
       return <Tips {...props} key={index} children={convCH(node)} />;
+    case "carousel": {
+      const images = splitStr(node.attribs["images"], ",").map(
+        (s) => `${baseFileURL}/${s}/img.png`
+      );
+      let urls = JSON.parse(cnord(node.attribs["urls"], "[]"));
+      urls = [...urls, ...images];
+      return (
+        <ImageCarousel
+          urls={urls}
+          height={node.attribs["height"]}
+          {...props}
+          key={index}
+        />
+      );
+    }
     case "pre-code":
       return (
         <PreCodeHighlight
@@ -76,9 +94,10 @@ const transform = (node, _ = null) => {
     case "custom-player":
       return (
         <CustomPlayer
+          height={node.attribs["height"]}
+          source={node.attribs["source"] ?? ""}
           {...props}
           key={index}
-          source={node.attribs["source"] ?? ""}
         />
       );
   }

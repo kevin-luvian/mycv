@@ -1,10 +1,13 @@
 import styles from "./styles.module.scss";
 import { useState } from "react";
 import { concat, fileExtFromURL } from "../../util/utils";
-import ResponsivePlayer from "../videoplayer/ResponsivePlayer";
 import CustomPlayer from "../videoplayer/CustomPlayer";
 
-export const ImageCarousel = ({ urls, className, height = "20rem" }) => {
+export const ImageCarousel = ({ urls = [], className, height = "20rem" }) => {
+  if (urls.length == 0) {
+    return <div></div>;
+  }
+
   const [currTarget, setCurrTarget] = useState(0);
 
   const changeTarget = (index) => {

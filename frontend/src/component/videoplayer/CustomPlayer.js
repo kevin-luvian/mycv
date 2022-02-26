@@ -10,6 +10,7 @@ import { concat } from "../../util/utils";
 /**
  * @param {{
  * source: string
+ * height: string
  * }} param0
  */
 const CustomPlayer = ({ source, height = "20rem" }) => {

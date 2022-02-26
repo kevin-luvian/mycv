@@ -193,7 +193,7 @@ export const parseMSToString = (ms) => {
 };
 
 /**
- * @param {string} url 
+ * @param {string} url
  */
 export function fileNameFromUrl(url) {
   var matches = url.match(/\/([^\/?#]+)[^\/]*$/);
@@ -201,4 +201,16 @@ export function fileNameFromUrl(url) {
     return matches[1];
   }
   return null;
+}
+
+/**
+ * @param {string|null} astr
+ * @param {string} separator
+ */
+export function splitStr(astr, separator) {
+  astr = cnord(astr, "");
+  if (astr == "") {
+    return [];
+  }
+  return astr.split(separator);
 }
