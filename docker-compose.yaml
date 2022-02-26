@@ -25,5 +25,6 @@ services:
     image: "mongo:4.4.12"
     volumes:
       - ../mongo-volume:/data/db
+      - ../mongo-volume/configdb:/data/configdb
     ports:
       - 27017:27017
