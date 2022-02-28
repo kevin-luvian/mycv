@@ -18,22 +18,30 @@ const port = env.PORT;
  * Database setup
  */
 
-
 const connection = mongoose.main_conn;
+const connection_file = mongoose.file_conn;
 connection.on(
   "error",
   console.error.bind(console, "[setup] MongoDB connection error:")
 );
+connection_file.on(
+  "error",
+  console.error.bind(console, "[setup] MongoDB connection error:")
+);
 connection.once("open", function () {
-  console.log("[setup] MongoDB connection established");
+  console.log("[setup - main] MongoDB connection established");
 
-  /**
-   * Listen on provided port, on all network interfaces.
-   */
-  app.listen(port, function (err) {
-    if (err) console.log("Error in server setup");
-    console.log("[setup] Server listening on Port", port);
+  connection_file.once("open", function () {
+    console.log("[setup - file] MongoDB file connection established");
 
-    startup();
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+    app.listen(port, function (err) {
+      if (err) console.log("Error in server setup");
+      console.log("[setup] Server listening on Port", port);
+
+      startup();
+    });
   });
 });
