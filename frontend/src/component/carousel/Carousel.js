@@ -1,5 +1,5 @@
 import styles from "./styles.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { concat, fileExtFromURL } from "../../util/utils";
 import CustomPlayer from "../videoplayer/CustomPlayer";
 
@@ -13,9 +13,11 @@ export const ImageCarousel = ({ urls = [], className, height = "20rem" }) => {
   };
   const isTarget = (index) => (index === currTarget ? styles.target : "");
 
-  if (urls.length == 0) {
-    return <div></div>;
-  }
+  useEffect(() => {
+    if (currTarget >= urls.length) {
+      setCurrTarget(0);
+    }
+  }, [urls]);
 
   return (
     <div className={concat(styles.imageCarousel, className)}>

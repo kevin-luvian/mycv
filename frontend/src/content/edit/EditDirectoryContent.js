@@ -19,6 +19,7 @@ import { SimpleValidation } from "../../component/modal/Modal";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 import styles from "./styles.module.scss";
 import { parse } from "../../util/htmlParser";
+import { cnord } from "../../util/utils";
 
 const parseDir = (dir) => ({
   _id: dir?._id ?? "",
@@ -63,8 +64,11 @@ const SectionCard = ({ directory, onEdit, onDelete }) => {
 
 const EditPage = ({ id, changePage }) => {
   const [directory, setDirectory] = useState(parseDir());
+  const [content, setContent] = useState(parse(""));
 
-  useEffect(() => getDirectoryInfo(), [id]);
+  useEffect(() => {
+    getDirectoryInfo();
+  }, [id]);
   useEffect(() => updateImageUrls(), [directory.images]);
 
   const updateDirectory = useCallback(
@@ -79,7 +83,11 @@ const EditPage = ({ id, changePage }) => {
 
   const getDirectoryInfo = useCallback(async () => {
     const res = await Get(`/directory/${id}`);
-    if (res.success) setDirectory(parseDir(res.data));
+    if (res.success) {
+      const dir = parseDir(res.data);
+      setDirectory(dir);
+      setContent(parse(dir.content));
+    }
     res.notify();
   }, [id]);
 
@@ -88,7 +96,10 @@ const EditPage = ({ id, changePage }) => {
 
   const onUpdate = async () => {
     const res = await Put(`/directory/${directory._id}`, directory);
-    if (res.success) changePage(directory.title, directory._id);
+    if (res.success) {
+      setContent(parse(directory.content));
+      changePage(directory.title, directory._id);
+    }
     res.notify();
   };
 
@@ -103,11 +114,6 @@ const EditPage = ({ id, changePage }) => {
     if (res.success) getDirectoryInfo();
     res.notify();
   };
-
-  const parseDirContent = useCallback(
-    () => parse(directory.content),
-    [directory.content]
-  );
 
   return (
     <Fragment>
@@ -146,14 +152,15 @@ const EditPage = ({ id, changePage }) => {
         onChange={(value) => updateDirectory({ content: value })}
       />
 
-      <Button className="w-100" onClick={onUpdate}>
+      <Button className="w-100" onClick={() => onUpdate()}>
         Update
       </Button>
 
       <Divider className="my-5" />
-
-      <ImageCarousel className="mb-3" urls={directory.imageURLs} />
-      {parseDirContent()}
+      {cnord(directory.imageURLs?.length, 0) > 0 && (
+        <ImageCarousel className="mb-3" urls={directory.imageURLs} />
+      )}
+      {content}
     </Fragment>
   );
 };

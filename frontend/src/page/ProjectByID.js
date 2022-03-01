@@ -84,6 +84,7 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
 
 const ViewDirectory = ({ className, directory }) => {
   const screen = useWindowSize();
+  const parseDir = useCallback(() => parse(directory.content), [directory]);
   return (
     <div className={concat(className, !screen.mobile ? "overflow-auto" : "")}>
       {0 < (directory.imageURLs?.length || 0) && (
@@ -93,9 +94,7 @@ const ViewDirectory = ({ className, directory }) => {
           urls={directory.imageURLs}
         />
       )}
-      <div className={screen.mobile ? "px-3" : ""}>
-        {parse(directory.content)}
-      </div>
+      <div className={screen.mobile ? "px-3" : ""}>{parseDir()}</div>
     </div>
   );
 };
