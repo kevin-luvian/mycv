@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback } from "react";
+import { Fragment, useState, useEffect, useCallback, memo } from "react";
 import { Banner } from "../component/decoration/Text";
 import { Get, Post } from "../axios/Axios";
 import { ImageCarousel } from "../component/carousel/Carousel";
@@ -82,11 +82,9 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
   );
 };
 
-const ViewDirectory = ({ className, directory }) => {
-  const screen = useWindowSize();
-  const parseDir = useCallback(() => parse(directory.content), [directory]);
+const ViewDirectory = memo(({ directory }) => {
   return (
-    <div className={concat(className, !screen.mobile ? "overflow-auto" : "")}>
+    <div className={styles.viewDirectory}>
       {0 < (directory.imageURLs?.length || 0) && (
         <ImageCarousel
           height="30rem"
@@ -94,10 +92,10 @@ const ViewDirectory = ({ className, directory }) => {
           urls={directory.imageURLs}
         />
       )}
-      <div className={screen.mobile ? "px-3" : ""}>{parseDir()}</div>
+      {parse(directory.content)}
     </div>
   );
-};
+});
 
 const getProjectState = (id) => `project-dir-id-${id}`;
 
@@ -179,10 +177,7 @@ const Page = ({ ...props }) => {
               project={project}
               onChange={setCurrentProject}
             />
-            <ViewDirectory
-              className={concat("col px-0", !screen.mobile ? "ml-3" : "")}
-              directory={currentProject}
-            />
+            <ViewDirectory directory={currentProject} />
           </Fragment>
         )}
       </ContentPadding>
