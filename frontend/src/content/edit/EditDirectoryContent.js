@@ -14,12 +14,16 @@ import {
 } from "../../component/input/Inputs";
 import { Link } from "react-router-dom";
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
-import { BlankCard, EditDirectoryCard } from "../../component/card/BlankCard";
+import { BlankCard } from "../../component/card/BlankCard";
 import { SimpleValidation } from "../../component/modal/Modal";
 import { Get, Delete, Post, Put } from "../../axios/Axios";
 import styles from "./styles.module.scss";
 import { parse } from "../../util/htmlParser";
 import { cnord } from "../../util/utils";
+import {
+  DirectoriesCard,
+  EditDirectoryCard,
+} from "../../component/card/DirectoriesCard";
 
 const parseDir = (dir) => ({
   _id: dir?._id ?? "",
@@ -238,20 +242,21 @@ const MainPage = ({ changePage }) => {
         </div>
       </div>
 
-      <div className="row">
-        {dirShown?.map((dir, index) => (
-          <div key={index} className="col-12 col-lg-6 px-3">
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        <DirectoriesCard
+          projects={dirShown}
+          render={(project, i) => (
             <EditDirectoryCard
-              className="mb-3"
-              title={dir.title}
-              imgUrls={dir.imageURLs}
-              description={dir.content}
-              readMoreURL={"/project/" + dir._id}
-              onEdit={() => onEdit(dir.title, dir._id)}
-              onDelete={() => onDelete(dir._id)}
+              key={i}
+              title={project.title}
+              imgUrls={project.imageURLs}
+              description={project.content}
+              readMoreURL={"/project/" + project._id}
+              onEdit={() => onEdit(project.title, project._id)}
+              onDelete={() => onDelete(project._id)}
             />
-          </div>
-        ))}
+          )}
+        />
       </div>
     </Fragment>
   );

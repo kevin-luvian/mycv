@@ -1,5 +1,6 @@
-@import "../style/theme";
-@import "../style/variables";
+@import "../style/responsive.scss";
+@import "../style/variables.scss";
+@import "../style/theme.scss";
 
 .wFit {
   width: fit-content;
@@ -51,5 +52,15 @@
     p {
       word-wrap: break-word;
     }
+  }
+}
+
+.projectContainer {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 !important;
+
+  @include media(tablet) {
+    padding: 1rem !important;
   }
 }

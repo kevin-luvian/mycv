@@ -1,3 +1,4 @@
+@import "../../style/responsive.scss";
 @import "../../style/variables.scss";
 @import "../../style/theme.scss";
 
@@ -175,6 +176,27 @@ $mutedColor: map-get($global, "muted");
       @include themify($themes) {
         background-color: themed("primary");
       }
+    }
+  }
+}
+
+.directories {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  width: 100%;
+  @include media(desktop) {
+    padding: 0 0.5rem;
+    width: 50%;
+  }
+
+  .directory {
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    @include media(desktop) {
+      margin-bottom: 1rem;
     }
   }
 }

@@ -1,11 +1,14 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useCallback } from "react";
 import { useStore, useDispatch, updateCache } from "../store/CacheStore";
 import { Get, Post } from "../axios/Axios";
 import { Banner } from "../component/decoration/Text";
-import { DirectoryCard } from "../component/card/BlankCard";
+import {
+  DirectoriesCard,
+  DirectoryCard,
+} from "../component/card/DirectoriesCard";
 import ContentPadding from "./extra/ContentPadding";
 import Loader from "../component/loader/hash";
-import { useWindowSize } from "../util/hooks";
+import styles from "./styles.module.scss";
 import { concat } from "../util/utils";
 
 const parseDir = (dir) => {
@@ -29,7 +32,6 @@ const Page = () => {
 
   const store = useStore();
   const dispatch = useDispatch();
-  const screen = useWindowSize();
 
   useEffect(() => {
     const projects = store.project?.value ?? [];
@@ -63,18 +65,13 @@ const Page = () => {
   return (
     <Fragment>
       <Banner title="Project" className="mb-3" />
-      <ContentPadding className="row">
+      <ContentPadding className={styles.projectContainer}>
         {loading ? (
           <Loader />
         ) : (
-          projects?.map((p, i) => (
-            <div
-              key={i}
-              className={concat(
-                screen.mobile ? "px-0 mt-0 mb-1" : "mb-4",
-                "col-12 col-md-6"
-              )}
-            >
+          <DirectoriesCard
+            projects={projects}
+            render={(p, i) => (
               <DirectoryCard
                 key={i}
                 title={p.title}
@@ -82,8 +79,8 @@ const Page = () => {
                 description={p.content}
                 readMoreURL={`/project/${p._id}`}
               />
-            </div>
-          ))
+            )}
+          />
         )}
       </ContentPadding>
     </Fragment>
