@@ -167,7 +167,7 @@ const Page = ({ ...props }) => {
         title={project.title ? `Project - ${project.title}` : "Project"}
         className="mb-3"
       />
-      <ContentPadding className={concat("row", screen.tablet ? "px-3" : "")}>
+      <ContentPadding className={concat("row", screen.desktop ? "" : "px-3")}>
         {loading ? (
           <Loader />
         ) : (
