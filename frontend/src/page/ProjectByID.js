@@ -87,7 +87,7 @@ const ViewDirectory = memo(({ directory }) => {
     <div className={styles.viewDirectory}>
       {0 < (directory.imageURLs?.length || 0) && (
         <ImageCarousel
-          height="30rem"
+          height="25rem"
           className="mb-3"
           urls={directory.imageURLs}
         />
