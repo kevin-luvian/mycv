@@ -100,9 +100,11 @@ $transitionDuration: 0.4s;
   .carousel {
     position: relative;
     width: 100%;
-    height: 20rem;
+    height: fit-content;
     overflow: hidden;
     background-color: rgba(236, 236, 236, 0.5);
+    max-height: 25rem;
+
     .imageBlock {
       position: absolute;
       width: 100%;

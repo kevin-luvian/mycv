@@ -63,14 +63,7 @@ const transform = (node, _ = null) => {
       );
       let urls = JSON.parse(cnord(node.attribs["urls"], "[]"));
       urls = [...urls, ...images];
-      return (
-        <ImageCarousel
-          urls={urls}
-          height={node.attribs["height"]}
-          {...props}
-          key={index}
-        />
-      );
+      return <ImageCarousel urls={urls} {...props} key={index} />;
     }
     case "pre-code":
       return (

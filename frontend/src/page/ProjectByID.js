@@ -83,15 +83,10 @@ const SectionsMenu = ({ project, onChange, className, ...props }) => {
 };
 
 const ViewDirectory = memo(({ directory }) => {
-  const screen = useWindowSize();
   return (
     <div className={styles.viewDirectory}>
       {0 < (directory.imageURLs?.length || 0) && (
-        <ImageCarousel
-          height={screen.mobile ? "fit" : "25rem"}
-          className="mb-3"
-          urls={directory.imageURLs}
-        />
+        <ImageCarousel className="mb-3" urls={directory.imageURLs} />
       )}
       {parse(directory.content)}
     </div>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { concat, fileExtFromURL } from "../../util/utils";
 import CustomPlayer from "../videoplayer/CustomPlayer";
 
-export const ImageCarousel = ({ urls = [], className, height = "20rem" }) => {
+export const ImageCarousel = ({ urls = [], className }) => {
   const [currTarget, setCurrTarget] = useState(0);
 
   const changeTarget = (index) => {
@@ -40,7 +40,7 @@ export const ImageCarousel = ({ urls = [], className, height = "20rem" }) => {
         </div>
       </div>
 
-      <div className={styles.carousel} style={{ height: height }}>
+      <div className={styles.carousel}>
         {urls.map((url, index) => {
           const ext = fileExtFromURL(url).toLowerCase();
           let fElem = <img src={url} alt="carousel" />;
