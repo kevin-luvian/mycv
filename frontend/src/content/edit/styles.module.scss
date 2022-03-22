@@ -120,6 +120,14 @@ $actionsWidth: 80px;
     .contentDesc {
       padding: 0.5rem;
     }
+
+    .fileURL {
+      overflow-wrap: break-word;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 

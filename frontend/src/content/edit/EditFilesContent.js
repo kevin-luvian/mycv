@@ -22,7 +22,12 @@ import {
   icons,
 } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
-import { concat, fileNameFromUrl, parseByteToString, parseMSToString } from "../../util/utils";
+import {
+  concat,
+  fileNameFromUrl,
+  parseByteToString,
+  parseMSToString,
+} from "../../util/utils";
 import styles from "./styles.module.scss";
 import { Post, Delete, Put, getCancelToken } from "../../axios/Axios";
 import $ from "jquery";
@@ -278,14 +283,12 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
     }
   };
 
-  const downloadFileTemp = () => window.open(cFile().url, "_blank");
-
   /**
-   * @param {string} path 
+   * @param {string} path
    */
   const downloadFile = (path) => {
     // Create a new link
-    const anchor = document.createElement('a');
+    const anchor = document.createElement("a");
     anchor.href = path;
     anchor.download = fileNameFromUrl(path);
 
@@ -359,7 +362,9 @@ const FileElement = ({ nameSearch, className, file, onChange }) => {
               <p>size: {parseByteToString(cFile().size)}</p>
               <p>upload date: {cFile().uploadDate}</p>
               <Divider className="mt-3 mb-2" />
-              <p style={{ overflowWrap: "break-word" }}>{cFile().url}</p>
+              <a href={cFile().url} target="_blank">
+                <p className={styles.fileURL}>{cFile().url}</p>
+              </a>
             </div>
           </div>
         </div>
