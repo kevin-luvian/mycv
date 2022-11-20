@@ -13,6 +13,8 @@ const environments = {
   SALT_ROUNDS: process.env.SALT_ROUNDS,
   JWT_TOKEN_SECRET: process.env.JWT_TOKEN_SECRET,
   CORS_URLS: String(cnord(process.env.CORS_URLS, "")).split(","),
+  METRICS_USERNAME: process.env.METRICS_USERNAME,
+  METRICS_PASSWORD: process.env.METRICS_PASSWORD,
 };
 
 module.exports = environments;

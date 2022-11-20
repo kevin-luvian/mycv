@@ -4,12 +4,32 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const env = require("../util/envs");
+const promMid = require("express-prometheus-middleware");
 const { logObject } = require("../util/utils");
 
 logObject(env);
 const allowedOrigins = [...env.CORS_URLS, `http://localhost:${env.PORT}`];
 
 const app = express();
+
+app.use(
+  promMid({
+    metricsPath: "/metrics",
+    prefix: "mycv_be_",
+    collectDefaultMetrics: true,
+    requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+    requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+    responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+    authenticate: (req) => {
+      const b64Conf = (req.headers.authorization || "").split(" ")[1] || "";
+      const b64Env = new Buffer.from(
+        `${env.METRICS_USERNAME}:${env.METRICS_PASSWORD}`,
+        "ascii"
+      ).toString("base64");
+      return b64Conf == b64Env;
+    },
+  })
+);
 
 app.use(
   cors({

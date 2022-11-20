@@ -3,18 +3,24 @@ version: "3"
 services:
   mycv:
     restart: unless-stopped
-    image: "wkeplon/mycv:latest"
+    build: ./
     env_file:
       - ./.env.docker
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
     ports:
       - 9000:9000
     depends_on:
       - mongodb
   mycv_2:
     restart: unless-stopped
-    image: "wkeplon/mycv:latest"
+    build: ./
     env_file:
       - ./.env.docker
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
     ports:
       - 9001:9000
     depends_on:

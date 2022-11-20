@@ -16,3 +16,4 @@ stress-ng --cpu 2
 
 # grafana id
 node_exporter_full 1860
+express-prometheus-middleware 16306
