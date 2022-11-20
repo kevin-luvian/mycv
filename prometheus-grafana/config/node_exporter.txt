@@ -4,6 +4,7 @@ sudo mv ./node_exporter /var/www/go/exporter
 sudo nano /etc/systemd/system/exporter.service
 sudo systemctl start exporter
 sudo systemctl enable jobs
+ufw allow 9100
 
 # benchmarking
 sudo apt-get install sysbench
