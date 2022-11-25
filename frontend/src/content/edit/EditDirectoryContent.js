@@ -3,6 +3,7 @@ import {
   icons,
   iconColors,
   ColoredIcon,
+  TextIcon,
 } from "../../component/decoration/Icons";
 import { Divider } from "../../component/decoration/TileBreaker";
 import { ImageCarousel } from "../../component/carousel/Carousel";
@@ -11,6 +12,7 @@ import {
   TextInput,
   MultiTextInput,
   SearchFilterInput,
+  NumberInput,
 } from "../../component/input/Inputs";
 import { Link } from "react-router-dom";
 import { ChooseMultiFileInput } from "../../component/input/SearchFilterInput";
@@ -49,6 +51,7 @@ const SectionCard = ({ directory, onEdit, onDelete }) => {
         <div className="row">
           <p className="col-9">{directory.title}</p>
           <div className="col-3 text-right">
+            <TextIcon className="d-inline-block">{directory.order}</TextIcon>
             <ColoredIcon
               icon={icons.edit}
               color={iconColors.warning}
@@ -136,11 +139,23 @@ const EditPage = ({ id, changePage }) => {
         </Button>
       </div>
 
-      <TextInput
-        label="title"
-        value={directory.title}
-        onChange={(value) => updateDirectory({ title: value })}
-      />
+      <div className="row">
+        <div className="col-10">
+          <TextInput
+            label="title"
+            value={directory.title}
+            onChange={(value) => updateDirectory({ title: value })}
+          />
+        </div>
+
+        <div className="col-2">
+          <NumberInput
+            label="order"
+            value={directory.order}
+            onChange={(value) => updateDirectory({ order: value })}
+          />
+        </div>
+      </div>
 
       <ChooseMultiFileInput
         label="images"
@@ -186,17 +201,6 @@ const MainPage = ({ changePage }) => {
     if (!res.success) return;
     const dirs = res.data.map(parseDir);
     setRootDirs(dirs);
-    new Promise(async () => {
-      const mDirs = await Promise.all(
-        dirs.map(async (dir) => {
-          dir.imageURLs = (
-            await Post("/file/find-urls", dir?.images ?? [])
-          ).data;
-          return dir;
-        })
-      );
-      setRootDirs(mDirs);
-    });
   }, []);
 
   const stringIncludes = (strA = "", strB = "") =>
@@ -248,6 +252,7 @@ const MainPage = ({ changePage }) => {
           render={(project, i) => (
             <EditDirectoryCard
               key={i}
+              order={project.order}
               title={project.title}
               imgUrls={project.imageURLs}
               description={project.content}

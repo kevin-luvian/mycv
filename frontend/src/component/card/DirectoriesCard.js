@@ -1,8 +1,8 @@
 import React, { Fragment, useCallback, useRef } from "react";
 import { concat } from "../../util/utils";
-import { Oval as BtnOval } from "../button/Button";
+import { Basic, Oval as BtnOval } from "../button/Button";
 import { ImageCarousel } from "../carousel/Carousel";
-import { icons, iconColors, ColoredIcon } from "../decoration/Icons";
+import { icons, iconColors, ColoredIcon, TextIcon } from "../decoration/Icons";
 import { SimpleValidation } from "../modal/Modal";
 import { parse } from "../../util/htmlParser";
 import { Link } from "react-router-dom";
@@ -68,7 +68,13 @@ export const DirectoryCard = ({
   );
 };
 
-export const EditDirectoryCard = ({ id, onEdit, onDelete, ...props }) => {
+export const EditDirectoryCard = ({
+  id,
+  order,
+  onEdit,
+  onDelete,
+  ...props
+}) => {
   const deleteModalRef = useRef();
 
   return (
@@ -76,6 +82,7 @@ export const EditDirectoryCard = ({ id, onEdit, onDelete, ...props }) => {
       <SimpleValidation ref={deleteModalRef} onContinue={onDelete} />
       <DirectoryCard {...props}>
         <div className="d-flex justify-content-end">
+          <TextIcon>{order}</TextIcon>
           <ColoredIcon
             icon={icons.edit}
             color={iconColors.warning}

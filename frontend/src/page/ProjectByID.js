@@ -10,6 +10,7 @@ import Loader from "../component/loader/hash";
 import { parse } from "../util/htmlParser";
 import { useWindowSize } from "../util/hooks";
 import { Err404 } from "./Error";
+import { Link } from "react-router-dom";
 
 const parseDir = (dir) => {
   return {
@@ -135,9 +136,11 @@ const Page = ({ ...props }) => {
 
   const updateImageURLs = async (dir) => {
     const imagesID = dir?.images ?? [];
-    if (imagesID.length > 0)
+    if (imagesID.length > 0) {
       dir.imageURLs = (await Post("/file/find-urls", imagesID)).data;
-    else dir.imageURLs = [];
+    } else {
+      dir.imageURLs = [];
+    }
     dir.childrens = await Promise.all(
       dir.childrens.map((d) => updateImageURLs(d))
     );
@@ -160,7 +163,18 @@ const Page = ({ ...props }) => {
   return (
     <Fragment>
       <Banner
-        title={project.title ? `Project - ${project.title}` : "Project"}
+        title={
+          project.title ? (
+            <>
+              <Link to="/project">
+                <u>{"Project"}</u>
+              </Link>
+              {` - ${project.title}`}
+            </>
+          ) : (
+            "Project"
+          )
+        }
         className="mb-3"
       />
       <ContentPadding className={concat("row", screen.desktop ? "" : "px-3")}>

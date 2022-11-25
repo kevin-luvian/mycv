@@ -8,12 +8,6 @@ const resf = require("./responseFactory");
 const util = require("../util/utils");
 const debug = util.log("routes:directory");
 
-const addImageUrls = async (req, dir) => {
-    dir["imageURLs"] = await fileMetadataRepo.getUrls(req.headers.host, dir.images);
-    dir.childrens = await Promise.all(dir.childrens.map(c => addImageUrls(req, c)));
-    return dir;
-}
-
 router.get('/', tokenAuth.parseTokenUser, async (req, res) => {
     const user = tokenAuth.getLocalsUser(res);
     resf.r200(res, "directories found", await dirRepo.retrieve());
@@ -21,7 +15,13 @@ router.get('/', tokenAuth.parseTokenUser, async (req, res) => {
 
 router.get('/root', async (req, res) => {
     let dirs = await dirRepo.findRoots();
-    // dirs = await Promise.all(dirs.map(dir => parseDirImgUrl(req, dir)));
+    dirs.sort((a, b) => a.order - b.order);
+
+    await Promise.allSettled(dirs.map(async (d, i) => {
+        d.imageURLs = await fileMetadataRepo.getUrls(req.headers.host, d.images);
+        dirs[i] = d
+    }))
+
     resf.r200(res, "root directories found", dirs);
 });
 

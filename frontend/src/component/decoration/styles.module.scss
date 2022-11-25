@@ -5,22 +5,27 @@
 .tileBreak {
     width: fit-content;
     width: -moz-fit-content;
+
     h1 {
         margin: 0 0 0.5rem 0;
         font-size: 1.4rem;
         font-weight: 700;
     }
+
     .lines {
         div {
             height: 2px;
         }
+
         .primary {
             width: 35px;
             transform: translateY(-2px);
+
             @include themify($themes) {
                 background-color: themed("root");
             }
         }
+
         .secondary {
             background-color: map-get($global, "dim");
         }
@@ -38,28 +43,50 @@
         color: themed("root");
     }
 }
+
 .colorSuccess {
     color: map-get($global, "success");
 }
+
 .colorWarning {
     color: map-get($global, "warning");
 }
+
 .colorDanger {
     color: map-get($global, "danger");
 }
+
 .colorDefault {
     color: map-get($global, "default");
 }
 
 $mutedColor: map-get($global, "muted");
+
 .icon {
     cursor: pointer;
     transition: map-get($transition, "ease") !important;
     border-radius: 50%;
     padding: 0.3rem;
+
     &:hover {
         background-color: lighten($mutedColor, 7%);
     }
+
+    &:active {
+        background-color: $mutedColor;
+    }
+}
+
+.texticon {
+    cursor: pointer;
+    transition: map-get($transition, "ease") !important;
+    border-radius: 50%;
+    padding: 0 .4rem;
+
+    &:hover {
+        background-color: lighten($mutedColor, 7%);
+    }
+
     &:active {
         background-color: $mutedColor;
     }
@@ -68,28 +95,33 @@ $mutedColor: map-get($global, "muted");
 .underlinedTitle {
     width: fit-content;
     width: -moz-fit-content;
+
     p {
         margin: 0;
         display: block;
         font-size: 1.4rem;
         font-weight: bold;
     }
-    
+
     .line {
         display: block;
-        & > div {
+
+        &>div {
             border-radius: 30px;
+
             &:first-child {
                 display: block;
                 height: 2px;
                 background-color: map-get($global, "muted");
             }
+
             &:last-child {
                 display: block;
                 position: relative;
                 height: 2px;
                 width: 35px;
                 transform: translateY(-2px);
+
                 @include themify($themes) {
                     background-color: themed("primary");
                 }
@@ -110,18 +142,22 @@ $mutedColor: map-get($global, "muted");
         padding-left: 8%;
         padding-right: 8%;
     }
+
     h1 {
         margin: 0;
         font-size: 3rem;
+
         // font-weight: bold;
         @include themify($themes) {
             color: themed("text_color");
         }
     }
+
     p {
         font-size: 1rem;
         margin-bottom: 0;
         margin-left: auto;
+
         @include themify($themes) {
             color: themed("text_dim");
         }

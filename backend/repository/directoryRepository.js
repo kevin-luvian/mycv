@@ -1,4 +1,5 @@
 const mongoose = require("../bin/mongoose");
+const fileMetadataRepo = require("./fileMetadataRepository");
 const Directory = require("../model/Directory");
 const access = require("../model/Access");
 const util = require("../util/utils");
@@ -25,8 +26,10 @@ const findManyByIds = ids => Promise.all(util.cleanNull(ids).map(id => findOneBy
 
 const findFullById = async id => {
     const dir = await findOneById(id);
-    if (dir !== null)
+    if (dir !== null) {
         dir.childrens = await Promise.all(dir.childrens.map(id => findFullById(id)));
+		dir.childrens.sort((a, b) => a.order - b.order);
+    }
     return dir;
 }
 

@@ -49,18 +49,9 @@ const Page = () => {
   const fetchRoots = async () => {
     const res = await Get("/directory/root");
     res.notify();
-    if (res.success) return fetchImages(res.data);
+    if (res.success) return res.data;
     return [];
   };
-
-  const fetchImages = async (rootDirs) =>
-    Promise.all(
-      rootDirs.map(async (dir) => {
-        dir = parseDir(dir);
-        dir.imageURLs = (await Post("/file/find-urls", dir?.images ?? [])).data;
-        return dir;
-      })
-    );
 
   return (
     <Fragment>
