@@ -32,5 +32,5 @@ services:
     ports:
       - "8002:8081"
     environment:
-      - ME_CONFIG_MONGODB_URL=mongodb+srv://admin:password12345@express-lizue.mongodb.net/express?retryWrites=true&w=majority
+      - ME_CONFIG_MONGODB_URL=mongodb://172.17.0.1:27017/mongodb?gssapiServiceName=mongodb
     restart: unless-stopped
