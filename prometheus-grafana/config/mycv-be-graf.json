@@ -109,7 +109,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\".{1,2}\"} or\n    on() label_replace(vector(0),\"status\",\"0\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\".{1,2}\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"0\",\"\",\"\")))",
           "interval": "",
           "legendFormat": "0xx",
           "range": true,
@@ -122,7 +122,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\"1..\"} or\n    on() label_replace(vector(0),\"status\",\"100\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"1..\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"100\",\"\",\"\")))",
           "hide": false,
           "interval": "",
           "legendFormat": "1xx",
@@ -136,7 +136,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\"2..\"} or\n    on() label_replace(vector(0),\"status\",\"200\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"2..\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"200\",\"\",\"\")))",
           "hide": false,
           "interval": "",
           "legendFormat": "2xx",
@@ -150,7 +150,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\"3..\"} or\n    on() label_replace(vector(0),\"status\",\"300\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"3..\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"300\",\"\",\"\")))",
           "hide": false,
           "interval": "",
           "legendFormat": "3xx",
@@ -164,7 +164,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\"4..\"} or\n    on() label_replace(vector(0),\"status\",\"400\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"4..\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"400\",\"\",\"\")))",
           "hide": false,
           "interval": "",
           "legendFormat": "4xx",
@@ -178,7 +178,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\"5..\"} or\n    on() label_replace(vector(0),\"status\",\"500\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"5..\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"500\",\"\",\"\")))",
           "hide": false,
           "interval": "",
           "legendFormat": "5xx",
@@ -192,7 +192,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(\n    mycv_be_http_requests_total{instance=\"$instance\",status=~\".*\"} or\n    on() label_replace(vector(0),\"status\",\"0\",\"\",\"\")\n)",
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\"}[$__range]) or\n    on() label_replace(vector(0),\"status\",\"0\",\"\",\"\")))",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -200,7 +200,7 @@
           "refId": "G"
         }
       ],
-      "title": "Count by class",
+      "title": "Count Response Code",
       "transformations": [],
       "type": "gauge"
     },
@@ -228,7 +228,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -264,16 +264,21 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 18,
-        "x": 3,
+        "h": 8,
+        "w": 11,
+        "x": 1,
         "y": 9
       },
-      "id": 76,
+      "id": 85,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "logmin",
+            "max",
+            "mean",
+            "range"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -291,7 +296,109 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(irate(mycv_be_http_requests_total{instance=\"$instance\"}[$__interval]) * 10)",
+          "expr": "sum(increase(mycv_be_http_request_duration_seconds_sum{instance=\"$instance\"}[$__rate_interval]))  \n/  \nsum(increase(mycv_be_http_request_duration_seconds_count{instance=\"$instance\"}[$__rate_interval]))",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Request Duration - Average duration of requests per second",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Request Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "CCCeccdVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 12,
+        "y": 9
+      },
+      "id": 76,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "CCCeccdVz"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "round(sum(increase(mycv_be_http_requests_total{instance=\"$instance\"}[$__rate_interval])))",
           "instant": false,
           "interval": "",
           "legendFormat": "Request rate - Number of requests per second",
@@ -365,15 +472,20 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 17
       },
       "id": 66,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -389,7 +501,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rate(mycv_be_http_request_duration_seconds_sum{instance=\"$instance\"}[$__interval]) / rate(mycv_be_http_request_duration_seconds_count{instance=\"$instance\"}[$__interval])",
+          "expr": "increase(mycv_be_http_request_duration_seconds_sum{instance=\"$instance\"}[$__rate_interval])\n / \nincrease(mycv_be_http_request_duration_seconds_count{instance=\"$instance\"}[$__rate_interval])",
           "interval": "",
           "legendFormat": "{{method}} {{route}} - {{status}}",
           "range": true,
@@ -462,15 +574,19 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 17
       },
       "id": 68,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -486,9 +602,10 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rate(mycv_be_http_requests_total{instance=\"$instance\"}[$__interval])",
+          "expr": "round(increase(mycv_be_http_requests_total{instance=\"$instance\"}[$__rate_interval]))",
+          "format": "time_series",
           "interval": "",
-          "legendFormat": "{{method}} {{route}} - {{status}}",
+          "legendFormat": "{{method}} {{route}}",
           "range": true,
           "refId": "A"
         }
@@ -542,8 +659,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -584,7 +700,7 @@
         "h": 9,
         "w": 10,
         "x": 1,
-        "y": 32
+        "y": 31
       },
       "id": 82,
       "options": {
@@ -662,8 +778,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -679,7 +794,7 @@
         "h": 9,
         "w": 10,
         "x": 13,
-        "y": 32
+        "y": 31
       },
       "id": 84,
       "options": {
@@ -724,6 +839,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisGridShow": true,
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -757,8 +873,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -774,15 +889,20 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 40
       },
       "id": 50,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -854,8 +974,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -871,15 +990,20 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 40
       },
       "id": 54,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -895,7 +1019,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rate(mycv_be_http_request_duration_seconds_bucket{instance=\"$instance\",le=\"0.5\"}[$__rate_interval])",
+          "expr": "rate(mycv_be_http_request_duration_seconds_bucket{instance=\"$instance\", le=\"0.5\"}[$__rate_interval])",
           "interval": "",
           "legendFormat": "{{method}} {{route}} - {{status}}",
           "range": true,
@@ -951,8 +1075,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -968,7 +1091,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 40
       },
       "id": 56,
       "options": {
@@ -1046,8 +1169,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1063,7 +1185,7 @@
         "h": 9,
         "w": 9,
         "x": 2,
-        "y": 50
+        "y": 49
       },
       "id": 58,
       "options": {
@@ -1143,8 +1265,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1160,7 +1281,7 @@
         "h": 9,
         "w": 9,
         "x": 13,
-        "y": 50
+        "y": 49
       },
       "id": 64,
       "options": {
@@ -1240,8 +1361,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1257,7 +1377,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 59
+        "y": 58
       },
       "id": 70,
       "options": {
@@ -1281,7 +1401,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "mycv_be_http_requests_total{instance=\"$instance\",status=~\"4XX\"}",
+          "expr": "increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"4XX\"}[$__range])",
           "interval": "",
           "legendFormat": "{{method}} {{route}}",
           "range": true,
@@ -1337,8 +1457,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1354,7 +1473,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 59
+        "y": 58
       },
       "id": 72,
       "options": {
@@ -1434,8 +1553,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1451,7 +1569,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 59
+        "y": 58
       },
       "id": 74,
       "options": {
@@ -1475,7 +1593,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "mycv_be_http_requests_total{instance=\"$instance\",status=~\"4XX\"} or mycv_be_http_requests_total{instance=\"$instance\",status=~\"5XX\"}",
+          "expr": "increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"4XX\"}[$__range]) or increase(mycv_be_http_requests_total{instance=\"$instance\",status=~\"5XX\"}[$__range])",
           "interval": "",
           "legendFormat": "{{method}} {{path}}",
           "range": true,
@@ -1531,8 +1649,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1548,7 +1665,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 67
+        "y": 66
       },
       "id": 78,
       "options": {
@@ -1572,7 +1689,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "((sum(mycv_be_process_cpu_seconds_total{instance=\"$instance\"}) - avg(rate(node_cpu_seconds_total{instance=\"$node_exporter\",mode=\"idle\"}[$__rate_interval]))) * 100) / sum(node_cpu_seconds_total{instance=\"$node_exporter\"})",
+          "expr": "((sum(mycv_be_process_cpu_seconds_total) - avg(rate(node_cpu_seconds_total{instance=\"$node_exporter\",mode=\"idle\"}[$__rate_interval]))) * 100) / sum(node_cpu_seconds_total{instance=\"$node_exporter\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Usage CPU percentage by service",
@@ -1629,8 +1746,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1646,7 +1762,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 67
+        "y": 66
       },
       "id": 80,
       "options": {
@@ -1670,7 +1786,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "(sum(mycv_be_process_resident_memory_bytes{instance=\"$instance\"}) * 100) / sum(node_memory_MemTotal_bytes{instance=\"$node_exporter\"})",
+          "expr": "(sum(mycv_be_process_resident_memory_bytes) * 100) / sum(node_memory_MemTotal_bytes{instance=\"$node_exporter\"})",
           "interval": "",
           "legendFormat": "Percentage of RAM used by service",
           "range": true,
@@ -1690,7 +1806,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 75
+        "y": 74
       },
       "id": 36,
       "panels": [
@@ -1722,7 +1838,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 76
+            "y": 84
           },
           "id": 34,
           "options": {
@@ -1898,7 +2014,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 84
+            "y": 92
           },
           "id": 4,
           "options": {
@@ -1992,7 +2108,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 84
+            "y": 92
           },
           "id": 6,
           "options": {
@@ -2086,7 +2202,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 92
+            "y": 100
           },
           "id": 8,
           "options": {
@@ -2180,7 +2296,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 92
+            "y": 100
           },
           "id": 10,
           "options": {
@@ -2274,7 +2390,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 100
+            "y": 108
           },
           "id": 12,
           "options": {
@@ -2368,7 +2484,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 100
+            "y": 108
           },
           "id": 14,
           "options": {
@@ -2462,7 +2578,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 108
+            "y": 116
           },
           "id": 16,
           "options": {
@@ -2556,7 +2672,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 108
+            "y": 116
           },
           "id": 18,
           "options": {
@@ -2650,7 +2766,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 116
+            "y": 124
           },
           "id": 20,
           "options": {
@@ -2744,7 +2860,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 116
+            "y": 124
           },
           "id": 22,
           "options": {
@@ -2838,7 +2954,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 124
+            "y": 132
           },
           "id": 24,
           "options": {
@@ -2932,7 +3048,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 124
+            "y": 132
           },
           "id": 26,
           "options": {
@@ -3026,7 +3142,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 132
+            "y": 140
           },
           "id": 28,
           "options": {
@@ -3145,7 +3261,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 132
+            "y": 140
           },
           "id": 30,
           "options": {
@@ -3191,7 +3307,7 @@
       "type": "row"
     }
   ],
-  "refresh": "10s",
+  "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -3218,15 +3334,15 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": "172.17.0.1:9001",
-          "value": "172.17.0.1:9001"
+          "selected": false,
+          "text": "172.17.0.1:9000",
+          "value": "172.17.0.1:9000"
         },
         "datasource": {
           "type": "prometheus",
           "uid": "CCCeccdVz"
         },
-        "definition": "label_values(instance)",
+        "definition": "label_values(mycv_be_nodejs_version_info,instance)",
         "hide": 0,
         "includeAll": false,
         "label": "Instance:",
@@ -3234,7 +3350,7 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(instance)",
+          "query": "label_values(mycv_be_nodejs_version_info,instance)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3256,7 +3372,6 @@
         "definition": "label_values(node_uname_info, instance)",
         "hide": 0,
         "includeAll": false,
-        "label": "Node Exporter:",
         "multi": false,
         "name": "node_exporter",
         "options": [],
@@ -3273,13 +3388,13 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Express Prometheus Middleware",
   "uid": "zJfYJhynk",
-  "version": 14,
+  "version": 40,
   "weekStart": ""
 }

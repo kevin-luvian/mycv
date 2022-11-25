@@ -26,3 +26,11 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
+  mongoclient:
+    image: mongo-express:latest
+    container_name: mongoclient
+    ports:
+      - "8002:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb+srv://admin:password12345@express-lizue.mongodb.net/express?retryWrites=true&w=majority
+    restart: unless-stopped
