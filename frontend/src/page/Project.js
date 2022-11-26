@@ -9,20 +9,6 @@ import {
 import ContentPadding from "./extra/ContentPadding";
 import Loader from "../component/loader/hash";
 import styles from "./styles.module.scss";
-import { concat } from "../util/utils";
-
-const parseDir = (dir) => {
-  return {
-    _id: dir?._id ?? "",
-    type: dir?.type ?? "0",
-    title: dir?.title ?? "empty",
-    images: dir?.images ?? [],
-    imageURLs: [],
-    content: dir?.content ?? "",
-    order: dir?.order ?? 0,
-    childrens: dir?.childrens?.map((c) => parseDir(c)) ?? [],
-  };
-};
 
 const Page = () => {
   document.title = "View My Projects";

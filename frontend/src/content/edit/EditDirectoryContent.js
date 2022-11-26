@@ -32,7 +32,7 @@ const parseDir = (dir) => ({
   type: dir?.type ?? "0",
   title: dir?.title ?? "empty",
   images: dir?.images ?? [],
-  imageURLs: [],
+  imageURLs: dir?.imageURLs ?? [],
   content: dir?.content ?? "",
   order: dir?.order ?? 0,
   childrens: dir?.childrens?.map((c) => parseDir(c)) ?? [],

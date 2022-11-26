@@ -26,11 +26,11 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
-  mongoclient:
-    image: mongo-express:latest
-    container_name: mongoclient
-    ports:
-      - "8002:8081"
-    environment:
-      - ME_CONFIG_MONGODB_URL=mongodb://172.17.0.1:27017/mongodb?gssapiServiceName=mongodb
-    restart: unless-stopped
+  # mongoclient:
+  #   image: mongo-express:latest
+  #   container_name: mongoclient
+  #   ports:
+  #     - "8002:8081"
+  #   environment:
+  #     - ME_CONFIG_MONGODB_URL=mongodb://172.17.0.1:27017/mongodb?gssapiServiceName=mongodb
+  #   restart: unless-stopped
